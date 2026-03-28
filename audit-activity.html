@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: Configuration Audit</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { display: flex; gap: 20px; max-width: 900px; width: 100%; }
+        .column { flex: 1; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h3 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 5px; }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8; }
+        .drop-zone { display: inline-block; min-width: 150px; height: 25px; border-bottom: 2px dashed #ff5555; color: #ff5555; vertical-align: bottom; text-align: center; }
+        .drop-zone.correct { border-bottom: 2px solid #50fa7b; color: #50fa7b; }
+        .draggable { background: #004a99; color: white; padding: 8px 12px; margin: 10px 0; border-radius: 4px; cursor: grab; font-family: 'Courier New', monospace; font-size: 13px; text-align: center; }
+        .draggable:active { cursor: grabbing; }
+        #feedback { margin-top: 20px; font-weight: bold; font-size: 1.1em; height: 30px; }
+        .success { color: #28a745; }
+    </style>
+</head>
+<body>
+    <h1>Lab Audit: Identify the Errors</h1>
+    <p>Drag the correct commands from the bank to fix the broken R1 configuration script.</p>
+
+    <div class="container">
+        <div class="column">
+            <h3>Broken R1 Script</h3>
+            <div class="code-block">
+                conf t<br>
+                1. <div class="drop-zone" data-answer="hostname R1">________</div><br>
+                2. <div class="drop-zone" data-answer="enable secret SCTCC">________</div><br>
+                line con 0<br>
+                3. <div class="drop-zone" data-answer="password cisco">________</div><br>
+                &nbsp;&nbsp;&nbsp;login<br>
+                exit<br>
+                4. <div class="drop-zone" data-answer="service password-encryption">________</div>
+            </div>
+        </div>
+
+        <div class="column">
+            <h3>Correction Bank</h3>
+            <div id="bank">
+                <div class="draggable" draggable="true" id="ans1">service password-encryption</div>
+                <div class="draggable" draggable="true" id="ans2">hostname R1</div>
+                <div class="draggable" draggable="true" id="ans3">enable secret SCTCC</div>
+                <div class="draggable" draggable="true" id="ans4">password cisco</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback"></div>
+
+    <script>
+        const draggables = document.querySelectorAll('.draggable');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        let solved = 0;
+
+        draggables.forEach(d => {
+            d.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text', e.target.innerText); });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const droppedData = e.dataTransfer.getData('text');
+                if (droppedData === zone.getAttribute('data-answer')) {
+                    zone.innerText = droppedData;
+                    zone.classList.add('correct');
+                    solved++;
+                    checkComplete();
+                } else {
+                    document.getElementById('feedback').innerHTML = '<span style="color:red">Incorrect. Try a different command.</span>';
+                    setTimeout(() => { document.getElementById('feedback').innerText = ''; }, 2000);
+                }
+            });
+        });
+
+        function checkComplete() {
+            if (solved === 4) {
+                document.getElementById('feedback').innerHTML = '<span class="success">✓ Configuration Audit Complete! Script is now valid.</span>';
+            }
+        }
+    </script>
+</body>
+</html>
