@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cisco Lab: STP and CDP</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 1px solid #333; padding: 15px; min-height: 350px; }
+        input { background: transparent; border: none; color: #0f0; outline: none; width: 70%; font-family: inherit; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div id="currentTask" style="color:#00bfff; margin-bottom:10px;"></div>
+        <div><span style="color:#0f0; font-weight:bold">Switch#</span> <input type="text" id="userInput" autofocus onkeydown="process(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "Set root bridge for VLAN 1", a: "spanning-tree vlan 1 root primary", h: "Optimizes the spanning tree topology."},
+            {q: "View spanning tree status", a: "show spanning-tree", h: "Shows bridge ID and port states."},
+            {q: "Check CDP neighbors", a: "show cdp neighbors", h: "Lists directly connected network devices."}
+        ];
+        let idx = 0, err = 0;
+        function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
+        function process(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                let d = document.getElementById("display");
+                d.innerHTML += "<div><span style='color:#0f0; font-weight:bold'>Switch# </span>" + e.target.value + "</div>";
+                if (val === tasks[idx].a.toLowerCase()) {
+                    idx++; err = 0;
+                    if (idx < tasks.length) { show(); } else { confetti(); d.innerHTML += "<div style='color:white'>CONGRATULATIONS: MODULE COMPLETE</div>"; }
+                } else {
+                    err++;
+                    if (err >= 3) d.innerHTML += "<div style='color:#ff0'>HINT: " + tasks[idx].h + "</div>";
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
