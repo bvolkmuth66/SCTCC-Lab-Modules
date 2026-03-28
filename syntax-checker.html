@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; }
+        body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .terminal { width: 100%; max-width: 750px; background: #282c34; padding: 25px; border-radius: 8px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #3e4451; padding-bottom: 10px; }
+        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #3e4451; padding-bottom: 10px; display: flex; justify-content: space-between; }
         .step-info { color: #61afef; margin-bottom: 20px; font-weight: bold; }
         .prompt { color: #98c379; }
         input { background: transparent; border: none; color: #e5c07b; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
         .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; }
         .success { color: #98c379; }
         .error { color: #e06c75; }
+        .reset-btn { background: #3e4451; color: #abb2bf; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
+        .reset-btn:hover { background: #4b5263; color: #fff; }
     </style>
 </head>
 <body>
     <div class="terminal">
-        <div class="header">SCTCC CLI Validator: Module 1 Baseline</div>
+        <div class="header">
+            <span>SCTCC CLI Validator: Case-Sensitive Mode</span>
+            <button class="reset-btn" onclick="resetTerminal()">Reset Session</button>
+        </div>
         <div id="stepDescription" class="step-info">Task 1: Set the hostname to R1</div>
         
         <div id="cli">
@@ -24,7 +29,7 @@
             <input type="text" id="commandInput" autofocus onkeydown="handleInput(event)">
         </div>
         
-        <div id="result" class="result">Enter the command and press Enter.</div>
+        <div id="result" class="result">Note: This validator is CASE SENSITIVE.</div>
     </div>
 
     <script>
@@ -32,38 +37,35 @@
         
         const tasks = [
             { 
-                instruction: "Task 1: Set the hostname to R1", 
-                command: "hostname r1", 
+                instruction: "Task 1: Set the hostname to R1 (Uppercase R)", 
+                command: "hostname R1", 
                 prompt: "Router(config)#", 
-                nextPrompt: "R1(config)#",
-                feedback: "✓ Hostname configured." 
+                feedback: "✓ Hostname R1 configured." 
             },
             { 
                 instruction: "Task 2: Configure 'LeTmEiN' as the enable secret", 
-                command: "enable secret letmein", 
+                command: "enable secret LeTmEiN", 
                 prompt: "R1(config)#", 
-                nextPrompt: "R1(config)#",
-                feedback: "✓ Enable secret set." 
+                feedback: "✓ Enable secret set exactly." 
             },
             { 
                 instruction: "Task 3: Enable global password encryption", 
                 command: "service password-encryption", 
                 prompt: "R1(config)#", 
-                nextPrompt: "R1(config)#",
                 feedback: "✓ Global encryption enabled." 
             },
             { 
                 instruction: "Task 4: Enable IPv6 Routing", 
                 command: "ipv6 unicast-routing", 
                 prompt: "R1(config)#", 
-                nextPrompt: "R1(config)#",
                 feedback: "✓ IPv6 routing active. Baseline Complete!" 
             }
         ];
 
         function handleInput(e) {
             if (e.key === 'Enter') {
-                const input = document.getElementById('commandInput').value.trim().toLowerCase();
+                // REMOVED .toLowerCase() to enforce case sensitivity
+                const input = document.getElementById('commandInput').value.trim();
                 const res = document.getElementById('result');
                 const step = tasks[currentStep];
 
@@ -72,13 +74,13 @@
                     currentStep++;
                     
                     if (currentStep < tasks.length) {
-                        updateTerminal(tasks[currentStep]);
+                        setTimeout(() => { updateTerminal(tasks[currentStep]); }, 500);
                     } else {
                         document.getElementById('stepDescription').innerText = "All Tasks Verified!";
                         document.getElementById('cli').style.display = 'none';
                     }
                 } else {
-                    res.innerHTML = `<span class="error">✗ Incorrect syntax. Expected: ${step.command}</span>`;
+                    res.innerHTML = `<span class="error">✗ Syntax or Case Error. Expected: ${step.command}</span>`;
                 }
                 document.getElementById('commandInput').value = '';
             }
@@ -87,6 +89,14 @@
         function updateTerminal(task) {
             document.getElementById('stepDescription').innerText = task.instruction;
             document.getElementById('terminalPrompt').innerText = task.prompt;
+            document.getElementById('result').innerText = "Enter the next command.";
+        }
+
+        function resetTerminal() {
+            currentStep = 0;
+            document.getElementById('cli').style.display = 'block';
+            updateTerminal(tasks[0]);
+            document.getElementById('commandInput').focus();
         }
     </script>
 </body>
