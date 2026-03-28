@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; }
+        .terminal { width: 100%; max-width: 700px; background: #282c34; padding: 20px; border-radius: 6px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .prompt { color: #98c379; }
+        input { background: transparent; border: none; color: #61afef; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
+        .result { margin-top: 15px; min-height: 24px; font-size: 14px; }
+        .success { color: #98c379; }
+        .error { color: #e06c75; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div style="color: #c678dd; margin-bottom: 10px;">// SCTCC CLI Syntax Validator - Global Config</div>
+        <div style="margin-bottom: 20px;">Task: Configure the device hostname to <strong>R1</strong>.</div>
+        <div id="cli">
+            <span class="prompt">Router(config)#</span>
+            <input type="text" id="commandInput" autofocus onkeydown="validate(event)">
+        </div>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function validate(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('commandInput').value.trim().toLowerCase();
+                const res = document.getElementById('result');
+                if (input === 'hostname r1') {
+                    res.innerHTML = '<span class="success">✓ Success: Hostname set to R1. Syntax verified.</span>';
+                    document.querySelector('.prompt').innerText = 'R1(config)#';
+                    document.getElementById('commandInput').value = '';
+                } else {
+                    res.innerHTML = '<span class="error">✗ Syntax Error. Use: hostname [name]</span>';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
