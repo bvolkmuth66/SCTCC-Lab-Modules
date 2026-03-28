@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>SCTCC: OSI Model Challenge</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { display: flex; gap: 30px; max-width: 1000px; width: 100%; margin-top: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 95vh; overflow-x: hidden; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        .container { display: flex; gap: 30px; max-width: 1000px; width: 100%; margin-top: 20px; z-index: 10; }
         .osi-stack { flex: 1.5; display: flex; flex-direction: column; gap: 5px; }
-        .layer-row { display: flex; align-items: center; background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 10px; height: 50px; }
+        .layer-row { display: flex; align-items: center; background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 10px; height: 50px; transition: all 0.3s; }
         .layer-number { width: 80px; font-weight: bold; color: #555; border-right: 2px solid #004a99; margin-right: 15px; }
         .drop-zone { flex: 1; height: 40px; border: 2px dashed #bbb; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999; font-style: italic; }
         .drop-zone.correct { background: #d4edda; border: 2px solid #28a745; color: #155724; font-style: normal; font-weight: bold; }
-        .bank { flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .bank { flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); height: fit-content; }
         .draggable { background: #004a99; color: white; padding: 10px; margin: 8px 0; border-radius: 4px; cursor: grab; text-align: center; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .draggable:active { cursor: grabbing; }
-        #message { margin-top: 25px; font-size: 1.2em; font-weight: bold; height: 30px; }
-        h1 { color: #004a99; margin-bottom: 0; }
+        #message { margin-top: 25px; font-size: 1.2em; font-weight: bold; height: 40px; z-index: 10; text-align: center;}
+        h1 { color: #004a99; margin-bottom: 0; z-index: 10; }
+        .final-box { border: 3px solid #28a745; background: #d4edda; padding: 20px; border-radius: 10px; animation: pop 0.5s ease-out; }
+        @keyframes pop { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
+    <canvas id="confetti-canvas"></canvas>
+    
     <h1>The OSI Model Stack Challenge</h1>
     <p>Drag the correct Layer Name to its corresponding level in the 7-Layer Model.</p>
 
-    <div class="container">
+    <div class="container" id="main-ui">
         <div class="osi-stack">
             <div class="layer-row"> <div class="layer-number">Layer 7</div> <div class="drop-zone" data-answer="Application">Drop Layer Name Here</div> </div>
             <div class="layer-row"> <div class="layer-number">Layer 6</div> <div class="drop-zone" data-answer="Presentation">Drop Layer Name Here</div> </div>
@@ -53,6 +61,7 @@
         const draggables = document.querySelectorAll('.draggable');
         const dropZones = document.querySelectorAll('.drop-zone');
         let correctCount = 0;
+        let confetti;
 
         draggables.forEach(d => {
             d.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text', e.target.innerText); });
@@ -69,15 +78,25 @@
                     correctCount++;
                     checkWin();
                 } else {
-                    document.getElementById('message').innerHTML = '<span style="color:#e06c75">Incorrect Placement!</span>';
-                    setTimeout(() => { document.getElementById('message').innerText = ''; }, 1500);
+                    document.getElementById('message').innerHTML = '<span style="color:#e06c75">Incorrect Placement! Check the layer number.</span>';
+                    setTimeout(() => { if(correctCount < 7) document.getElementById('message').innerText = ''; }, 1500);
                 }
             });
         });
 
         function checkWin() {
             if (correctCount === 7) {
-                document.getElementById('message').innerHTML = '<span style="color:#28a745">✓ OSI Model Successfully Stacked!</span>';
+                document.getElementById('message').innerHTML = `
+                    <div class="final-box">
+                        ✓ OSI Model Successfully Stacked!<br>
+                        <span style="font-size: 0.8em; font-weight: normal;">Foundational networking concept mastered.</span>
+                    </div>`;
+                
+                const confettiSettings = { target: 'confetti-canvas', max: 150, props: ['circle', 'square'], colors: [[0, 74, 153],[40, 167, 69],[255, 193, 7]], clock: 35};
+                confetti = new ConfettiGenerator(confettiSettings);
+                confetti.render();
+                
+                setTimeout(() => { confetti.clear(); }, 8000);
             }
         }
     </script>
