@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: Physical Layer Cable Trace</title>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #2c3e50; color: #ecf0f1; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 95vh; }
+        .rack-container { background: #34495e; padding: 30px; border-radius: 10px; border: 4px solid #7f8c8d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 900px; width: 100%; position: relative; z-index: 10; }
+        .device { margin-bottom: 40px; }
+        .label { font-weight: bold; margin-bottom: 10px; color: #bdc3c7; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        
+        /* Grid for Ports */
+        .port-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; background: #222; padding: 15px; border-radius: 4px; border: 2px solid #111; }
+        .port { width: 40px; height: 40px; background: #444; border: 2px solid #555; border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.2s; }
+        .port:hover { background: #555; border-color: #3498db; }
+        .port.selected-source { background: #3498db; border-color: #fff; box-shadow: 0 0 10px #3498db; }
+        .port.correct { background: #27ae60; border-color: #fff; box-shadow: 0 0 10px #27ae60; }
+        .port.error { background: #e74c3c; animation: shake 0.3s; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        
+        .task-box { background: #1a252f; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #3498db; width: 100%; max-width: 860px; }
+        #message { margin-top: 20px; font-weight: bold; height: 30px; text-align: center; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <h1>Physical Layer: Cable Trace Challenge</h1>
+    
+    <div class="task-box">
+        <h3 style="margin: 0; color: #3498db;">Work Order #4021</h3>
+        <p>A new workstation is connected to **Patch Panel Port #18**. Trace the connection and patch it into **Switch Port Fa0/18** to activate VLAN 10.</p>
+        <p style="font-size: 0.9em; color: #bdc3c7;">Step 1: Click Port 18 on the Patch Panel. Step 2: Click Port 18 on the Switch.</p>
+    </div>
+
+    <div class="rack-container">
+        <div class="device">
+            <div class="label">Cat6 Patch Panel (Horizontal Management)</div>
+            <div class="port-grid" id="patch-panel">
+                </div>
+        </div>
+
+        <div class="device">
+            <div class="label">Cisco Catalyst 2960 Series Switch</div>
+            <div class="port-grid" id="cisco-switch">
+                </div>
+        </div>
+    </div>
+
+    <div id="message"></div>
+
+    <script>
+        let sourceSelected = false;
+        let confetti;
+
+        function initPorts() {
+            const patch = document.getElementById('patch-panel');
+            const sw = document.getElementById('cisco-switch');
+
+            for (let i = 1; i <= 24; i++) {
+                // Create Patch Port
+                let pPort = document.createElement('div');
+                pPort.className = 'port';
+                pPort.innerText = i;
+                pPort.onclick = () => selectSource(pPort, i);
+                patch.appendChild(pPort);
+
+                // Create Switch Port
+                let sPort = document.createElement('div');
+                sPort.className = 'port';
+                sPort.innerText = `Fa0/${i}`;
+                sPort.onclick = () => selectDestination(sPort, i);
+                sw.appendChild(sPort);
+            }
+        }
+
+        function selectSource(el, num) {
+            if (num === 18) {
+                document.querySelectorAll('#patch-panel .port').forEach(p => p.classList.remove('selected-source'));
+                el.classList.add('selected-source');
+                sourceSelected = true;
+                document.getElementById('message').innerText = "Patch Port 18 Selected. Now select the destination switch port.";
+            } else {
+                el.classList.add('error');
+                setTimeout(() => el.classList.remove('error'), 500);
+                document.getElementById('message').innerHTML = "<span style='color:#e74c3c'>Wrong Patch Port. Check the Work Order.</span>";
+            }
+        }
+
+        function selectDestination(el, num) {
+            if (!sourceSelected) {
+                document.getElementById('message').innerText = "Select the Patch Panel port first!";
+                return;
+            }
+
+            if (num === 18) {
+                el.classList.add('correct');
+                document.getElementById('message').innerHTML = "<span style='color:#2ecc71'>✓ Physical Link Established! Port LED is Green.</span>";
+                triggerConfetti();
+            } else {
+                el.classList.add('error');
+                setTimeout(() => el.classList.remove('error'), 500);
+                document.getElementById('message').innerHTML = "<span style='color:#e74c3c'>Wrong Switch Port. Check Fa0/ numbering.</span>";
+            }
+        }
+
+        function triggerConfetti() {
+            const confettiSettings = { target: 'confetti-canvas', max: 150, props: ['circle', 'square'], colors: [[52, 152, 219],[46, 204, 113],[241, 196, 15]], clock: 35};
+            confetti = new ConfettiGenerator(confettiSettings);
+            confetti.render();
+            setTimeout(() => { confetti.clear(); }, 8000);
+        }
+
+        initPorts();
+    </script>
+</body>
+</html>
