@@ -2,43 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SCTCC: Syntax Checker</title>
+    <title>SCTCC: CLI Syntax Validator</title>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
     <style>
-        body { font-family: 'Courier New', monospace; background-color: #f0f5ff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .terminal { background: #1e1e1e; padding: 25px; border-radius: 10px; border: 3px solid #004a99; box-shadow: 0 10px 20px rgba(0,0,0,0.5); width: 100%; max-width: 650px; color: #abb2bf; }
-        .header { color: #c678dd; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #004a99; padding-bottom: 5px; }
+        body { font-family: 'Courier New', monospace; background-color: #f1f1f1; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 95vh; position: relative; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        .terminal { background: #282c34; padding: 25px; border-radius: 10px; border: 4px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 750px; color: #abb2bf; z-index: 10; }
+        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-family: sans-serif; }
+        .step-info { color: #61afef; margin-bottom: 20px; font-weight: bold; font-family: sans-serif; }
         .prompt { color: #98c379; }
-        input[type="text"] { background: transparent; border: none; color: #61afef; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
-        .result { margin-top: 10px; min-height: 24px; color: #abb2bf; font-style: italic;}
-        .reset-btn { background: #004a99; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; float: right; font-size: 12px; font-family: 'Segoe UI', sans-serif;}
+        input[type="text"] { background: transparent; border: none; color: #e5c07b; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
+        .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; }
+        .success { color: #98c379; font-weight: bold; }
+        .error { color: #e06c75; }
+        .hint-btn { background: #d19a66; color: #282c34; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; display: none; margin-top: 10px; font-family: sans-serif; }
+        .reset-btn { background: #333; color: #fff; border: 1px solid #444; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; font-family: sans-serif; }
     </style>
 </head>
 <body>
+    <canvas id="confetti-canvas"></canvas>
+
     <div class="terminal">
         <div class="header">
-            CLI Syntax Validator
-            <button class="reset-btn" onclick="resetValidator()">Reset</button>
+            <span>SCTCC CLI Validator: Module 1 Baseline</span>
+            <button class="reset-btn" onclick="location.reload()">Reset Session</button>
         </div>
-        <div style="margin-bottom: 15px; color: #fff;">Task: Configure the device hostname to <strong>R1</strong>.</div>
-        <div id="cliPrompt"><span class="prompt">Router(config)#</span> <input type="text" id="commandInput" autofocus onkeydown="validate(event)"></div>
-        <div id="result" class="result"></div>
+        <div id="stepDescription" class="step-info">Task 1: Set the hostname to R1 (Case Sensitive)</div>
+        
+        <div id="cli">
+            <span id="terminalPrompt" class="prompt">Router(config)#</span>
+            <input type="text" id="commandInput" autofocus onkeydown="handleInput(event)">
+        </div>
+        
+        <div id="result" class="result">Note: Enter the exact command to proceed.</div>
+        <button id="hintBtn" class="hint-btn" onclick="showHint()">Need a Hint?</button>
+        <div id="hintDisplay" style="color: #e5c07b; margin-top: 10px; font-style: italic; font-size: 0.9em;"></div>
     </div>
 
     <script>
-        function validate(e) {
+        let currentStep = 0;
+        let attempts = 0;
+        
+        const tasks = [
+            { instruction: "Task 1: Set the hostname to R1", command: "hostname R1", prompt: "Router(config)#", nextPrompt: "R1(config)#", feedback: "✓ Hostname R1 configured.", hint: "The command is 'hostname R1' with a capital R." },
+            { instruction: "Task 2: Configure 'LeTmEiN' as the enable secret", command: "enable secret LeTmEiN", prompt: "R1(config)#", nextPrompt: "R1(config)#", feedback: "✓ Enable secret set exactly.", hint: "Type: enable secret LeTmEiN (Watch the capitalization)." },
+            { instruction: "Task 3: Enable global password encryption", command: "service password-encryption", prompt: "R1(config)#", nextPrompt: "R1(config)#", feedback: "✓ Global encryption enabled.", hint: "The command is: service password-encryption" },
+            { instruction: "Task 4: Enable IPv6 Routing", command: "ipv6 unicast-routing", prompt: "R1(config)#", nextPrompt: "R1(config)#", feedback: "✓ IPv6 routing active. Baseline Complete!", hint: "Use: ipv6 unicast-routing" }
+        ];
+
+        function handleInput(e) {
             if (e.key === 'Enter') {
                 const input = document.getElementById('commandInput').value.trim();
                 const res = document.getElementById('result');
-                if (input.toLowerCase() === 'hostname r1') {
-                    res.innerHTML = '<span style="color:#98c379">✓ Success: Hostname set to R1.</span>';
-                    document.getElementById('cliPrompt').innerHTML = '<span class="prompt">R1(config)#</span>';
+                const step = tasks[currentStep];
+
+                if (input === step.command) {
+                    res.innerHTML = `<span class="success">${step.feedback}</span>`;
+                    hideHintUI();
+                    currentStep++;
+                    attempts = 0;
+                    
+                    if (currentStep < tasks.length) {
+                        setTimeout(() => { updateTerminal(tasks[currentStep]); }, 2000);
+                    } else {
+                        setTimeout(triggerFinalSuccess, 1000);
+                    }
                 } else {
-                    res.innerHTML = '<span style="color:#e06c75">✗ Syntax Error. Expected: hostname R1</span>';
-                    document.getElementById('commandInput').value = "";
+                    attempts++;
+                    res.innerHTML = `<span class="error">✗ Incorrect syntax or case. Attempts: ${attempts}</span>`;
+                    if (attempts >= 3) {
+                        document.getElementById('hintBtn').style.display = 'inline-block';
+                    }
                 }
+                document.getElementById('commandInput').value = '';
             }
         }
-        function resetValidator() { location.reload(); }
+
+        function showHint() {
+            document.getElementById('hintDisplay').innerText = `Hint: ${tasks[currentStep].hint}`;
+        }
+
+        function hideHintUI() {
+            document.getElementById('hintBtn').style.display = 'none';
+            document.getElementById('hintDisplay').innerText = '';
+        }
+
+        function updateTerminal(task) {
+            document.getElementById('stepDescription').innerText = task.instruction;
+            document.getElementById('terminalPrompt').innerText = task.prompt;
+            document.getElementById('result').innerText = "Enter the next command.";
+        }
+
+        function triggerFinalSuccess() {
+            document.getElementById('cli').style.display = 'none';
+            document.getElementById('stepDescription').innerText = "Baseline Verification Complete!";
+            document.getElementById('result').innerHTML = '<div style="padding:20px; border:2px solid #98c379; background:rgba(152,195,121,0.1); color:#98c379; text-align:center;"><h3>CONGRATULATIONS!</h3><p>You have mastered the Module 1 device baseline.</p></div>';
+            
+            const confettiSettings = { target: 'confetti-canvas', max: 150, props: ['circle', 'square'], colors: [[152, 195, 121],[97, 175, 239],[255, 255, 255]], clock: 35};
+            const confetti = new ConfettiGenerator(confettiSettings);
+            confetti.render();
+            setTimeout(() => { confetti.clear(); }, 7000);
+        }
     </script>
 </body>
 </html>
