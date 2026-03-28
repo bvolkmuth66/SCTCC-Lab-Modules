@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cisco Lab: Basic Config</title>
+    <meta charset="UTF-8">
+    <title>Cisco Lab: Basic Configuration</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { background-color: #000; color: #0f0; font-family: monospace; padding: 20px; }
-        .terminal { border: 1px solid #333; padding: 15px; min-height: 300px; }
-        .prompt { color: #0f0; }
-        input { background: transparent; border: none; color: #0f0; outline: none; width: 80%; font-family: monospace; font-size: 1.1em; }
-        .task { color: #00bfff; margin-bottom: 10px; }
-        .error { color: #f00; }
-        .hint { color: #ff0; }
+        body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 1px solid #444; padding: 15px; min-height: 400px; background: #000; }
+        .prompt { color: #00ff00; font-weight: bold; }
+        input { background: transparent; border: none; color: #00ff00; outline: none; width: 70%; font-family: inherit; font-size: 1.1em; }
+        .task { color: #00ccff; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .error { color: #ff0000; }
+        .hint { color: #ffff00; }
     </style>
 </head>
 <body>
@@ -21,25 +22,27 @@
     </div>
     <script>
         const tasks = [
-            {q: "Assign hostname 'R1'", a: "hostname R1", h: "Use the hostname keyword."},
-            {q: "Set encrypted enable password to 'cisco'", a: "enable secret cisco", h: "The secret keyword provides encryption."},
-            {q: "Encrypt all plaintext passwords", a: "service password-encryption", h: "Use the service command."}
+            {q: "Set hostname to R1", a: "hostname R1", h: "Use the hostname command."},
+            {q: "Encrypt enable password to cisco", a: "enable secret cisco", h: "The secret keyword provides encryption."},
+            {q: "Encrypt all plaintext passwords", a: "service password-encryption", h: "This is a global service command."},
+            {q: "Verify current running configuration", a: "show running-config", h: "This displays the config in RAM."},
+            {q: "Verify the hardware and version", a: "show version", h: "Provides hardware and software details."}
         ];
         let idx = 0, err = 0;
         function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
         function process(e) {
             if (e.key === "Enter") {
                 let val = e.target.value.trim().toLowerCase();
-                let disp = document.getElementById("display");
-                disp.innerHTML += "<div>" + val + "</div>";
+                let d = document.getElementById("display");
+                d.innerHTML += "<div><span class='prompt'>Router(config)# </span>" + e.target.value + "</div>";
                 if (val === tasks[idx].a.toLowerCase()) {
                     idx++; err = 0;
                     if (idx < tasks.length) { show(); } 
-                    else { confetti(); disp.innerHTML += "<div>SUCCESS</div>"; }
+                    else { confetti(); d.innerHTML += "<div style='color:white'>MODULE COMPLETE</div>"; }
                 } else {
                     err++;
-                    if (err >= 3) { disp.innerHTML += "<div class='hint'>HINT: " + tasks[idx].h + "</div>"; }
-                    else { disp.innerHTML += "<div class='error'>Incorrect syntax.</div>"; }
+                    if (err >= 3) { d.innerHTML += "<div class='hint'>HINT: " + tasks[idx].h + "</div>"; }
+                    else { d.innerHTML += "<div class='error'>Invalid syntax.</div>"; }
                 }
                 e.target.value = "";
             }
