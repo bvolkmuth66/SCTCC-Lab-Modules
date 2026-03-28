@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cisco Lab: Basic Config</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        .terminal { border: 1px solid #333; padding: 15px; min-height: 300px; }
+        .prompt { color: #0f0; }
+        input { background: transparent; border: none; color: #0f0; outline: none; width: 80%; font-family: monospace; font-size: 1.1em; }
+        .task { color: #00bfff; margin-bottom: 10px; }
+        .error { color: #f00; }
+        .hint { color: #ff0; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div class="task" id="currentTask"></div>
+        <div><span class="prompt">Router(config)#</span> <input type="text" id="userInput" autofocus onkeydown="process(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "Assign hostname 'R1'", a: "hostname R1", h: "Use the hostname keyword."},
+            {q: "Set encrypted enable password to 'cisco'", a: "enable secret cisco", h: "The secret keyword provides encryption."},
+            {q: "Encrypt all plaintext passwords", a: "service password-encryption", h: "Use the service command."}
+        ];
+        let idx = 0, err = 0;
+        function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
+        function process(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                let disp = document.getElementById("display");
+                disp.innerHTML += "<div>" + val + "</div>";
+                if (val === tasks[idx].a.toLowerCase()) {
+                    idx++; err = 0;
+                    if (idx < tasks.length) { show(); } 
+                    else { confetti(); disp.innerHTML += "<div>SUCCESS</div>"; }
+                } else {
+                    err++;
+                    if (err >= 3) { disp.innerHTML += "<div class='hint'>HINT: " + tasks[idx].h + "</div>"; }
+                    else { disp.innerHTML += "<div class='error'>Incorrect syntax.</div>"; }
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
