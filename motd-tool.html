@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #f0f5ff; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #004a99; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 14px; }
+        button { background-color: #004a99; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        button:hover { background-color: #003366; }
+        #status { display: block; margin-top: 10px; text-align: center; color: #28a745; font-weight: bold; height: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Standardized Banner MOTD</h3>
+        <p>Copy the legal notification below for your configuration script:</p>
+        <pre id="motd">****************************************************************************
+WARNING: Authorized access only. All activities are monitored and logged. 
+Unauthorized access is prohibited and may be subject to civil and/or 
+criminal penalties.
+****************************************************************************</pre>
+        <button onclick="copyText()">Copy to Clipboard</button>
+        <span id="status"></span>
+    </div>
+
+    <script>
+        function copyText() {
+            const text = document.getElementById('motd').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const status = document.getElementById('status');
+                status.innerText = "Copied!";
+                setTimeout(() => { status.innerText = ""; }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
