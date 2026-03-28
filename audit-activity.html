@@ -2,84 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SCTCC: Configuration Audit</title>
+    <title>SCTCC: Audit Challenge</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { display: flex; gap: 20px; max-width: 900px; width: 100%; }
-        .column { flex: 1; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h3 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 5px; }
-        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.8; }
-        .drop-zone { display: inline-block; min-width: 150px; height: 25px; border-bottom: 2px dashed #ff5555; color: #ff5555; vertical-align: bottom; text-align: center; }
-        .drop-zone.correct { border-bottom: 2px solid #50fa7b; color: #50fa7b; }
-        .draggable { background: #004a99; color: white; padding: 8px 12px; margin: 10px 0; border-radius: 4px; cursor: grab; font-family: 'Courier New', monospace; font-size: 13px; text-align: center; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f6f0ff; color: #333; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .audit-container { background: #fff; padding: 25px; border-radius: 10px; border: 3px solid #6c5ce7; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+        h1 { color: #6c5ce7; border-bottom: 2px solid #6c5ce7; padding-bottom: 10px; margin-bottom: 20px; }
+        pre { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 14px; overflow-x: auto;}
+        .drop-zone { background: #fdf2f2; border: 2px dashed #ff7675; border-radius: 4px; padding: 5px; min-height: 20px; display: inline-block; min-width: 150px; text-align: center; vertical-align: middle;}
+        .correct { background: #e2fdf1; border-color: #00b894; color: #00b894; font-weight: bold;}
+        .draggable { background: #6c5ce7; color: white; padding: 8px 12px; border-radius: 4px; cursor: grab; display: inline-block; margin: 5px; font-size: 12px; }
         .draggable:active { cursor: grabbing; }
-        #feedback { margin-top: 20px; font-weight: bold; font-size: 1.1em; height: 30px; }
-        .success { color: #28a745; }
+        .bank { background: #fff; border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
     </style>
 </head>
 <body>
-    <h1>Lab Audit: Identify the Errors</h1>
-    <p>Drag the correct commands from the bank to fix the broken R1 configuration script.</p>
+    <div class="audit-container">
+        <h1>Configuration Audit Activity</h1>
+        <p>Drag the correct syntax block into the missing line of the R1 script:</p>
+        <pre>
+conf t
+hostname R1
+<div class="drop-zone" data-answer="ans1">Drop Line Here</div>
+username admin secret sctcc</pre>
 
-    <div class="container">
-        <div class="column">
-            <h3>Broken R1 Script</h3>
-            <div class="code-block">
-                conf t<br>
-                1. <div class="drop-zone" data-answer="hostname R1">________</div><br>
-                2. <div class="drop-zone" data-answer="enable secret SCTCC">________</div><br>
-                line con 0<br>
-                3. <div class="drop-zone" data-answer="password cisco">________</div><br>
-                &nbsp;&nbsp;&nbsp;login<br>
-                exit<br>
-                4. <div class="drop-zone" data-answer="service password-encryption">________</div>
-            </div>
+        <div class="bank">
+            <h3>Command Bank</h3>
+            <div id="ans1" class="draggable" draggable="true">line con 0</div>
+            <div class="draggable" draggable="true">enable secret letmein</div>
+            <div class="draggable" draggable="true">service password-encryption</div>
         </div>
-
-        <div class="column">
-            <h3>Correction Bank</h3>
-            <div id="bank">
-                <div class="draggable" draggable="true" id="ans1">service password-encryption</div>
-                <div class="draggable" draggable="true" id="ans2">hostname R1</div>
-                <div class="draggable" draggable="true" id="ans3">enable secret SCTCC</div>
-                <div class="draggable" draggable="true" id="ans4">password cisco</div>
-            </div>
-        </div>
+        <div id="result" style="margin-top:20px; font-weight:bold;"></div>
     </div>
-
-    <div id="feedback"></div>
 
     <script>
         const draggables = document.querySelectorAll('.draggable');
-        const dropZones = document.querySelectorAll('.drop-zone');
-        let solved = 0;
+        const dropZone = document.querySelector('.drop-zone');
 
         draggables.forEach(d => {
-            d.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text', e.target.innerText); });
+            d.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text', e.target.id); });
         });
 
-        dropZones.forEach(zone => {
-            zone.addEventListener('dragover', (e) => { e.preventDefault(); });
-            zone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const droppedData = e.dataTransfer.getData('text');
-                if (droppedData === zone.getAttribute('data-answer')) {
-                    zone.innerText = droppedData;
-                    zone.classList.add('correct');
-                    solved++;
-                    checkComplete();
-                } else {
-                    document.getElementById('feedback').innerHTML = '<span style="color:red">Incorrect. Try a different command.</span>';
-                    setTimeout(() => { document.getElementById('feedback').innerText = ''; }, 2000);
-                }
-            });
-        });
-
-        function checkComplete() {
-            if (solved === 4) {
-                document.getElementById('feedback').innerHTML = '<span class="success">✓ Configuration Audit Complete! Script is now valid.</span>';
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const droppedId = e.dataTransfer.getData('text');
+            if (droppedId === dropZone.getAttribute('data-answer')) {
+                dropZone.innerText = document.getElementById(droppedId).innerText;
+                dropZone.classList.add('correct');
+                document.getElementById('result').innerHTML = '<span style="color:#00b894">✓ Success: Script validated.</span>';
+            } else {
+                document.getElementById('result').innerHTML = '<span style="color:#d63031">✗ Incorrect. Try again.</span>';
+                setTimeout(() => { document.getElementById('result').innerText = ""; }, 2000);
             }
-        }
+        });
     </script>
 </body>
 </html>
