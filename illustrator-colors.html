@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: Illustrator Color Validator</title>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #232323; color: #ebebeb; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 95vh; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        
+        .ai-interface { background: #323232; padding: 30px; border-radius: 4px; border: 1px solid #4a4a4a; display: flex; gap: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 10; max-width: 850px; width: 100%; }
+        
+        /* The Canvas Area */
+        .artboard { flex: 1.5; background: #535353; border: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: center; position: relative; height: 350px; }
+        #target-shape { width: 150px; height: 150px; background-color: #cccccc; transition: background-color 0.5s; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
+        
+        /* The Panel Area */
+        .panel { flex: 1; background: #3c3c3c; padding: 20px; border: 1px solid #2a2a2a; }
+        .panel-title { font-size: 11px; text-transform: uppercase; color: #aaa; margin-bottom: 15px; border-bottom: 1px solid #4a4a4a; padding-bottom: 5px; }
+        
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; margin-bottom: 5px; color: #ddd; }
+        input[type="text"] { background: #262626; border: 1px solid #1a1a1a; color: #61afef; padding: 8px; width: 80%; font-family: 'Courier New', monospace; font-size: 16px; border-radius: 2px; }
+        
+        .color-preview { width: 40px; height: 40px; border: 1px solid #000; display: inline-block; vertical-align: middle; margin-right: 10px; }
+        
+        #message { margin-top: 20px; font-weight: bold; font-size: 14px; text-align: center; }
+        .success { color: #98c379; }
+        .error { color: #e06c75; }
+        
+        .ai-header { color: #ff9a00; font-weight: bold; margin-bottom: 20px; font-size: 24px; letter-spacing: -1px; }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="ai-header">Ai <span style="color:#ddd; font-weight: normal; font-size: 18px;">Adobe Illustrator Simulation</span></div>
+
+    <div class="ai-interface">
+        <div class="artboard">
+            <div id="target-shape"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">Appearance / Fill</div>
+            <div class="input-group">
+                <label>Target: SCTCC Brand Blue</label>
+                <div style="display: flex; align-items: center;">
+                    <div id="preview-box" class="color-preview" style="background-color: #ccc;"></div>
+                    <input type="text" id="hexInput" placeholder="#000000" maxlength="7" oninput="updatePreview()">
+                </div>
+                <p style="font-size: 11px; color: #888; margin-top: 10px;">Hint: The brand color is <strong>#004a99</strong></p>
+            </div>
+            <button onclick="validateColor()" style="background: #4a4a4a; color: white; border: 1px solid #1a1a1a; padding: 10px; cursor: pointer; width: 100%; border-radius: 2px;">Apply Fill</button>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        let confetti;
+        const targetHex = "#004a99";
+
+        function updatePreview() {
+            let val = document.getElementById('hexInput').value;
+            if (val.length === 7 && val.startsWith('#')) {
+                document.getElementById('preview-box').style.backgroundColor = val;
+            }
+        }
+
+        function validateColor() {
+            const input = document.getElementById('hexInput').value.trim();
+            const shape = document.getElementById('target-shape');
+            const msg = document.getElementById('message');
+
+            if (input.toLowerCase() === targetHex.toLowerCase()) {
+                shape.style.backgroundColor = targetHex;
+                msg.innerHTML = '<span class="success">✓ Brand Standard Verified!</span>';
+                triggerConfetti();
+            } else {
+                msg.innerHTML = '<span class="error">✗ HEX Mismatch. Shape remains unchanged.</span>';
+                setTimeout(() => { msg.innerText = ""; }, 2000);
+            }
+        }
+
+        function triggerConfetti() {
+            const confettiSettings = { target: 'confetti-canvas', max: 80, props: ['circle', 'square'], colors: [[0, 74, 153],[255, 154, 0],[255, 255, 255]], clock: 35};
+            confetti = new ConfettiGenerator(confettiSettings);
+            confetti.render();
+            setTimeout(() => { confetti.clear(); }, 5000);
+        }
+    </script>
+</body>
+</html>
