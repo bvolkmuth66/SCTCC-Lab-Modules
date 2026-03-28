@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cisco Lab: Console & VTY</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #050505; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 2px solid #222; padding: 15px; min-height: 350px; background: #000; }
+        .prompt { color: #00ff41; font-weight: bold; }
+        input { background: transparent; border: none; color: #00ff41; outline: none; width: 70%; font-family: inherit; font-size: 1.1em; }
+        .task { color: #00d4ff; margin-bottom: 15px; border-bottom: 1px solid #111; padding-bottom: 5px; }
+        .error { color: #ff3333; }
+        .hint { color: #ffcc00; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div class="task" id="currentTask"></div>
+        <div><span class="prompt">Router(config)#</span> <input type="text" id="userInput" autofocus onkeydown="handle(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "Enter console line configuration", a: "line console 0", h: "The physical console port is line 0."},
+            {q: "Set the line password to 'cisco'", a: "password cisco", h: "Use the password command within the line mode."},
+            {q: "Enable the password prompt for login", a: "login", h: "This command is required for the line to check credentials."}
+        ];
+        let i = 0, tries = 0;
+        const disp = document.getElementById("display");
+        function show() { document.getElementById("currentTask").innerText = "ACTIVE TASK: " + tasks[i].q; }
+        function handle(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                disp.innerHTML += "<div><span class='prompt'>Router(config-line)# </span>" + val + "</div>";
+                if (val === tasks[i].a.toLowerCase()) {
+                    i++; tries = 0;
+                    if (i < tasks.length) { show(); } 
+                    else { confetti(); disp.innerHTML += "<div style='color:white'>GROUP COMPLETE</div>"; }
+                } else {
+                    tries++;
+                    if (tries >= 3) { disp.innerHTML += "<div class='hint'>HINT: " + tasks[i].h + "</div>"; }
+                    else { disp.innerHTML += "<div class='error'>Invalid syntax.</div>"; }
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
