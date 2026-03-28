@@ -2,140 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SCTCC CLI Validator</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
-    
+    <title>SCTCC: Syntax Checker</title>
     <style>
-        body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 90vh;}
-        
-        /* ADDED: CONFETTI CANVAS (This is the invisible layer where confetti will fall) */
-        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
-        
-        .terminal { width: 100%; max-width: 750px; background: #282c34; padding: 25px; border-radius: 8px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10;}
-        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #3e4451; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .step-info { color: #61afef; margin-bottom: 20px; font-weight: bold; }
+        body { font-family: 'Courier New', monospace; background-color: #f0f5ff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .terminal { background: #1e1e1e; padding: 25px; border-radius: 10px; border: 3px solid #004a99; box-shadow: 0 10px 20px rgba(0,0,0,0.5); width: 100%; max-width: 650px; color: #abb2bf; }
+        .header { color: #c678dd; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #004a99; padding-bottom: 5px; }
         .prompt { color: #98c379; }
-        input { background: transparent; border: none; color: #e5c07b; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
-        .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; }
-        .success { color: #98c379; font-weight: bold; }
-        .final-success { color: #98c379; font-weight: bold; font-size: 1.2em; border: 2px solid #98c379; padding: 15px; border-radius: 5px; background: rgba(152, 195, 121, 0.1); margin-top: 20px;}
-        .error { color: #e06c75; }
-        .loading { color: #abb2bf; font-style: italic; font-size: 12px; margin-top: 5px; }
-        .reset-btn, .hint-btn { background: #3e4451; color: #abb2bf; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; z-index: 20; position: relative;}
-        .reset-btn:hover { background: #4b5263; color: #fff; }
-        .hint-btn { background: #d19a66; color: #282c34; font-weight: bold; display: none; margin-top: 10px; }
+        input[type="text"] { background: transparent; border: none; color: #61afef; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
+        .result { margin-top: 10px; min-height: 24px; color: #abb2bf; font-style: italic;}
+        .reset-btn { background: #004a99; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; float: right; font-size: 12px; font-family: 'Segoe UI', sans-serif;}
     </style>
 </head>
 <body>
-    
-    <canvas id="confetti-canvas"></canvas>
-    
     <div class="terminal">
         <div class="header">
-            <span>SCTCC CLI Validator: Module 1</span>
-            <button class="reset-btn" onclick="resetTerminal()">Reset Session</button>
+            CLI Syntax Validator
+            <button class="reset-btn" onclick="resetValidator()">Reset</button>
         </div>
-        <div id="stepDescription" class="step-info">Task 1: Set the hostname to R1</div>
-        
-        <div id="cli">
-            <span id="terminalPrompt" class="prompt">Router(config)#</span>
-            <input type="text" id="commandInput" autofocus onkeydown="handleInput(event)">
-        </div>
-        
-        <div id="result" class="result">Note: Case sensitivity is enforced.</div>
-        <div id="loadingMsg" class="loading"></div>
-        <button id="hintBtn" class="hint-btn" onclick="showHint()">Need a Hint?</button>
+        <div style="margin-bottom: 15px; color: #fff;">Task: Configure the device hostname to <strong>R1</strong>.</div>
+        <div id="cliPrompt"><span class="prompt">Router(config)#</span> <input type="text" id="commandInput" autofocus onkeydown="validate(event)"></div>
+        <div id="result" class="result"></div>
     </div>
 
     <script>
-        let currentStep = 0;
-        let attempts = 0;
-        let confetti; // This variable will hold our confetti instance
-        
-        const tasks = [
-            { instruction: "Task 1: Set the hostname to R1 (Uppercase R)", command: "hostname R1", prompt: "Router(config)#", feedback: "✓ Hostname R1 configured." },
-            { instruction: "Task 2: Configure 'LeTmEiN' as the enable secret", command: "enable secret LeTmEiN", prompt: "R1(config)#", feedback: "✓ Enable secret set exactly." },
-            { instruction: "Task 3: Enable global password encryption", command: "service password-encryption", prompt: "R1(config)#", feedback: "✓ Global encryption enabled." },
-            { instruction: "Task 4: Enable IPv6 Routing", command: "ipv6 unicast-routing", prompt: "R1(config)#", feedback: "✓ IPv6 routing active." }
-        ];
-
-        function handleInput(e) {
+        function validate(e) {
             if (e.key === 'Enter') {
                 const input = document.getElementById('commandInput').value.trim();
                 const res = document.getElementById('result');
-                const step = tasks[currentStep];
-
-                if (input === step.command) {
-                    res.innerHTML = `<span class="success">${step.feedback}</span>`;
-                    document.getElementById('loadingMsg').innerText = "Processing next task...";
-                    hideHintUI();
-                    currentStep++;
-                    attempts = 0;
-                    
-                    if (currentStep < tasks.length) {
-                        // Standard pause for middle tasks
-                        setTimeout(() => { updateTerminal(tasks[currentStep]); }, 2000);
-                    } else {
-                        // THE FINAL SUCCESS: Triggers confetti
-                        setTimeout(() => {
-                            showFinalSuccess();
-                        }, 2000);
-                    }
+                if (input.toLowerCase() === 'hostname r1') {
+                    res.innerHTML = '<span style="color:#98c379">✓ Success: Hostname set to R1.</span>';
+                    document.getElementById('cliPrompt').innerHTML = '<span class="prompt">R1(config)#</span>';
                 } else {
-                    attempts++;
-                    res.innerHTML = `<span class="error">✗ Incorrect syntax or case. Attempts: ${attempts}</span>`;
-                    if (attempts >= 3) {
-                        document.getElementById('hintBtn').style.display = 'inline-block';
-                    }
+                    res.innerHTML = '<span style="color:#e06c75">✗ Syntax Error. Expected: hostname R1</span>';
+                    document.getElementById('commandInput').value = "";
                 }
-                document.getElementById('commandInput').value = '';
             }
         }
-
-        // ADDED: FUNCTION TO TRIGGER CONFETTI AND FINAL MSG
-        function showFinalSuccess() {
-            // 1. Clear the terminal interface
-            document.getElementById('cli').style.display = 'none';
-            document.getElementById('loadingMsg').innerText = "";
-            document.getElementById('stepDescription').innerText = "Module 1 Complete!";
-            
-            // 2. Show the high-visibility success box
-            document.getElementById('result').innerHTML = `
-                <div class="final-success">
-                    <h3>CONGRATULATIONS!</h3>
-                    <p>Course baseline validated. You are now authorized to proceed to the physical hardware pods.</p>
-                </div>`;
-
-            // 3. Start the Confetti!
-            const confettiSettings = { target: 'confetti-canvas', max: 150, props: ['circle', 'square'], colors: [[152, 195, 121],[97, 175, 239],[198, 120, 221],[229, 192, 123]], clock: 35};
-            confetti = new ConfettiGenerator(confettiSettings);
-            confetti.render();
-            
-            // 4. Automatically stop the confetti after 8 seconds so it doesn't run forever
-            setTimeout(() => { confetti.clear(); }, 8000);
-        }
-
-        function hideHintUI() {
-            document.getElementById('hintBtn').style.display = 'none';
-        }
-
-        function updateTerminal(task) {
-            document.getElementById('stepDescription').innerText = task.instruction;
-            document.getElementById('terminalPrompt').innerText = task.prompt;
-            document.getElementById('result').innerText = "Enter the next command.";
-            document.getElementById('loadingMsg').innerText = "";
-        }
-
-        function resetTerminal() {
-            currentStep = 0;
-            attempts = 0;
-            if (confetti) { confetti.clear(); } // Stop confetti if it's running
-            hideHintUI();
-            document.getElementById('cli').style.display = 'block';
-            updateTerminal(tasks[0]);
-            document.getElementById('commandInput').focus();
-        }
+        function resetValidator() { location.reload(); }
     </script>
 </body>
 </html>
