@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cisco Lab: Console and VTY</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 1px solid #444; padding: 15px; min-height: 400px; background: #000; }
+        input { background: transparent; border: none; color: #00ff00; outline: none; width: 70%; font-family: inherit; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div id="currentTask" style="color:#00ccff; margin-bottom:10px;"></div>
+        <div><span id="prompt" style="color:#00ff00; font-weight:bold">Router(config-line)#</span> <input type="text" id="userInput" autofocus onkeydown="process(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "Enter console configuration", a: "line console 0", h: "The first line index is 0."},
+            {q: "Set line password to cisco", a: "password cisco", h: "Use the password command."},
+            {q: "Enable login requirement", a: "login", h: "Forces a password prompt."},
+            {q: "Show line configuration details", a: "show line", h: "Displays information about terminal lines."}
+        ];
+        let idx = 0, err = 0;
+        function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
+        function process(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                let d = document.getElementById("display");
+                d.innerHTML += "<div><span style='color:#00ff00; font-weight:bold'>Router(config-line)# </span>" + e.target.value + "</div>";
+                if (val === tasks[idx].a.toLowerCase()) {
+                    idx++; err = 0;
+                    if (idx < tasks.length) { show(); } else { confetti(); d.innerHTML += "<div style='color:white'>MODULE COMPLETE</div>"; }
+                } else {
+                    err++;
+                    if (err >= 3) d.innerHTML += "<div style='color:#ffff00'>HINT: " + tasks[idx].h + "</div>";
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
