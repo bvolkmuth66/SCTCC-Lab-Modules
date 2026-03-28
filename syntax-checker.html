@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>SCTCC CLI Validator</title>
     <style>
         body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .terminal { width: 100%; max-width: 750px; background: #282c34; padding: 25px; border-radius: 8px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -64,7 +65,6 @@
 
         function handleInput(e) {
             if (e.key === 'Enter') {
-                // REMOVED .toLowerCase() to enforce case sensitivity
                 const input = document.getElementById('commandInput').value.trim();
                 const res = document.getElementById('result');
                 const step = tasks[currentStep];
