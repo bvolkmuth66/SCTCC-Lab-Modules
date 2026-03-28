@@ -6,21 +6,23 @@
     <style>
         body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .terminal { width: 100%; max-width: 750px; background: #282c34; padding: 25px; border-radius: 8px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #3e4451; padding-bottom: 10px; display: flex; justify-content: space-between; }
+        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #3e4451; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .step-info { color: #61afef; margin-bottom: 20px; font-weight: bold; }
         .prompt { color: #98c379; }
         input { background: transparent; border: none; color: #e5c07b; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
-        .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; }
+        .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; position: relative; }
         .success { color: #98c379; }
         .error { color: #e06c75; }
-        .reset-btn { background: #3e4451; color: #abb2bf; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
-        .reset-btn:hover { background: #4b5263; color: #fff; }
+        .hint-text { color: #e5c07b; font-style: italic; margin-top: 10px; display: block; }
+        .reset-btn, .hint-btn { background: #3e4451; color: #abb2bf; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
+        .reset-btn:hover, .hint-btn:hover { background: #4b5263; color: #fff; }
+        .hint-btn { background: #d19a66; color: #282c34; font-weight: bold; display: none; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="terminal">
         <div class="header">
-            <span>SCTCC CLI Validator: Case-Sensitive Mode</span>
+            <span>SCTCC CLI Validator: Module 1</span>
             <button class="reset-btn" onclick="resetTerminal()">Reset Session</button>
         </div>
         <div id="stepDescription" class="step-info">Task 1: Set the hostname to R1</div>
@@ -30,36 +32,43 @@
             <input type="text" id="commandInput" autofocus onkeydown="handleInput(event)">
         </div>
         
-        <div id="result" class="result">Note: This validator is CASE SENSITIVE.</div>
+        <div id="result" class="result">Note: Case sensitivity is enforced.</div>
+        <button id="hintBtn" class="hint-btn" onclick="showHint()">Need a Hint?</button>
+        <div id="hintDisplay" class="hint-text"></div>
     </div>
 
     <script>
         let currentStep = 0;
+        let attempts = 0;
         
         const tasks = [
             { 
                 instruction: "Task 1: Set the hostname to R1 (Uppercase R)", 
                 command: "hostname R1", 
                 prompt: "Router(config)#", 
-                feedback: "✓ Hostname R1 configured." 
+                feedback: "✓ Hostname R1 configured.",
+                hint: "The command is 'hostname' followed by a space and 'R1' (Capital R)."
             },
             { 
                 instruction: "Task 2: Configure 'LeTmEiN' as the enable secret", 
                 command: "enable secret LeTmEiN", 
                 prompt: "R1(config)#", 
-                feedback: "✓ Enable secret set exactly." 
+                feedback: "✓ Enable secret set exactly.",
+                hint: "Type: enable secret LeTmEiN (Watch the uppercase L, T, M, N)."
             },
             { 
                 instruction: "Task 3: Enable global password encryption", 
                 command: "service password-encryption", 
                 prompt: "R1(config)#", 
-                feedback: "✓ Global encryption enabled." 
+                feedback: "✓ Global encryption enabled.",
+                hint: "Use the command: service password-encryption"
             },
             { 
                 instruction: "Task 4: Enable IPv6 Routing", 
                 command: "ipv6 unicast-routing", 
                 prompt: "R1(config)#", 
-                feedback: "✓ IPv6 routing active. Baseline Complete!" 
+                feedback: "✓ IPv6 routing active. Baseline Complete!",
+                hint: "Use: ipv6 unicast-routing"
             }
         ];
 
@@ -71,19 +80,36 @@
 
                 if (input === step.command) {
                     res.innerHTML = `<span class="success">${step.feedback}</span>`;
+                    hideHintUI();
                     currentStep++;
+                    attempts = 0;
                     
                     if (currentStep < tasks.length) {
                         setTimeout(() => { updateTerminal(tasks[currentStep]); }, 500);
                     } else {
                         document.getElementById('stepDescription').innerText = "All Tasks Verified!";
                         document.getElementById('cli').style.display = 'none';
+                        document.getElementById('result').innerText = "Course baseline complete. You are ready for the hardware pods.";
                     }
                 } else {
-                    res.innerHTML = `<span class="error">✗ Syntax or Case Error. Expected: ${step.command}</span>`;
+                    attempts++;
+                    res.innerHTML = `<span class="error">✗ Incorrect syntax or case. Attempts: ${attempts}</span>`;
+                    if (attempts >= 3) {
+                        document.getElementById('hintBtn').style.display = 'inline-block';
+                    }
                 }
                 document.getElementById('commandInput').value = '';
             }
+        }
+
+        function showHint() {
+            const step = tasks[currentStep];
+            document.getElementById('hintDisplay').innerText = `Hint: ${step.hint}`;
+        }
+
+        function hideHintUI() {
+            document.getElementById('hintBtn').style.display = 'none';
+            document.getElementById('hintDisplay').innerText = '';
         }
 
         function updateTerminal(task) {
@@ -94,6 +120,8 @@
 
         function resetTerminal() {
             currentStep = 0;
+            attempts = 0;
+            hideHintUI();
             document.getElementById('cli').style.display = 'block';
             updateTerminal(tasks[0]);
             document.getElementById('commandInput').focus();
