@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cisco Truncated: Show Commands</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #0d0d0d; color: #33ff33; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 1px solid #333; padding: 15px; min-height: 380px; }
+        input { background: transparent; border: none; color: #33ff33; outline: none; width: 70%; font-family: inherit; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div id="currentTask" style="color:#00ccff; margin-bottom:10px;"></div>
+        <div><span style="color:#33ff33; font-weight:bold">Router#</span> <input type="text" id="userInput" autofocus onkeydown="process(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "Show running config", a: "sh run", h: "Short for show running-config."},
+            {q: "Show startup config", a: "sh start", h: "Short for show startup-config."},
+            {q: "Show version", a: "sh ver", h: "Short for show version."},
+            {q: "Show ip route", a: "sh ip rou", h: "Short for show ip route."}
+        ];
+        let idx = 0, err = 0;
+        function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
+        function process(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                let d = document.getElementById("display");
+                d.innerHTML += "<div><span style='color:#33ff33; font-weight:bold'>Router# </span>" + e.target.value + "</div>";
+                if (val === tasks[idx].a.toLowerCase()) {
+                    idx++; err = 0;
+                    if (idx < tasks.length) { show(); } else { confetti(); d.innerHTML += "<div style='color:white'>COMPLETED</div>"; }
+                } else {
+                    err++;
+                    if (err >= 3) d.innerHTML += "<div style='color:#ffff00'>HINT: " + tasks[idx].h + "</div>";
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
