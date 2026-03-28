@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: OSI Model Challenge</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { display: flex; gap: 30px; max-width: 1000px; width: 100%; margin-top: 20px; }
+        .osi-stack { flex: 1.5; display: flex; flex-direction: column; gap: 5px; }
+        .layer-row { display: flex; align-items: center; background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 10px; height: 50px; }
+        .layer-number { width: 80px; font-weight: bold; color: #555; border-right: 2px solid #004a99; margin-right: 15px; }
+        .drop-zone { flex: 1; height: 40px; border: 2px dashed #bbb; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999; font-style: italic; }
+        .drop-zone.correct { background: #d4edda; border: 2px solid #28a745; color: #155724; font-style: normal; font-weight: bold; }
+        .bank { flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .draggable { background: #004a99; color: white; padding: 10px; margin: 8px 0; border-radius: 4px; cursor: grab; text-align: center; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .draggable:active { cursor: grabbing; }
+        #message { margin-top: 25px; font-size: 1.2em; font-weight: bold; height: 30px; }
+        h1 { color: #004a99; margin-bottom: 0; }
+    </style>
+</head>
+<body>
+    <h1>The OSI Model Stack Challenge</h1>
+    <p>Drag the correct Layer Name to its corresponding level in the 7-Layer Model.</p>
+
+    <div class="container">
+        <div class="osi-stack">
+            <div class="layer-row"> <div class="layer-number">Layer 7</div> <div class="drop-zone" data-answer="Application">Drop Layer Name Here</div> </div>
+            <div class="layer-row"> <div class="layer-number">Layer 6</div> <div class="drop-zone" data-answer="Presentation">Drop Layer Name Here</div> </div>
+            <div class="layer-row"> <div class="layer-number">Layer 5</div> <div class="drop-zone" data-answer="Session">Drop Layer Name Here</div> </div>
+            <div class="layer-row"> <div class="layer-number">Layer 4</div> <div class="drop-zone" data-answer="Transport">Drop Layer Name Here</div> </div>
+            <div class="layer-row"> <div class="layer-number">Layer 3</div> <div class="drop-zone" data-answer="Network">Drop Layer Name Here</div> </div>
+            <div class="layer-row"> <div class="layer-number">Layer 2</div> <div class="drop-zone" data-answer="Data Link">Drop Layer Name Here</div> </div>
+            <div class="layer-row"> <div class="layer-number">Layer 1</div> <div class="drop-zone" data-answer="Physical">Drop Layer Name Here</div> </div>
+        </div>
+
+        <div class="bank">
+            <h3>Layer Bank</h3>
+            <div id="layer-bank">
+                <div class="draggable" draggable="true">Network</div>
+                <div class="draggable" draggable="true">Physical</div>
+                <div class="draggable" draggable="true">Application</div>
+                <div class="draggable" draggable="true">Transport</div>
+                <div class="draggable" draggable="true">Session</div>
+                <div class="draggable" draggable="true">Data Link</div>
+                <div class="draggable" draggable="true">Presentation</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="message"></div>
+
+    <script>
+        const draggables = document.querySelectorAll('.draggable');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        let correctCount = 0;
+
+        draggables.forEach(d => {
+            d.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text', e.target.innerText); });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const droppedName = e.dataTransfer.getData('text');
+                if (droppedName === zone.getAttribute('data-answer')) {
+                    zone.innerText = droppedName;
+                    zone.classList.add('correct');
+                    correctCount++;
+                    checkWin();
+                } else {
+                    document.getElementById('message').innerHTML = '<span style="color:#e06c75">Incorrect Placement!</span>';
+                    setTimeout(() => { document.getElementById('message').innerText = ''; }, 1500);
+                }
+            });
+        });
+
+        function checkWin() {
+            if (correctCount === 7) {
+                document.getElementById('message').innerHTML = '<span style="color:#28a745">✓ OSI Model Successfully Stacked!</span>';
+            }
+        }
+    </script>
+</body>
+</html>
