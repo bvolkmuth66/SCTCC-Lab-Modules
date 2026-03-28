@@ -4,38 +4,89 @@
     <meta charset="UTF-8">
     <style>
         body { background-color: #1e1e1e; color: #abb2bf; font-family: 'Courier New', monospace; padding: 20px; display: flex; justify-content: center; }
-        .terminal { width: 100%; max-width: 700px; background: #282c34; padding: 20px; border-radius: 6px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .terminal { width: 100%; max-width: 750px; background: #282c34; padding: 25px; border-radius: 8px; border: 1px solid #3e4451; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #3e4451; padding-bottom: 10px; }
+        .step-info { color: #61afef; margin-bottom: 20px; font-weight: bold; }
         .prompt { color: #98c379; }
-        input { background: transparent; border: none; color: #61afef; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
-        .result { margin-top: 15px; min-height: 24px; font-size: 14px; }
+        input { background: transparent; border: none; color: #e5c07b; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
+        .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; }
         .success { color: #98c379; }
         .error { color: #e06c75; }
     </style>
 </head>
 <body>
     <div class="terminal">
-        <div style="color: #c678dd; margin-bottom: 10px;">// SCTCC CLI Syntax Validator - Global Config</div>
-        <div style="margin-bottom: 20px;">Task: Configure the device hostname to <strong>R1</strong>.</div>
+        <div class="header">SCTCC CLI Validator: Module 1 Baseline</div>
+        <div id="stepDescription" class="step-info">Task 1: Set the hostname to R1</div>
+        
         <div id="cli">
-            <span class="prompt">Router(config)#</span>
-            <input type="text" id="commandInput" autofocus onkeydown="validate(event)">
+            <span id="terminalPrompt" class="prompt">Router(config)#</span>
+            <input type="text" id="commandInput" autofocus onkeydown="handleInput(event)">
         </div>
-        <div id="result" class="result"></div>
+        
+        <div id="result" class="result">Enter the command and press Enter.</div>
     </div>
 
     <script>
-        function validate(e) {
+        let currentStep = 0;
+        
+        const tasks = [
+            { 
+                instruction: "Task 1: Set the hostname to R1", 
+                command: "hostname r1", 
+                prompt: "Router(config)#", 
+                nextPrompt: "R1(config)#",
+                feedback: "✓ Hostname configured." 
+            },
+            { 
+                instruction: "Task 2: Configure 'LeTmEiN' as the enable secret", 
+                command: "enable secret letmein", 
+                prompt: "R1(config)#", 
+                nextPrompt: "R1(config)#",
+                feedback: "✓ Enable secret set." 
+            },
+            { 
+                instruction: "Task 3: Enable global password encryption", 
+                command: "service password-encryption", 
+                prompt: "R1(config)#", 
+                nextPrompt: "R1(config)#",
+                feedback: "✓ Global encryption enabled." 
+            },
+            { 
+                instruction: "Task 4: Enable IPv6 Routing", 
+                command: "ipv6 unicast-routing", 
+                prompt: "R1(config)#", 
+                nextPrompt: "R1(config)#",
+                feedback: "✓ IPv6 routing active. Baseline Complete!" 
+            }
+        ];
+
+        function handleInput(e) {
             if (e.key === 'Enter') {
                 const input = document.getElementById('commandInput').value.trim().toLowerCase();
                 const res = document.getElementById('result');
-                if (input === 'hostname r1') {
-                    res.innerHTML = '<span class="success">✓ Success: Hostname set to R1. Syntax verified.</span>';
-                    document.querySelector('.prompt').innerText = 'R1(config)#';
-                    document.getElementById('commandInput').value = '';
+                const step = tasks[currentStep];
+
+                if (input === step.command) {
+                    res.innerHTML = `<span class="success">${step.feedback}</span>`;
+                    currentStep++;
+                    
+                    if (currentStep < tasks.length) {
+                        updateTerminal(tasks[currentStep]);
+                    } else {
+                        document.getElementById('stepDescription').innerText = "All Tasks Verified!";
+                        document.getElementById('cli').style.display = 'none';
+                    }
                 } else {
-                    res.innerHTML = '<span class="error">✗ Syntax Error. Use: hostname [name]</span>';
+                    res.innerHTML = `<span class="error">✗ Incorrect syntax. Expected: ${step.command}</span>`;
                 }
+                document.getElementById('commandInput').value = '';
             }
+        }
+
+        function updateTerminal(task) {
+            document.getElementById('stepDescription').innerText = task.instruction;
+            document.getElementById('terminalPrompt').innerText = task.prompt;
         }
     </script>
 </body>
