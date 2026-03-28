@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fff4e5; padding: 20px; color: #333; }
+        .sandbox-container { max-width: 600px; background: white; padding: 20px; border-left: 5px solid #ffa500; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h4 { margin-top: 0; color: #cc8400; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        input { width: 80%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; }
+        .feedback { margin-top: 5px; font-size: 0.85em; font-style: italic; min-height: 1.2em; }
+        .correct { color: #28a745; font-weight: bold; }
+        .incorrect { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="sandbox-container">
+    <h4>VLSM Validation Sandbox</h4>
+    <p style="font-size: 0.85em;">Enter the CIDR notation (e.g., /25) for each subnet based on the 10.10.20.0/24 block.</p>
+
+    <div class="input-group">
+        <label>Main Office LAN (100 Hosts):</label>
+        <input type="text" id="r1-cidr" placeholder="/XX" oninput="validateVLSM('r1-cidr', 'r1-feedback', 25)">
+        <div id="r1-feedback" class="feedback"></div>
+    </div>
+
+    <div class="input-group">
+        <label>Branch Office LAN (25 Hosts):</label>
+        <input type="text" id="r2-cidr" placeholder="/XX" oninput="validateVLSM('r2-cidr', 'r2-feedback', 27)">
+        <div id="r2-feedback" class="feedback"></div>
+    </div>
+
+    <div class="input-group">
+        <label>Inter-Router Link (2 Hosts):</label>
+        <input type="text" id="link-cidr" placeholder="/XX" oninput="validateVLSM('link-cidr', 'link-feedback', 30)">
+        <div id="link-feedback" class="feedback"></div>
+    </div>
+</div>
+
+<script>
+    function validateVLSM(inputId, feedbackId, correctValue) {
+        const input = document.getElementById(inputId).value.trim();
+        const feedback = document.getElementById(feedbackId);
+        
+        if (input === "") {
+            feedback.innerHTML = "";
+            return;
+        }
+
+        if (input === "/" + correctValue) {
+            feedback.innerHTML = "<span class='correct'>✓ Correct. This mask provides the required usable addresses.</span>";
+        } else if (input.startsWith("/") && parseInt(input.substring(1)) < correctValue) {
+            feedback.innerHTML = "<span class='incorrect'>✗ Valid, but inefficient. You are wasting address space.</span>";
+        } else {
+            feedback.innerHTML = "<span class='incorrect'>✗ Incorrect. This mask does not provide enough host addresses.</span>";
+        }
+    }
+</script>
+
+</body>
+</html>
