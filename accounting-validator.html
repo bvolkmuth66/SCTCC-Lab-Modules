@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: Accounting Excel Validator</title>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #e8f5e9; color: #2e7d32; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 95vh; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        
+        .excel-window { background: #fff; border: 2px solid #1b5e20; border-radius: 8px; width: 100%; max-width: 800px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 10; overflow: hidden; }
+        .excel-ribbon { background: #1b5e20; color: white; padding: 10px 20px; font-weight: bold; font-size: 14px; }
+        .formula-bar { background: #f1f8e9; border-bottom: 1px solid #c8e6c9; padding: 10px; display: flex; align-items: center; }
+        .fx { font-style: italic; font-weight: bold; color: #1b5e20; margin-right: 10px; font-size: 18px; }
+        input[type="text"] { flex: 1; border: 1px solid #a5d6a7; padding: 8px; font-family: 'Consolas', monospace; font-size: 16px; border-radius: 2px; outline: none; }
+        
+        .grid { padding: 20px; background: #fff; }
+        .task-card { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 4px; margin-bottom: 15px; border-left: 5px solid #1b5e20; }
+        .success-text { color: #2e7d32; font-weight: bold; margin-top: 10px; }
+        .error-text { color: #c62828; font-size: 13px; margin-top: 5px; }
+        
+        button { background: #1b5e20; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #2e7d32; }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <h1 style="color: #1b5e20;">Business Analytics: Excel Formula Validator</h1>
+    <p style="color: #4caf50;">Master the syntax of common financial calculations.</p>
+
+    <div class="excel-window">
+        <div class="excel-ribbon">SCTCC Accounting Lab - Formula Auditor</div>
+        
+        <div class="grid">
+            <div id="task-info" class="task-card">
+                <h3 id="step-title" style="margin-top:0;">Task 1: Gross Profit</h3>
+                <p id="step-desc">Revenue is in cell <strong>A2</strong> and COGS is in cell <strong>B2</strong>. Enter the formula to calculate Gross Profit.</p>
+            </div>
+
+            <div class="formula-bar">
+                <span class="fx">fx</span>
+                <input type="text" id="formulaInput" placeholder="Enter Excel Formula (e.g., =A1+B1)" onkeydown="if(event.key==='Enter') validateFormula()">
+            </div>
+            
+            <div style="text-align: right;">
+                <button onclick="validateFormula()">Submit Formula</button>
+            </div>
+
+            <div id="feedback" style="min-height: 40px; margin-top: 15px; font-weight: bold;"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let confetti;
+
+        const tasks = [
+            { 
+                title: "Task 1: Gross Profit", 
+                desc: "Revenue is in <strong>A2</strong>, Cost of Goods Sold is in <strong>B2</strong>. Calculate Gross Profit.", 
+                correct: "=A2-B2", 
+                hint: "Remember the equals sign! It is Revenue minus COGS." 
+            },
+            { 
+                title: "Task 2: Net Income", 
+                desc: "Total Revenue is in <strong>C5</strong>, Total Expenses in <strong>C6</strong>. Calculate Net Income.", 
+                correct: "=C5-C6", 
+                hint: "Net Income = Revenue - Expenses." 
+            },
+            { 
+                title: "Task 3: Current Ratio", 
+                desc: "Current Assets are in <strong>D10</strong>, Current Liabilities in <strong>E10</strong>. Calculate the Current Ratio.", 
+                correct: "=D10/E10", 
+                hint: "The ratio is found by dividing Assets by Liabilities." 
+            },
+            { 
+                title: "Task 4: Straight-Line Depreciation", 
+                desc: "Cost is in <strong>B5</strong>, Salvage in <strong>C5</strong>, and Life in <strong>D5</strong>. Use the SLN function.", 
+                correct: "=SLN(B5,C5,D5)", 
+                hint: "The syntax is =SLN(cost, salvage, life)." 
+            }
+        ];
+
+        function validateFormula() {
+            const input = document.getElementById('formulaInput').value.trim().toUpperCase();
+            const feedback = document.getElementById('feedback');
+            const task = tasks[currentStep];
+
+            if (input === task.correct) {
+                feedback.innerHTML = '<span class="success-text">✓ Correct Syntax Applied.</span>';
+                currentStep++;
+                document.getElementById('formulaInput').value = "";
+                
+                if (currentStep < tasks.length) {
+                    setTimeout(updateTask, 2000);
+                } else {
+                    setTimeout(triggerSuccess, 2000);
+                }
+            } else {
+                feedback.innerHTML = `<span class="error-text">✗ Syntax Error. Hint: ${task.hint}</span>`;
+            }
+        }
+
+        function updateTask() {
+            const task = tasks[currentStep];
+            document.getElementById('step-title').innerText = task.title;
+            document.getElementById('step-desc').innerHTML = task.desc;
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function triggerSuccess() {
+            document.querySelector('.grid').innerHTML = `
+                <div style="text-align:center; padding: 40px;">
+                    <h2 style="color: #2e7d32;">Excel Certification Ready!</h2>
+                    <p>You have successfully validated the logic for major financial statements.</p>
+                </div>`;
+            
+            const confettiSettings = { target: 'confetti-canvas', max: 150, colors: [[27, 94, 32],[76, 175, 80],[255, 255, 255]], clock: 35};
+            confetti = new ConfettiGenerator(confettiSettings);
+            confetti.render();
+            setTimeout(() => { confetti.clear(); }, 7000);
+        }
+    </script>
+</body>
+</html>
