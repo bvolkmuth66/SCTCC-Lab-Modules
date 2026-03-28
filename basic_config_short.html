@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cisco Truncated: Basic Config</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #0d0d0d; color: #33ff33; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 1px solid #333; padding: 15px; min-height: 380px; background: #000; }
+        .prompt { color: #33ff33; font-weight: bold; }
+        input { background: transparent; border: none; color: #33ff33; outline: none; width: 70%; font-family: inherit; font-size: 1.1em; }
+        .task { color: #00ccff; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .error { color: #ff4444; }
+        .hint { color: #ffcc00; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div class="task" id="currentTask"></div>
+        <div><span class="prompt">Router(config)#</span> <input type="text" id="userInput" autofocus onkeydown="process(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "Enter global configuration mode (short)", a: "conf t", h: "Use conf followed by t."},
+            {q: "Assign hostname R1", a: "host R1", h: "Truncate hostname to host."},
+            {q: "Set encrypted enable password to cisco", a: "en sec cisco", h: "Use en sec for enable secret."},
+            {q: "Encrypt passwords", a: "serv pass", h: "Truncate service password-encryption to serv pass."},
+            {q: "Verify running config (short)", a: "sh run", h: "Use sh run."}
+        ];
+        let idx = 0, err = 0;
+        function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
+        function process(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                let d = document.getElementById("display");
+                d.innerHTML += "<div><span class='prompt'>Router(config)# </span>" + e.target.value + "</div>";
+                if (val === tasks[idx].a.toLowerCase()) {
+                    idx++; err = 0;
+                    if (idx < tasks.length) { show(); } 
+                    else { confetti(); d.innerHTML += "<div style='color:white'>COMPLETED</div>"; }
+                } else {
+                    err++;
+                    if (err >= 3) { d.innerHTML += "<div class='hint'>HINT: " + tasks[idx].h + "</div>"; }
+                    else { d.innerHTML += "<div class='error'>Incorrect syntax.</div>"; }
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
