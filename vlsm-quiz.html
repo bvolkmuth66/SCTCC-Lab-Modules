@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: VLSM Knowledge Check</title>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fdfaf0; color: #333; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 95vh; }
+        .quiz-container { background: #fff; padding: 30px; border-radius: 10px; border: 3px solid #d4a017; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 700px; width: 100%; z-index: 10; }
+        h1 { color: #d4a017; border-bottom: 2px solid #d4a017; padding-bottom: 10px; margin-top: 0; }
+        .question { font-weight: bold; margin-bottom: 20px; font-size: 1.1em; color: #5d4037; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { background: #fff; border: 2px solid #ddd; padding: 12px; border-radius: 5px; cursor: pointer; text-align: left; transition: all 0.2s; font-size: 14px; }
+        .option-btn:hover { border-color: #d4a017; background: #fffdf5; }
+        .correct { background: #e8f5e9 !important; border-color: #2e7d32 !important; color: #1b5e20; }
+        .incorrect { background: #ffebee !important; border-color: #c62828 !important; color: #b71c1c; }
+        #feedback { margin-top: 20px; padding: 15px; border-radius: 5px; display: none; font-size: 0.9em; }
+        #next-btn { margin-top: 20px; background: #d4a017; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; display: none; width: 100%; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        .progress { font-size: 0.8em; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="quiz-container" id="quiz-box">
+        <div class="progress" id="progress-text">Question 1 of 5</div>
+        <h1 id="quiz-title">VLSM Concept Mastery</h1>
+        <div id="question-text" class="question"></div>
+        <div id="options-container" class="options"></div>
+        <div id="feedback"></div>
+        <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "When designing a VLSM scheme, which subnet should you typically calculate and assign first?",
+                options: ["The largest number of required hosts", "The inter-router serial links", "The highest numerical VLAN ID", "The Gateway of Last Resort"],
+                correct: 0,
+                rationale: "Assigning the largest block first prevents smaller subnets from fragmenting the address space."
+            },
+            {
+                q: "A Branch Office LAN requires 28 host addresses. What is the most efficient subnet mask?",
+                options: ["/28", "/26", "/27", "/29"],
+                correct: 2,
+                rationale: "A /27 provides 30 usable host addresses, which is the smallest power of 2 that fits 28 hosts."
+            },
+            {
+                q: "In a point-to-point serial link, why is a /30 mask considered the industry standard?",
+                options: ["It allows for 5 hosts", "It matches the two ends of the link exactly", "It enables OSPF by default", "It is the only mask Cisco supports"],
+                correct: 1,
+                rationale: "A /30 provides exactly 2 usable host addresses, matching the two interfaces on a serial link."
+            },
+            {
+                q: "If you split a /25 network in half, what are the CIDR notations of the two resulting subnets?",
+                options: ["Two /24s", "Two /27s", "Two /26s", "Four /26s"],
+                correct: 2,
+                rationale: "Splitting a subnet in half always increases the CIDR notation by 1 bit (/25 to /26)."
+            },
+            {
+                q: "What is the primary benefit of using VLSM over traditional Fixed-Length Subnet Masking (FLSM)?",
+                options: ["Increased physical line speed", "Immunity to spoofing", "Elimination of gateways", "Reducing the waste of IP addresses"],
+                correct: 3,
+                rationale: "VLSM allows you to tailor subnet sizes to specific needs, saving valuable address space."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const data = quizData[currentQ];
+            document.getElementById('progress-text').innerText = `Question ${currentQ + 1} of 5`;
+            document.getElementById('question-text').innerText = data.q;
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            data.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(index, btn) {
+            const data = quizData[currentQ];
+            const feedback = document.getElementById('feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.disabled = true);
+            
+            if (index === data.correct) {
+                btn.classList.add('correct');
+                feedback.innerHTML = `<strong>Correct!</strong> ${data.rationale}`;
+                feedback.style.background = '#e8f5e9';
+                feedback.style.color = '#1b5e20';
+                score++;
+            } else {
+                btn.classList.add('incorrect');
+                allBtns[data.correct].classList.add('correct');
+                feedback.innerHTML = `<strong>Incorrect.</strong> ${data.rationale}`;
+                feedback.style.background = '#ffebee';
+                feedback.style.color = '#b71c1c';
+            }
+            
+            feedback.style.display = 'block';
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const quizBox = document.getElementById('quiz-box');
+            quizBox.innerHTML = `
+                <div style="text-align:center; padding: 20px;">
+                    <h2 style="color: #d4a017;">Knowledge Check Complete!</h2>
+                    <p style="font-size: 1.5em; font-weight: bold;">Score: ${score} / 5</p>
+                    <p>You have demonstrated conceptual mastery of VLSM logic.</p>
+                </div>`;
+            
+            if (score >= 4) {
+                const confettiSettings = { target: 'confetti-canvas', max: 150, colors: [[212, 160, 23],[255, 255, 255]], clock: 35};
+                const confetti = new ConfettiGenerator(confettiSettings);
+                confetti.render();
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
