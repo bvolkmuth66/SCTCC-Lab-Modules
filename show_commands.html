@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cisco Lab: Show Commands</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        .terminal { border: 1px solid #333; padding: 15px; min-height: 300px; }
+        input { background: transparent; border: none; color: #0f0; outline: none; width: 80%; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div id="display"></div>
+        <div id="currentTask" style="color:#00bfff"></div>
+        <div><span style="color:#0f0">Router#</span> <input type="text" id="userInput" autofocus onkeydown="process(event)"></div>
+    </div>
+    <script>
+        const tasks = [
+            {q: "View the running configuration", a: "show running-config", h: "Verify the config in RAM."},
+            {q: "Check software version and uptime", a: "show version", h: "Use show followed by the version keyword."},
+            {q: "View recent command history", a: "show history", h: "Use the history keyword."}
+        ];
+        let idx = 0, err = 0;
+        function show() { document.getElementById("currentTask").innerText = "TASK: " + tasks[idx].q; }
+        function process(e) {
+            if (e.key === "Enter") {
+                let val = e.target.value.trim().toLowerCase();
+                if (val === tasks[idx].a.toLowerCase()) {
+                    idx++; err = 0;
+                    if (idx < tasks.length) { show(); } else { confetti(); }
+                } else {
+                    err++;
+                    if (err >= 3) alert("HINT: " + tasks[idx].h);
+                }
+                e.target.value = "";
+            }
+        }
+        show();
+    </script>
+</body>
+</html>
