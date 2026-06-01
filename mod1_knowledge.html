@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: Knowledge Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f6f9; }
+        h1 { color: #004a99; border-bottom: 3px solid #004a99; padding-bottom: 10px; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question-block { margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-left: 5px solid #0056b3; border-radius: 4px; }
+        .question-text { font-weight: bold; margin-bottom: 10px; }
+        .options-list { list-style-type: none; padding-left: 0; }
+        .options-list li { margin-bottom: 8px; }
+        input[type="radio"] { margin-right: 10px; }
+        .feedback { margin-top: 10px; font-weight: bold; display: none; padding: 8px; border-radius: 4px; }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
+        .action-btn { background-color: #004a99; color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; transition: background 0.2s; }
+        .action-btn:hover { background-color: #003366; }
+        .score-banner { background-color: #e2e3e5; color: #383d41; padding: 15px; border-radius: 4px; font-weight: bold; margin-top: 20px; text-align: center; }
+        select { padding: 6px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc; width: 100%; }
+        .matching-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; align-items: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Module 1: Formative Knowledge Check</h1>
+    <p>Use this ungraded utility to verify your conceptual comprehension of device hardening theory before participating in the weekly summative lab assessment.</p>
+
+    <form id="quizForm">
+        
+        <div class="question-block" data-qtype="radio" data-correct="C">
+            <div class="question-text">1. Which specific character prompt indicates that a network administrator is operating in Privileged EXEC mode?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q1" value="A"> A) Switch></label></li>
+                <li><label><input type="radio" name="q1" value="B"> B) Switch(config)#</label></li>
+                <li><label><input type="radio" name="q1" value="C"> C) Switch#</label></li>
+                <li><label><input type="radio" name="q1" value="D"> D) Switch(config-if)#</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="B">
+            <div class="question-text">2. A technician types a command incorrectly and the terminal session locks up for several minutes while displaying the message: Translating "cmand"... domain server (255.255.255.255). Which global configuration instruction prevents this behavior?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q2" value="A"> A) no service password-encryption</label></li>
+                <li><label><input type="radio" name="q2" value="B"> B) no ip domain-lookup</label></li>
+                <li><label><input type="radio" name="q2" value="C"> C) transport input none</label></li>
+                <li><label><input type="radio" name="q2" value="D"> D) clear line vty 0</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="F">
+            <div class="question-text">3. The execution of the service password-encryption command applies a cryptographically secure SHA-256 hash to all passwords residing within the active running configuration file.</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q3" value="T"> True</label></li>
+                <li><label><input type="radio" name="q3" value="F"> False</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="C">
+            <div class="question-text">4. What occurs immediately after executing the transport input ssh command on a set of Virtual Teletype (VTY) lines?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q4" value="A"> A) The switch automatically generates a 1024 bit RSA cryptographic key pair.</label></li>
+                <li><label><input type="radio" name="q4" value="B"> B) Local database authentication is bypassed for all inbound remote sessions.</label></li>
+                <li><label><input type="radio" name="q4" value="C"> C) Cleartext Telnet connection requests are terminated and blocked by the device.</label></li>
+                <li><label><input type="radio" name="q4" value="D"> D) The physical console port is administratively disabled.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="C">
+            <div class="question-text">5. An administrative user logs into a switch and is prompted with a password challenge. Upon successful entry, they find themselves at the Switch> prompt. Which command must be input to access diagnostic show commands and configuration tools?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q5" value="A"> A) configure terminal</label></li>
+                <li><label><input type="radio" name="q5" value="B"> B) line console 0</label></li>
+                <li><label><input type="radio" name="q5" value="C"> C) enable</label></li>
+                <li><label><input type="radio" name="q5" value="D"> D) login local</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="matching">
+            <div class="question-text">6. Match the technical execution mechanism to its corresponding Cisco IOS password security type.</div>
+            <div class="matching-grid">
+                <div>Reversible Type 7 Vigenère cipher algorithm designed for basic obfuscation.</div>
+                <div>
+                    <select id="match1" data-ans="C">
+                        <option value="">--Select--</option>
+                        <option value="A">A. password LeTmEiN!</option>
+                        <option value="B">B. enable secret SecurePass1</option>
+                        <option value="C">C. service password-encryption output</option>
+                    </select>
+                </div>
+                <div>One way MD5 or SHA-256 cryptographic hashing standard for secure access.</div>
+                <div>
+                    <select id="match2" data-ans="B">
+                        <option value="">--Select--</option>
+                        <option value="A">A. password LeTmEiN!</option>
+                        <option value="B">B. enable secret SecurePass1</option>
+                        <option value="C">C. service password-encryption output</option>
+                    </select>
+                </div>
+                <div>Plaintext representation visible during immediate file inspection.</div>
+                <div>
+                    <select id="match3" data-ans="A">
+                        <option value="">--Select--</option>
+                        <option value="A">A. password LeTmEiN!</option>
+                        <option value="B">B. enable secret SecurePass1</option>
+                        <option value="C">C. service password-encryption output</option>
+                    </select>
+                </div>
+            </div>
+            <div class="feedback" id="matchingFeedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="B">
+            <div class="question-text">7. Why must a network administrator configure an IP address on a Switch Virtual Interface (SVI) like Interface VLAN 1 on a Layer 2 switch?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q7" value="A"> A) To enable the hardware to route production data packets between different IP subnets.</label></li>
+                <li><label><input type="radio" name="q7" value="B"> B) To permit out of band operational file transfers and secure remote management traffic.</label></li>
+                <li><label><input type="radio" name="q7" value="C"> C) To increase the overall physical line processing speed of the switch backplane.</label></li>
+                <li><label><input type="radio" name="q7" value="D"> D) To force connected host computers to automatically receive dynamic IP parameters.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="T">
+            <div class="question-text">8. When constructing an administrative local user account using the syntax "username Admin01 password SecretPass", the password string remains unhashed within the active running configuration file until an explicit encryption service is enabled globally.</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q8" value="T"> True</label></li>
+                <li><label><input type="radio" name="q8" value="F"> False</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="B">
+            <div class="question-text">9. Which mandatory administrative prerequisite must be executed globally before the crypto key generate rsa command will compile successfully?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q9" value="A"> A) An active management SVI must be turned on using the no shutdown instruction.</label></li>
+                <li><label><input type="radio" name="q9" value="B"> B) A fully qualified host domain name must be assigned via the ip domain-name command.</label></li>
+                <li><label><input type="radio" name="q9" value="C"> C) Local authentication must be locked to the VTY lines using login local.</label></li>
+                <li><label><input type="radio" name="q9" value="D"> D) Cleartext passwords must be stripped using the no service command.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="F">
+            <div class="question-text">10. The parameterization string line vty 0 15 restricts the switch infrastructure to accepting only one inbound remote management connection at any given time.</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q10" value="T"> True</label></li>
+                <li><label><input type="radio" name="q10" value="F"> False</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <button type="button" class="action-btn" onclick="gradeQuiz()">Evaluate Answers</button>
+    </form>
+    <div id="quizScore" class="score-banner" style="display:none;"></div>
+</div>
+
+<script>
+    function gradeQuiz() {
+        let total = 10;
+        let score = 0;
+        
+        let blocks = document.querySelectorAll('.question-block[data-qtype="radio"]');
+        blocks.forEach(block => {
+            let selected = block.querySelector('input[type="radio"]:checked');
+            let fb = block.querySelector('.feedback');
+            fb.style.display = "block";
+            
+            if(selected && selected.value === block.getAttribute('data-correct')) {
+                score++;
+                fb.className = "feedback correct";
+                fb.innerText = "Correct.";
+            } else {
+                fb.className = "feedback incorrect";
+                fb.innerText = "Incorrect. Reference textbook configuration rules.";
+            }
+        });
+        
+        let m1 = document.getElementById('match1');
+        let m2 = document.getElementById('match2');
+        let m3 = document.getElementById('match3');
+        let mfb = document.getElementById('matchingFeedback');
+        mfb.style.display = "block";
+        
+        if(m1.value === 'C' && m2.value === 'B' && m3.value === 'A') {
+            score++;
+            mfb.className = "feedback correct";
+            mfb.innerText = "Matching Correct.";
+        } else {
+            mfb.className = "feedback incorrect";
+            mfb.innerText = "Matching Incorrect. Review Type 7 obfuscation vs SHA-256.";
+        }
+        
+        let banner = document.getElementById('quizScore');
+        banner.style.display = "block";
+        banner.innerText = "Knowledge Check Result: " + score + " / " + total + " (" + ((score/total)*100).toFixed(0) + "%)";
+    }
+</script>
+
+</body>
+</html>
