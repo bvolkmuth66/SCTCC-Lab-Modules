@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: Syntax Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f6f9; }
+        h1 { color: #004a99; border-bottom: 3px solid #004a99; padding-bottom: 10px; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .syntax-block { background-color: #1e1e1e; color: #fff; padding: 25px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; margin-bottom: 20px; }
+        .syntax-prompt { color: #98c379; font-weight: bold; margin-right: 5px; }
+        .syntax-input { background: #282c34; border: 1px solid #4b5263; color: #abb2bf; padding: 6px; font-family: 'Courier New', Courier, monospace; font-size: 14px; width: 60%; border-radius: 4px; }
+        .syntax-input:focus { outline: none; border-color: #61afef; }
+        .action-btn { background-color: #004a99; color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; transition: background 0.2s; }
+        .action-btn:hover { background-color: #003366; }
+        .score-banner { background-color: #e2e3e5; color: #383d41; padding: 15px; border-radius: 4px; font-weight: bold; margin-top: 20px; text-align: center; display: none; }
+        .correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .instruction-text { font-weight: bold; margin-bottom: 15px; color: #0056b3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Module 1: Command Syntax Checker</h1>
+    
+    <p class="instruction-text">Task: Initialize basic baseline parameters and execute management plane hardening settings on a factory reset device using the specified target strings.</p>
+    
+    <ul style="margin-bottom: 20px;">
+        <li>Assign the hostname Dist-Switch-01</li>
+        <li>Disable interactive lookup broadcasting</li>
+        <li>Set the privileged secret to C1sc0$ecure!</li>
+        <li>Configure the physical console line with the password ConsoleAccess1 and require login</li>
+        <li>Apply global visual obfuscation to cleartext passwords</li>
+    </ul>
+    
+    <div class="syntax-block">
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Switch&gt;</span><input type="text" id="syn1" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Switch#</span><input type="text" id="syn2" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Switch(config)#</span><input type="text" id="syn3" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config)#</span><input type="text" id="syn4" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config)#</span><input type="text" id="syn5" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config)#</span><input type="text" id="syn6" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config-line)#</span><input type="text" id="syn7" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config-line)#</span><input type="text" id="syn8" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config-line)#</span><input type="text" id="syn9" class="syntax-input" autocomplete="off"></div>
+        <div style="margin-bottom: 10px;"><span class="syntax-prompt">Dist-Switch-01(config)#</span><input type="text" id="syn10" class="syntax-input" autocomplete="off"></div>
+    </div>
+    
+    <button type="button" class="action-btn" onclick="gradeSyntax()">Validate Command Chain</button>
+    <div id="syntaxScore" class="score-banner"></div>
+</div>
+
+<script>
+    function gradeSyntax() {
+        const answers = [
+            "enable", "configure terminal", "hostname Dist-Switch-01", "no ip domain-lookup",
+            "enable secret C1sc0$ecure!", "line console 0", "password ConsoleAccess1", "login",
+            "exit", "service password-encryption"
+        ];
+        
+        let correctCount = 0;
+        for(let i = 1; i <= 10; i++) {
+            let inputEl = document.getElementById('syn' + i);
+            let userVal = inputEl.value.trim().replace(/\s+/g, ' '); 
+            
+            if(userVal.toLowerCase() === answers[i-1].toLowerCase() || userVal === answers[i-1]) {
+                correctCount++;
+                inputEl.style.border = "2px solid #28a745";
+                inputEl.style.backgroundColor = "#1e2b22";
+            } else {
+                inputEl.style.border = "2px solid #dc3545";
+                inputEl.style.backgroundColor = "#3b2024";
+            }
+        }
+        
+        let banner = document.getElementById('syntaxScore');
+        banner.style.display = "block";
+        if(correctCount === 10) {
+            banner.className = "score-banner correct";
+            banner.innerText = "Syntax Verification Successful. All commands match perfectly.";
+        } else {
+            banner.className = "score-banner incorrect";
+            banner.innerText = "Syntax Discrepancies Found. Correct lines are highlighted green and errors in red: " + correctCount + " / 10 Correct.";
+        }
+    }
+</script>
+
+</body>
+</html>
