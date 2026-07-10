@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Knowledge Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f6f9; }
+        h1 { color: #004a99; border-bottom: 3px solid #004a99; padding-bottom: 10px; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .question-block { margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-left: 5px solid #0056b3; border-radius: 4px; }
+        .question-text { font-weight: bold; margin-bottom: 10px; }
+        .options-list { list-style-type: none; padding-left: 0; }
+        .options-list li { margin-bottom: 8px; }
+        input[type="radio"] { margin-right: 10px; }
+        .feedback { margin-top: 10px; font-weight: bold; display: none; padding: 8px; border-radius: 4px; }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
+        .action-btn { background-color: #004a99; color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; transition: background 0.2s; }
+        .action-btn:hover { background-color: #003366; }
+        .score-banner { background-color: #e2e3e5; color: #383d41; padding: 15px; border-radius: 4px; font-weight: bold; margin-top: 20px; text-align: center; }
+        select { padding: 6px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc; width: 100%; }
+        .matching-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; align-items: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Module 2: Formative Knowledge Check</h1>
+    <p>Use this ungraded utility to verify your conceptual comprehension of network segmentation and database isolation theory before participating in the weekly summative lab assessment.</p>
+
+    <form id="quizForm">
+        
+        <div class="question-block" data-qtype="radio" data-correct="C">
+            <div class="question-text">1. By default, every physical port on a Cisco Catalyst switch is assigned to which specific broadcast domain?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q1" value="A"> A) VLAN 99</label></li>
+                <li><label><input type="radio" name="q1" value="B"> B) The Native VLAN</label></li>
+                <li><label><input type="radio" name="q1" value="C"> C) VLAN 1</label></li>
+                <li><label><input type="radio" name="q1" value="D"> D) The Management VLAN</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="B">
+            <div class="question-text">2. When a network administrator implements multiple Virtual Local Area Networks, how does the switch operating system alter the internal forwarding logic?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q2" value="A"> A) It combines all physical addresses into a single global routing table.</label></li>
+                <li><label><input type="radio" name="q2" value="B"> B) It partitions the Content Addressable Memory table to create mathematically isolated forwarding databases.</label></li>
+                <li><label><input type="radio" name="q2" value="C"> C) It disables the Address Resolution Protocol to prevent broadcast storms.</label></li>
+                <li><label><input type="radio" name="q2" value="D"> D) It forwards all unrecognized traffic to the default gateway.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="F">
+            <div class="question-text">3. If a broadcast frame ingresses on a port explicitly assigned to VLAN 10, devices connected to VLAN 20 ports will receive a replicated copy of the transmission.</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q3" value="T"> True</label></li>
+                <li><label><input type="radio" name="q3" value="F"> False</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="B">
+            <div class="question-text">4. Security best practices dictate that administrators must create a dedicated Management Virtual Local Area Network rather than using the hardware default. What is the primary purpose of this segregation?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q4" value="A"> A) To increase the physical throughput speed of administrative file transfers.</label></li>
+                <li><label><input type="radio" name="q4" value="B"> B) To ensure that standard user endpoints cannot easily scan or initiate command line connections to the network infrastructure hardware.</label></li>
+                <li><label><input type="radio" name="q4" value="C"> C) To allow the switch to automatically negotiate dynamic trunking protocols.</label></li>
+                <li><label><input type="radio" name="q4" value="D"> D) To synchronize the database across multiple switches.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="C">
+            <div class="question-text">5. Under the IEEE 802.1Q networking standard, what is the explicit function of the designated Native Virtual Local Area Network?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q5" value="A"> A) It serves as the primary route for all encrypted Secure Shell management sessions.</label></li>
+                <li><label><input type="radio" name="q5" value="B"> B) It automatically generates cryptographic keys for trunk links.</label></li>
+                <li><label><input type="radio" name="q5" value="C"> C) It is explicitly designed to handle and process untagged Ethernet frames traversing a transit link.</label></li>
+                <li><label><input type="radio" name="q5" value="D"> D) It synchronizes the numeric identifiers across the spanning tree topology.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="matching">
+            <div class="question-text">6. Match the technical definition to its corresponding layer 2 networking concept.</div>
+            <div class="matching-grid">
+                <div>The internal hardware database partitioned to isolate physical MAC addresses.</div>
+                <div>
+                    <select id="match1" data-ans="C">
+                        <option value="">--Select--</option>
+                        <option value="A">A. Native Virtual Local Area Network</option>
+                        <option value="B">B. Management Virtual Local Area Network</option>
+                        <option value="C">C. Content Addressable Memory Table</option>
+                    </select>
+                </div>
+                <div>The isolated segment strictly reserved for administrative command line traffic and device configuration.</div>
+                <div>
+                    <select id="match2" data-ans="B">
+                        <option value="">--Select--</option>
+                        <option value="A">A. Native Virtual Local Area Network</option>
+                        <option value="B">B. Management Virtual Local Area Network</option>
+                        <option value="C">C. Content Addressable Memory Table</option>
+                    </select>
+                </div>
+                <div>The explicitly assigned network responsible for processing untagged frames.</div>
+                <div>
+                    <select id="match3" data-ans="A">
+                        <option value="">--Select--</option>
+                        <option value="A">A. Native Virtual Local Area Network</option>
+                        <option value="B">B. Management Virtual Local Area Network</option>
+                        <option value="C">C. Content Addressable Memory Table</option>
+                    </select>
+                </div>
+            </div>
+            <div class="feedback" id="matchingFeedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="B">
+            <div class="question-text">7. When expanding a network architecture across multiple interconnected switches, what attribute does the hardware rely on strictly to bridge traffic correctly between isolated databases?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q7" value="A"> A) The text string name assigned to the network segment.</label></li>
+                <li><label><input type="radio" name="q7" value="B"> B) The numeric identifier of the Virtual Local Area Network.</label></li>
+                <li><label><input type="radio" name="q7" value="C"> C) The physical speed of the transit link.</label></li>
+                <li><label><input type="radio" name="q7" value="D"> D) The device hostname configuration.</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="T">
+            <div class="question-text">8. To mitigate Layer 2 security vulnerabilities such as network hopping attacks, administrators must explicitly change the Native network to an unused and isolated segment across all connected hardware.</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q8" value="T"> True</label></li>
+                <li><label><input type="radio" name="q8" value="F"> False</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="C">
+            <div class="question-text">9. Which interface configuration command hardcodes a physical port to operate strictly as an endpoint connection and prevents dynamic trunking negotiation?</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q9" value="A"> A) switchport access vlan 10</label></li>
+                <li><label><input type="radio" name="q9" value="B"> B) switchport trunk native vlan 99</label></li>
+                <li><label><input type="radio" name="q9" value="C"> C) switchport mode access</label></li>
+                <li><label><input type="radio" name="q9" value="D"> D) interface vlan 10</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <div class="question-block" data-qtype="radio" data-correct="F">
+            <div class="question-text">10. Executing the global configuration command vlan 99 assigns an Internet Protocol address to the hardware to allow for remote administration.</div>
+            <ul class="options-list">
+                <li><label><input type="radio" name="q10" value="T"> True</label></li>
+                <li><label><input type="radio" name="q10" value="F"> False</label></li>
+            </ul>
+            <div class="feedback"></div>
+        </div>
+
+        <button type="button" class="action-btn" onclick="gradeQuiz()">Evaluate Answers</button>
+    </form>
+    <div id="quizScore" class="score-banner" style="display:none;"></div>
+</div>
+
+<script>
+    function gradeQuiz() {
+        let total = 10;
+        let score = 0;
+        
+        let blocks = document.querySelectorAll('.question-block[data-qtype="radio"]');
+        blocks.forEach(block => {
+            let selected = block.querySelector('input[type="radio"]:checked');
+            let fb = block.querySelector('.feedback');
+            fb.style.display = "block";
+            
+            if(selected && selected.value === block.getAttribute('data-correct')) {
+                score++;
+                fb.className = "feedback correct";
+                fb.innerText = "Correct.";
+            } else {
+                fb.className = "feedback incorrect";
+                fb.innerText = "Incorrect. Reference textbook configuration rules.";
+            }
+        });
+        
+        let m1 = document.getElementById('match1');
+        let m2 = document.getElementById('match2');
+        let m3 = document.getElementById('match3');
+        let mfb = document.getElementById('matchingFeedback');
+        mfb.style.display = "block";
+        
+        if(m1.value === 'C' && m2.value === 'B' && m3.value === 'A') {
+            score++;
+            mfb.className = "feedback correct";
+            mfb.innerText = "Matching Correct.";
+        } else {
+            mfb.className = "feedback incorrect";
+            mfb.innerText = "Matching Incorrect. Review the definitions for CAM table, Management VLAN, and Native VLAN.";
+        }
+        
+        let banner = document.getElementById('quizScore');
+        banner.style.display = "block";
+        banner.innerText = "Knowledge Check Result: " + score + " / " + total + " (" + ((score/total)*100).toFixed(0) + "%)";
+    }
+</script>
+
+</body>
+</html>
