@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCTCC: CLI Syntax Validator</title>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <style>
+        body { font-family: 'Courier New', monospace; background-color: #f1f1f1; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 95vh; position: relative; }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        .terminal { background: #282c34; padding: 25px; border-radius: 10px; border: 4px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 750px; color: #abb2bf; z-index: 10; }
+        .header { color: #c678dd; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-family: sans-serif; }
+        .step-info { color: #61afef; margin-bottom: 20px; font-weight: bold; font-family: sans-serif; }
+        .prompt { color: #98c379; }
+        input[type="text"] { background: transparent; border: none; color: #e5c07b; outline: none; font-family: inherit; font-size: 16px; width: 70%; }
+        .result { margin-top: 20px; min-height: 24px; border-top: 1px solid #3e4451; padding-top: 10px; }
+        .success { color: #98c379; font-weight: bold; }
+        .error { color: #e06c75; }
+        .hint-btn { background: #d19a66; color: #282c34; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; display: none; margin-top: 10px; font-family: sans-serif; }
+        .reset-btn { background: #333; color: #fff; border: 1px solid #444; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; font-family: sans-serif; }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="terminal">
+        <div class="header">
+            <span>SCTCC CLI Validator: Module 2 VLAN Segmentation</span>
+            <button class="reset-btn" onclick="location.reload()">Reset Session</button>
+        </div>
+        <div id="stepDescription" class="step-info">Task 1: Create VLAN 10 within the global database (Case Sensitive)</div>
+        
+        <div id="cli">
+            <span id="terminalPrompt" class="prompt">Switch(config)#</span>
+            <input type="text" id="commandInput" autofocus onkeydown="handleInput(event)">
+        </div>
+        
+        <div id="result" class="result">Note: Enter the exact command to proceed.</div>
+        <button id="hintBtn" class="hint-btn" onclick="showHint()">Need a Hint?</button>
+        <div id="hintDisplay" style="color: #e5c07b; margin-top: 10px; font-style: italic; font-size: 0.9em;"></div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let attempts = 0;
+        
+        const tasks = [
+            { instruction: "Task 1: Create VLAN 10 within the global database", command: "vlan 10", prompt: "Switch(config)#", nextPrompt: "Switch(config-vlan)#", feedback: "✓ VLAN 10 initialized in the database.", hint: "Type: vlan 10" },
+            { instruction: "Task 2: Name the network segment 'Accounting'", command: "name Accounting", prompt: "Switch(config-vlan)#", nextPrompt: "Switch(config-vlan)#", feedback: "✓ Alphanumeric text descriptor bound successfully.", hint: "Type: name Accounting (Capitalize the A)." },
+            { instruction: "Task 3: Navigate to interface context for GigabitEthernet0/1", command: "interface GigabitEthernet0/1", prompt: "Switch(config-vlan)#", nextPrompt: "Switch(config-if)#", feedback: "✓ Context shifted to physical interface layer.", hint: "Type: interface GigabitEthernet0/1" },
+            { instruction: "Task 4: Enforce access mode on the interface", command: "switchport mode access", prompt: "Switch(config-if)#", nextPrompt: "Switch(config-if)#", feedback: "✓ Dynamic trunking negotiation permanently disabled.", hint: "Type: switchport mode access" },
+            { instruction: "Task 5: Bind the interface explicitly to VLAN 10", command: "switchport access vlan 10", prompt: "Switch(config-if)#", nextPrompt: "Switch(config-if)#", feedback: "✓ Broadcast boundary established. Local Layer 2 Segmentation Complete!", hint: "Type: switchport access vlan 10" }
+        ];
+
+        function handleInput(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('commandInput').value.trim();
+                const res = document.getElementById('result');
+                const step = tasks[currentStep];
+
+                if (input === step.command) {
+                    res.innerHTML = `<span class="success">${step.feedback}</span>`;
+                    hideHintUI();
+                    currentStep++;
+                    attempts = 0;
+                    
+                    if (currentStep < tasks.length) {
+                        setTimeout(() => { updateTerminal(tasks[currentStep]); }, 2000);
+                    } else {
+                        setTimeout(triggerFinalSuccess, 1000);
+                    }
+                } else {
+                    attempts++;
+                    res.innerHTML = `<span class="error">✗ Incorrect syntax or case. Attempts: ${attempts}</span>`;
+                    if (attempts >= 3) {
+                        document.getElementById('hintBtn').style.display = 'inline-block';
+                    }
+                }
+                document.getElementById('commandInput').value = '';
+            }
+        }
+
+        function showHint() {
+            document.getElementById('hintDisplay').innerText = `Hint: ${tasks[currentStep].hint}`;
+        }
+
+        function hideHintUI() {
+            document.getElementById('hintBtn').style.display = 'none';
+            document.getElementById('hintDisplay').innerText = '';
+        }
+
+        function updateTerminal(task) {
+            document.getElementById('stepDescription').innerText = task.instruction;
+            document.getElementById('terminalPrompt').innerText = task.prompt;
+            document.getElementById('result').innerText = "Enter the next command.";
+        }
+
+        function triggerFinalSuccess() {
+            document.getElementById('cli').style.display = 'none';
+            document.getElementById('stepDescription').innerText = "Segmentation Verification Complete!";
+            document.getElementById('result').innerHTML = '<div style="padding:20px; border:2px solid #98c379; background:rgba(152,195,121,0.1); color:#98c379; text-align:center;"><h3>CONGRATULATIONS!</h3><p>You have mastered the Module 2 local network segmentation syntax.</p></div>';
+            
+            const confettiSettings = { target: 'confetti-canvas', max: 150, props: ['circle', 'square'], colors: [[152, 195, 121],[97, 175, 239],[255, 255, 255]], clock: 35};
+            const confetti = new ConfettiGenerator(confettiSettings);
+            const confettiCanvas = document.getElementById('confetti-canvas');
+            if (confettiCanvas) {
+                confetti.render();
+                setTimeout(() => { confetti.clear(); }, 7000);
+            }
+        }
+    </script>
+</body>
+</html>
