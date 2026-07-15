@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3 Week 1 Syntax Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; }
+        .terminal-container { background-color: #1e1e1e; color: #00ff00; padding: 20px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; }
+        input[type="text"] { background-color: #1e1e1e; color: #00ff00; border: none; border-bottom: 1px solid #333; font-family: 'Courier New', Courier, monospace; font-size: 1em; width: 80%; outline: none; margin-bottom: 10px; }
+        button { margin-top: 15px; padding: 10px 20px; background-color: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: Arial, sans-serif; }
+        button:hover { background-color: #004494; }
+        .result-msg { margin-top: 20px; font-weight: bold; font-family: Arial, sans-serif; }
+        .success { color: green; }
+        .error { color: red; }
+        .prompt-text { display: inline-block; width: 120px; }
+    </style>
+</head>
+<body>
+
+    <h2>Module 3 Week 1: Transit Link Configuration Syntax</h2>
+    <p>Assume you are already in interface configuration mode for interface GigabitEthernet0/1. Enter the exact commands required to execute the following administrative directives.</p>
+    <ul>
+        <li>Step 1: Hardcode the interface to operate as a transit link.</li>
+        <li>Step 2: Reassign the native untagged database to VLAN 99.</li>
+        <li>Step 3: Restrict the transit link to only permit VLAN 10, VLAN 20, and VLAN 99.</li>
+    </ul>
+
+    <div class="terminal-container">
+        <div>
+            <span class="prompt-text">Switch(config-if)#</span>
+            <input type="text" id="cmd1" autocomplete="off" spellcheck="false" placeholder="Enter Step 1 command">
+        </div>
+        <div>
+            <span class="prompt-text">Switch(config-if)#</span>
+            <input type="text" id="cmd2" autocomplete="off" spellcheck="false" placeholder="Enter Step 2 command">
+        </div>
+        <div>
+            <span class="prompt-text">Switch(config-if)#</span>
+            <input type="text" id="cmd3" autocomplete="off" spellcheck="false" placeholder="Enter Step 3 command">
+        </div>
+        <button onclick="checkSyntax()">Verify Syntax</button>
+    </div>
+
+    <div id="syntaxResult" class="result-msg"></div>
+
+    <script>
+        function checkSyntax() {
+            // Normalize inputs: remove leading/trailing spaces and convert to lowercase
+            let cmd1 = document.getElementById('cmd1').value.trim().toLowerCase();
+            let cmd2 = document.getElementById('cmd2').value.trim().toLowerCase();
+            let cmd3 = document.getElementById('cmd3').value.trim().toLowerCase();
+
+            // Define exact correct answers
+            const correct1 = "switchport mode trunk";
+            const correct2 = "switchport trunk native vlan 99";
+            
+            // Allow for spaces after commas in the allowed vlan list
+            const correct3_optionA = "switchport trunk allowed vlan 10,20,99";
+            const correct3_optionB = "switchport trunk allowed vlan 10, 20, 99";
+
+            let errors = [];
+
+            if (cmd1 !== correct1) {
+                errors.push("Step 1 is incorrect. Check your 'switchport mode' syntax.");
+            }
+            if (cmd2 !== correct2) {
+                errors.push("Step 2 is incorrect. Check your 'native vlan' syntax and ensure you used VLAN 99.");
+            }
+            if (cmd3 !== correct3_optionA && cmd3 !== correct3_optionB) {
+                errors.push("Step 3 is incorrect. Check your 'allowed vlan' syntax and ensure the list matches the prompt exactly.");
+            }
+
+            let resultDiv = document.getElementById('syntaxResult');
+            
+            if (errors.length === 0) {
+                resultDiv.innerHTML = "Success! All transit link commands are syntactically correct.";
+                resultDiv.className = "result-msg success";
+            } else {
+                resultDiv.innerHTML = "Syntax Error(s) Detected:<br>" + errors.join("<br>");
+                resultDiv.className = "result-msg error";
+            }
+        }
+    </script>
+</body>
+</html>
