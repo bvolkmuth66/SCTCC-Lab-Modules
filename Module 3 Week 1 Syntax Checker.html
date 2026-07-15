@@ -5,26 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Module 3 Week 1 Syntax Checker</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; max-width: 800px; }
-        .terminal-container { background-color: #1e1e1e; color: #00ff00; padding: 20px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; }
-        input[type="text"] { background-color: #1e1e1e; color: #00ff00; border: none; border-bottom: 1px solid #333; font-family: 'Courier New', Courier, monospace; font-size: 1em; width: 80%; outline: none; margin-bottom: 10px; }
-        button { margin-top: 15px; padding: 10px 20px; background-color: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: Arial, sans-serif; }
-        button:hover { background-color: #004494; }
-        .result-msg { margin-top: 20px; font-weight: bold; font-family: Arial, sans-serif; }
-        .success { color: green; }
-        .error { color: red; }
-        .prompt-text { display: inline-block; width: 120px; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px auto; max-width: 800px; color: #333; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .instructions { margin-bottom: 25px; padding: 20px; background-color: #f4f4f4; border-left: 5px solid #004a99; }
+        .terminal-container { background-color: #1e1e1e; color: #00ff00; padding: 25px; font-family: 'Courier New', Courier, monospace; font-size: 18px; border-bottom: 5px solid #004a99; }
+        input[type="text"] { background-color: #1e1e1e; color: #00ff00; border: none; border-bottom: 1px solid #333; outline: none; font-family: 'Courier New', Courier, monospace; font-size: 18px; width: 65%; margin-bottom: 15px; }
+        .prompt-text { display: inline-block; width: 180px; }
+        button { margin-top: 20px; padding: 12px 24px; background-color: #004a99; color: white; border: none; font-size: 16px; cursor: pointer; font-family: Arial, sans-serif; }
+        button:hover { background-color: #0056b3; }
+        .result-msg { margin-top: 25px; font-weight: bold; padding: 15px; display: none; }
+        .success { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; display: block; }
+        .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; display: block; }
     </style>
 </head>
 <body>
 
     <h2>Module 3 Week 1: Transit Link Configuration Syntax</h2>
-    <p>Assume you are already in interface configuration mode for interface GigabitEthernet0/1. Enter the exact commands required to execute the following administrative directives.</p>
-    <ul>
-        <li>Step 1: Hardcode the interface to operate as a transit link.</li>
-        <li>Step 2: Reassign the native untagged database to VLAN 99.</li>
-        <li>Step 3: Restrict the transit link to only permit VLAN 10, VLAN 20, and VLAN 99.</li>
-    </ul>
+    
+    <div class="instructions">
+        <p>Enter the exact Cisco IOS commands required to execute the following administrative directives based on your reading material.</p>
+        <ul style="margin-bottom: 0;">
+            <li><strong>Step 1:</strong> From interface configuration mode, hardcode the port to operate as a transit link.</li>
+            <li><strong>Step 2:</strong> From interface configuration mode, reassign the native untagged database to VLAN 99.</li>
+            <li><strong>Step 3:</strong> From interface configuration mode, restrict the transit link to only permit VLAN 10, VLAN 20, and VLAN 99.</li>
+            <li><strong>Step 4:</strong> From Privileged EXEC mode, verify the operational status of all active transit links and their allowed lists.</li>
+        </ul>
+    </div>
 
     <div class="terminal-container">
         <div>
@@ -39,6 +45,10 @@
             <span class="prompt-text">Switch(config-if)#</span>
             <input type="text" id="cmd3" autocomplete="off" spellcheck="false" placeholder="Enter Step 3 command">
         </div>
+        <div style="margin-top: 20px;">
+            <span class="prompt-text">Switch#</span>
+            <input type="text" id="cmd4" autocomplete="off" spellcheck="false" placeholder="Enter Step 4 command">
+        </div>
         <button onclick="checkSyntax()">Verify Syntax</button>
     </div>
 
@@ -46,38 +56,39 @@
 
     <script>
         function checkSyntax() {
-            // Normalize inputs: remove leading/trailing spaces and convert to lowercase
             let cmd1 = document.getElementById('cmd1').value.trim().toLowerCase();
             let cmd2 = document.getElementById('cmd2').value.trim().toLowerCase();
             let cmd3 = document.getElementById('cmd3').value.trim().toLowerCase();
+            let cmd4 = document.getElementById('cmd4').value.trim().toLowerCase();
 
-            // Define exact correct answers
             const correct1 = "switchport mode trunk";
             const correct2 = "switchport trunk native vlan 99";
-            
-            // Allow for spaces after commas in the allowed vlan list
             const correct3_optionA = "switchport trunk allowed vlan 10,20,99";
             const correct3_optionB = "switchport trunk allowed vlan 10, 20, 99";
+            const correct4 = "show interfaces trunk";
 
             let errors = [];
 
             if (cmd1 !== correct1) {
-                errors.push("Step 1 is incorrect. Check your 'switchport mode' syntax.");
+                errors.push("Step 1 is incorrect. Check your switchport mode syntax.");
             }
             if (cmd2 !== correct2) {
-                errors.push("Step 2 is incorrect. Check your 'native vlan' syntax and ensure you used VLAN 99.");
+                errors.push("Step 2 is incorrect. Check your native vlan syntax and ensure you used VLAN 99.");
             }
             if (cmd3 !== correct3_optionA && cmd3 !== correct3_optionB) {
-                errors.push("Step 3 is incorrect. Check your 'allowed vlan' syntax and ensure the list matches the prompt exactly.");
+                errors.push("Step 3 is incorrect. Check your allowed vlan syntax and ensure the list matches the prompt exactly.");
+            }
+            if (cmd4 !== correct4) {
+                errors.push("Step 4 is incorrect. Check your verification command syntax.");
             }
 
             let resultDiv = document.getElementById('syntaxResult');
             
             if (errors.length === 0) {
-                resultDiv.innerHTML = "Success! All transit link commands are syntactically correct.";
+                resultDiv.innerHTML = "Success! All transit link and verification commands are syntactically correct.";
                 resultDiv.className = "result-msg success";
             } else {
-                resultDiv.innerHTML = "Syntax Error(s) Detected:<br>" + errors.join("<br>");
+                resultDiv.innerHTML = "Syntax Errors Detected:<br><br>" + errors.join("<br>");
                 resultDiv.className = "result-msg error";
             }
         }
