@@ -52,6 +52,24 @@
             <div class="feedback" id="q3-feedback"></div>
         </div>
 
+        <div class="question-block" id="q4-container">
+            <div class="question-text">4. By default, which database identifier does Cisco hardware assign as the native segment before any administrative configuration is applied?</div>
+            <input type="radio" name="q4" value="a"> A) VLAN 99<br>
+            <input type="radio" name="q4" value="b" id="q4-correct"> B) VLAN 1<br>
+            <input type="radio" name="q4" value="c"> C) VLAN 1000<br>
+            <input type="radio" name="q4" value="d"> D) VLAN 1002<br>
+            <div class="feedback" id="q4-feedback"></div>
+        </div>
+
+        <div class="question-block" id="q5-container">
+            <div class="question-text">5. Which command must an administrator execute to view all active transit links and verify which databases are permitted to cross the physical connection?</div>
+            <input type="radio" name="q5" value="a"> A) show vlan brief<br>
+            <input type="radio" name="q5" value="b"> B) show mac address-table<br>
+            <input type="radio" name="q5" value="c"> C) show running-config<br>
+            <input type="radio" name="q5" value="d" id="q5-correct"> D) show interfaces trunk<br>
+            <div class="feedback" id="q5-feedback"></div>
+        </div>
+
         <button onclick="gradeQuiz()">Submit Answers</button>
     </div>
 
@@ -60,7 +78,7 @@
     <script>
         function gradeQuiz() {
             let score = 0;
-            const totalQuestions = 3;
+            const totalQuestions = 5;
 
             if (document.getElementById('q1-correct').checked) {
                 score++;
@@ -80,20 +98,4 @@
                 document.getElementById('q2-feedback').innerHTML = "Incorrect. Review the Native Segment and Untagged Traffic section.";
                 document.getElementById('q2-feedback').className = "feedback incorrect";
             }
-            document.getElementById('q2-feedback').style.display = "block";
-
-            if (document.getElementById('q3-correct').checked) {
-                score++;
-                document.getElementById('q3-feedback').innerHTML = "Correct. This command blocks all unapproved databases from crossing the wire.";
-                document.getElementById('q3-feedback').className = "feedback correct";
-            } else {
-                document.getElementById('q3-feedback').innerHTML = "Incorrect. Review the Cisco IOS Transit Link Configuration section.";
-                document.getElementById('q3-feedback').className = "feedback incorrect";
-            }
-            document.getElementById('q3-feedback').style.display = "block";
-
-            document.getElementById('finalScore').innerHTML = "Your Score: " + score + " / " + totalQuestions;
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('q2-feedback').style.
