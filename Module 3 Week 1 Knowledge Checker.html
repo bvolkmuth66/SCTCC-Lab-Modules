@@ -1,26 +1,99 @@
-<h3>Module 3 Week 1: 802.1Q Frame Tagging and Transit Links</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3 Week 1 Knowledge Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px auto; max-width: 800px; color: #333; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro-text { margin-bottom: 20px; font-size: 16px; }
+        .question-block { margin-bottom: 25px; padding: 20px; background-color: #f4f4f4; border-left: 5px solid #004a99; }
+        .question-text { font-weight: bold; margin-bottom: 10px; font-size: 16px; color: #333; }
+        .feedback { font-weight: bold; margin-top: 15px; display: none; padding: 12px; }
+        .correct { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .incorrect { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        input[type="radio"] { margin-right: 10px; margin-bottom: 10px; }
+        button { margin-top: 20px; padding: 12px 24px; background-color: #004a99; color: white; border: none; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #finalScore { margin-top: 30px; font-size: 22px; font-weight: bold; color: #004a99; }
+    </style>
+</head>
+<body>
 
-<h4>The Transit Link Architecture</h4>
-<p>A standard Layer 2 switchport configured as an access link can only carry traffic for a single assigned Virtual Local Area Network. When connecting multiple switches together, deploying a dedicated physical cable for every isolated database is unscalable and consumes excessive hardware resources. The <strong>IEEE 802.1Q</strong> standard resolves this limitation by allowing a single physical transit link to carry traffic for multiple broadcast domains simultaneously. Cisco networking terminology defines this transit connection as a trunk link.</p>
+    <h2>Module 3 Week 1: 802.1Q Transit Links Knowledge Check</h2>
+    <p class="intro-text">Select the correct answer for each question below and click submit to verify your understanding.</p>
 
-<h4>The 802.1Q Frame Tagging Process</h4>
-<p>To maintain logical isolation across a shared physical wire, the transmitting switch must mathematically identify the source broadcast domain of every frame before placing it on the transit link.</p>
+    <div id="quizForm">
+        <div class="question-block" id="q1-container">
+            <div class="question-text">1. What is the maximum Ethernet frame size after a transmitting switch inserts an 802.1Q tag?</div>
+            <input type="radio" name="q1" value="a"> A) 1500 bytes<br>
+            <input type="radio" name="q1" value="b"> B) 1518 bytes<br>
+            <input type="radio" name="q1" value="c" id="q1-correct"> C) 1522 bytes<br>
+            <input type="radio" name="q1" value="d"> D) 1526 bytes<br>
+            <div class="feedback" id="q1-feedback"></div>
+        </div>
 
-<p>The hardware achieves this by inserting a 4 byte tag directly into the standard Ethernet header immediately following the Source MAC Address field. This tag contains the exact numeric identifier of the originating segment. This insertion increases the maximum Ethernet frame size from 1518 bytes to 1522 bytes.</p>
+        <div class="question-block" id="q2-container">
+            <div class="question-text">2. Which database automatically processes internal control traffic that arrives on a transit link without a mathematical tag?</div>
+            <input type="radio" name="q2" value="a" id="q2-correct"> A) The Native VLAN<br>
+            <input type="radio" name="q2" value="b"> B) The Default Gateway<br>
+            <input type="radio" name="q2" value="c"> C) The Management VLAN<br>
+            <input type="radio" name="q2" value="d"> D) The Parking Lot VLAN<br>
+            <div class="feedback" id="q2-feedback"></div>
+        </div>
 
-<p>When the receiving switch processes the incoming data, it reads this numerical tag, strips the 4 byte field from the header to restore the original standard Ethernet frame, and forwards the data strictly to the ports assigned to that specific numeric identifier in its local Content Addressable Memory table.</p>
+        <div class="question-block" id="q3-container">
+            <div class="question-text">3. Which specific Cisco IOS command restricts a transit link to only carry traffic for explicitly defined logical segments?</div>
+            <input type="radio" name="q3" value="a"> A) switchport mode trunk<br>
+            <input type="radio" name="q3" value="b" id="q3-correct"> B) switchport trunk allowed vlan<br>
+            <input type="radio" name="q3" value="c"> C) switchport trunk native vlan<br>
+            <input type="radio" name="q3" value="d"> D) switchport access vlan<br>
+            <div class="feedback" id="q3-feedback"></div>
+        </div>
 
-<h4>The Native Segment and Untagged Traffic</h4>
-<p>By default, an 802.1Q transit link expects all incoming traffic to possess a mathematical tag. However, switches generate internal control traffic that lacks this tag. To process this untagged traffic, the IEEE standard utilizes a native database.</p>
+        <button onclick="gradeQuiz()">Submit Answers</button>
+    </div>
 
-<p>Any frame arriving on a transit link without an 802.1Q tag is automatically placed into this native database. By default, Cisco hardware assigns VLAN 1 as the native segment. For security compliance, administrators must manually change this native assignment from the default database to a dedicated and unused numeric identifier to prevent unauthorized access across the infrastructure.</p>
+    <div id="finalScore"></div>
 
-<h4>Cisco IOS Transit Link Configuration</h4>
-<p>To establish a transit link between infrastructure components, administrators must enter interface configuration mode and execute the following specific commands.</p>
+    <script>
+        function gradeQuiz() {
+            let score = 0;
+            const totalQuestions = 3;
 
-<ul>
-    <li><code style="color: red;">switchport mode trunk</code> : Hardcodes the physical interface to operate strictly as a transit link.</li>
-    <li><code style="color: red;">switchport trunk native vlan [ID]</code> : Reassigns the database identifier used to process untagged frames arriving on the interface.</li>
-    <li><code style="color: red;">switchport trunk allowed vlan [List]</code> : Restricts the transit link to only carry traffic for explicitly defined logical segments, blocking all unapproved databases from crossing the wire.</li>
-    <li><code style="color: red;">show interfaces trunk</code> : Displays all active transit links on the device, including their current operational status and the specific segments permitted to traverse the connection.</li>
-</ul>
+            if (document.getElementById('q1-correct').checked) {
+                score++;
+                document.getElementById('q1-feedback').innerHTML = "Correct. The 4 byte tag increases the maximum frame size to 1522 bytes.";
+                document.getElementById('q1-feedback').className = "feedback correct";
+            } else {
+                document.getElementById('q1-feedback').innerHTML = "Incorrect. Review the 802.1Q Frame Tagging Process section.";
+                document.getElementById('q1-feedback').className = "feedback incorrect";
+            }
+            document.getElementById('q1-feedback').style.display = "block";
+
+            if (document.getElementById('q2-correct').checked) {
+                score++;
+                document.getElementById('q2-feedback').innerHTML = "Correct. Untagged traffic is automatically processed by the native database.";
+                document.getElementById('q2-feedback').className = "feedback correct";
+            } else {
+                document.getElementById('q2-feedback').innerHTML = "Incorrect. Review the Native Segment and Untagged Traffic section.";
+                document.getElementById('q2-feedback').className = "feedback incorrect";
+            }
+            document.getElementById('q2-feedback').style.display = "block";
+
+            if (document.getElementById('q3-correct').checked) {
+                score++;
+                document.getElementById('q3-feedback').innerHTML = "Correct. This command blocks all unapproved databases from crossing the wire.";
+                document.getElementById('q3-feedback').className = "feedback correct";
+            } else {
+                document.getElementById('q3-feedback').innerHTML = "Incorrect. Review the Cisco IOS Transit Link Configuration section.";
+                document.getElementById('q3-feedback').className = "feedback incorrect";
+            }
+            document.getElementById('q3-feedback').style.display = "block";
+
+            document.getElementById('finalScore').innerHTML = "Your Score: " + score + " / " + totalQuestions;
+        }
+    </script>
+</body>
+</html>
