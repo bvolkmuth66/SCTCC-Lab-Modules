@@ -1,0 +1,26 @@
+<h3>Module 3 Week 1: 802.1Q Frame Tagging and Transit Links</h3>
+
+<h4>The Transit Link Architecture</h4>
+<p>A standard Layer 2 switchport configured as an access link can only carry traffic for a single assigned Virtual Local Area Network. When connecting multiple switches together, deploying a dedicated physical cable for every isolated database is unscalable and consumes excessive hardware resources. The <strong>IEEE 802.1Q</strong> standard resolves this limitation by allowing a single physical transit link to carry traffic for multiple broadcast domains simultaneously. Cisco networking terminology defines this transit connection as a trunk link.</p>
+
+<h4>The 802.1Q Frame Tagging Process</h4>
+<p>To maintain logical isolation across a shared physical wire, the transmitting switch must mathematically identify the source broadcast domain of every frame before placing it on the transit link.</p>
+
+<p>The hardware achieves this by inserting a 4 byte tag directly into the standard Ethernet header immediately following the Source MAC Address field. This tag contains the exact numeric identifier of the originating segment. This insertion increases the maximum Ethernet frame size from 1518 bytes to 1522 bytes.</p>
+
+<p>When the receiving switch processes the incoming data, it reads this numerical tag, strips the 4 byte field from the header to restore the original standard Ethernet frame, and forwards the data strictly to the ports assigned to that specific numeric identifier in its local Content Addressable Memory table.</p>
+
+<h4>The Native Segment and Untagged Traffic</h4>
+<p>By default, an 802.1Q transit link expects all incoming traffic to possess a mathematical tag. However, switches generate internal control traffic that lacks this tag. To process this untagged traffic, the IEEE standard utilizes a native database.</p>
+
+<p>Any frame arriving on a transit link without an 802.1Q tag is automatically placed into this native database. By default, Cisco hardware assigns VLAN 1 as the native segment. For security compliance, administrators must manually change this native assignment from the default database to a dedicated and unused numeric identifier to prevent unauthorized access across the infrastructure.</p>
+
+<h4>Cisco IOS Transit Link Configuration</h4>
+<p>To establish a transit link between infrastructure components, administrators must enter interface configuration mode and execute the following specific commands.</p>
+
+<ul>
+    <li><code style="color: red;">switchport mode trunk</code> : Hardcodes the physical interface to operate strictly as a transit link.</li>
+    <li><code style="color: red;">switchport trunk native vlan [ID]</code> : Reassigns the database identifier used to process untagged frames arriving on the interface.</li>
+    <li><code style="color: red;">switchport trunk allowed vlan [List]</code> : Restricts the transit link to only carry traffic for explicitly defined logical segments, blocking all unapproved databases from crossing the wire.</li>
+    <li><code style="color: red;">show interfaces trunk</code> : Displays all active transit links on the device, including their current operational status and the specific segments permitted to traverse the connection.</li>
+</ul>
