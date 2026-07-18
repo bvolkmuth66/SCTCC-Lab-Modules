@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntax Practice: Subinterface Encapsulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 20px;
+        }
+        .container {
+            border: 2px solid #004a99;
+            padding: 20px;
+            max-width: 600px;
+            background-color: #f9f9f9;
+        }
+        h3 {
+            color: #004a99;
+            margin-top: 0;
+        }
+        .terminal {
+            background-color: #000000;
+            color: #00ff00;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 15px;
+        }
+        .terminal input {
+            background-color: #000000;
+            color: #00ff00;
+            border: none;
+            outline: none;
+            border-bottom: 1px solid #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            width: 250px;
+        }
+        button {
+            background-color: #004a99;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #feedbackMessage {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Syntax Practice: Subinterface Encapsulation</h3>
+    <p>You are configuring logical subinterface 10. Enter the exact Cisco IOS command to define the 802.1Q encapsulation protocol and assign it to database 10.</p>
+    
+    <div class="terminal">
+        Router(config)# interface GigabitEthernet0/0.10<br>
+        Router(config-subif)# <input type="text" id="commandInput" autocomplete="off" spellcheck="false">
+    </div>
+    
+    <button onclick="checkSyntax()">Verify Syntax</button>
+    
+    <p id="feedbackMessage"></p>
+</div>
+
+<script>
+    function checkSyntax() {
+        var userInput = document.getElementById("commandInput").value.trim().toLowerCase();
+        var feedback = document.getElementById("feedbackMessage");
+        
+        if (userInput === "encapsulation dot1q 10") {
+            feedback.style.color = "green";
+            feedback.innerText = "Correct. The subinterface is now configured to process tags for database 10.";
+        } else {
+            feedback.style.color = "red";
+            feedback.innerText = "Incorrect. Review the required protocol and database identifier.";
+        }
+    }
+</script>
+
+</body>
+</html>
