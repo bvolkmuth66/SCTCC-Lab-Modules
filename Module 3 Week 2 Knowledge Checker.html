@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Assessment: Layer 3 Architecture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 20px;
+        }
+        .container {
+            border: 2px solid #004a99;
+            padding: 20px;
+            max-width: 800px;
+            background-color: #f9f9f9;
+        }
+        h3 {
+            color: #004a99;
+            margin-top: 0;
+        }
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #cccccc;
+        }
+        .question-block:last-child {
+            border-bottom: none;
+        }
+        button {
+            background-color: #e6e6e6;
+            color: #333333;
+            border: 1px solid #999999;
+            padding: 8px 15px;
+            margin: 5px 0;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: left;
+        }
+        button:hover {
+            background-color: #d9d9d9;
+        }
+        .feedback {
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Module 3 Week 2: Knowledge Assessment</h3>
+
+    <div class="question-block" id="q1">
+        <p><strong>Question 1:</strong> What is the primary physical hardware limitation that the Router on a Stick architecture resolves?</p>
+        <button onclick="checkAnswer('q1', false, this)">A. Routers lack the memory capacity to store multiple routing tables.</button>
+        <button onclick="checkAnswer('q1', true, this)">B. Allocating a physical router interface for every isolated subnet exhausts available ports.</button>
+        <button onclick="checkAnswer('q1', false, this)">C. Switches cannot forward frames without a dedicated internal hardware router.</button>
+        <button onclick="checkAnswer('q1', false, this)">D. Endpoints require a dynamic routing protocol to reach a default gateway.</button>
+        <p class="feedback"></p>
+    </div>
+
+    <div class="question-block" id="q2">
+        <p><strong>Question 2:</strong> Which component does a Multilayer switch utilize to route packets internally without relying on external routing hardware?</p>
+        <button onclick="checkAnswer('q2', false, this)">A. Logical subinterfaces on a trunk link</button>
+        <button onclick="checkAnswer('q2', false, this)">B. A dedicated physical management port</button>
+        <button onclick="checkAnswer('q2', true, this)">C. A Switch Virtual Interface</button>
+        <button onclick="checkAnswer('q2', false, this)">D. An external default gateway</button>
+        <p class="feedback"></p>
+    </div>
+
+    <div class="question-block" id="q3">
+        <p><strong>Question 3:</strong> When configuring a Router on a Stick topology, which command is strictly required on the router subinterface before assigning an IP address?</p>
+        <button onclick="checkAnswer('q3', false, this)">A. ip routing</button>
+        <button onclick="checkAnswer('q3', false, this)">B. switchport mode trunk</button>
+        <button onclick="checkAnswer('q3', false, this)">C. interface vlan 10</button>
+        <button onclick="checkAnswer('q3', true, this)">D. encapsulation dot1Q</button>
+        <p class="feedback"></p>
+    </div>
+
+</div>
+
+<script>
+    function checkAnswer(questionId, isCorrect, btnElement) {
+        var block = document.getElementById(questionId);
+        var feedback = block.querySelector('.feedback');
+        var buttons = block.querySelectorAll('button');
+        
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+            buttons[i].style.opacity = "0.6";
+        }
+        
+        btnElement.style.opacity = "1";
+        feedback.style.display = "block";
+        
+        if (isCorrect) {
+            btnElement.style.backgroundColor = "#ccffcc";
+            btnElement.style.border = "1px solid #009900";
+            feedback.style.color = "green";
+            feedback.innerText = "Correct.";
+        } else {
+            btnElement.style.backgroundColor = "#ffcccc";
+            btnElement.style.border = "1px solid #cc0000";
+            feedback.style.color = "red";
+            feedback.innerText = "Incorrect. Please review the reading material and try again.";
+        }
+    }
+</script>
+
+</body>
+</html>
