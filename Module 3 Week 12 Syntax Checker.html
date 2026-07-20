@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3 Week 2 Syntax Practice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 20px auto;
+            max-width: 700px;
+            padding: 20px;
+        }
+        .container {
+            border: 2px solid #004a99;
+            padding: 25px;
+            background-color: #f9f9f9;
+        }
+        h3 {
+            color: #004a99;
+            margin-top: 0;
+            border-bottom: 2px solid #004a99;
+            padding-bottom: 10px;
+            font-size: 24px;
+        }
+        p {
+            color: #333333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .terminal {
+            background-color: #000000;
+            color: #00ff00;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .terminal input {
+            background-color: #000000;
+            color: #00ff00;
+            border: none;
+            outline: none;
+            border-bottom: 1px solid #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            width: 300px;
+        }
+        button {
+            background-color: #004a99;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #003366;
+        }
+        #feedbackMessage {
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Syntax Practice: Subinterface Encapsulation</h3>
+    <p>You are configuring logical subinterface 10 for the Router on a Stick architecture. Enter the exact Cisco IOS command to define the 802.1Q encapsulation protocol and assign it to database 10.</p>
+    
+    <div class="terminal">
+        Router(config)# interface GigabitEthernet0/0.10<br>
+        Router(config-subif)# <input type="text" id="commandInput" autocomplete="off" spellcheck="false">
+    </div>
+    
+    <button onclick="checkSyntax()">Verify Syntax</button>
+    
+    <p id="feedbackMessage"></p>
+</div>
+
+<script>
+    function checkSyntax() {
+        var userInput = document.getElementById("commandInput").value.trim().toLowerCase();
+        var feedback = document.getElementById("feedbackMessage");
+        
+        if (userInput === "encapsulation dot1q 10") {
+            feedback.style.color = "#009900";
+            feedback.innerText = "Verification Successful. The logical subinterface is now configured to process 802.1Q tags for database 10.";
+        } else {
+            feedback.style.color = "#cc0000";
+            feedback.innerText = "Syntax Error. Please review the required protocol and numeric identifier, then try again.";
+        }
+    }
+    
+    document.getElementById("commandInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            checkSyntax();
+        }
+    });
+</script>
+
+</body>
+</html>
