@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Module 4 Week 1 Knowledge Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; }
+        .quiz-container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .question { font-weight: bold; margin-top: 20px; color: #0056b3; }
+        .options { margin-top: 10px; }
+        .options label { display: block; margin-bottom: 8px; background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .options label:hover { background: #e9e9e9; }
+        button { background: #004a99; color: #fff; border: none; padding: 10px 20px; margin-top: 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #003366; }
+        #result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Module 4 Week 1 Knowledge Check</h1>
+    <p>Select the correct answer for each question regarding STP, PVST+, and dual stack management.</p>
+    
+    <div id="quiz"></div>
+    <button onclick="calculateScore()">Submit Answers</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "What components make up the Bridge ID in a Per VLAN Spanning Tree Plus environment?",
+            a: "Bridge Priority, Extended System ID (VLAN ID), and MAC Address",
+            b: "IP Address, Subnet Mask, and Default Gateway",
+            c: "Root Cost, Port ID, and Designated Bridge",
+            d: "Bridge Priority and IP Address only",
+            correct: "a"
+        },
+        {
+            q: "Which command explicitly enables Rapid PVST+ on a Cisco Catalyst switch?",
+            a: "spanning-tree mode pvst",
+            b: "spanning-tree rapid",
+            c: "spanning-tree mode rapid-pvst",
+            d: "enable spanning-tree 802.1w",
+            correct: "c"
+        },
+        {
+            q: "What is the operational function of the spanning-tree portfast command?",
+            a: "It disables spanning tree completely on the interface.",
+            b: "It instantly transitions the port to a forwarding state by bypassing listening and learning phases.",
+            c: "It configures the port as a trunk link.",
+            d: "It forces the port to become the root port.",
+            correct: "b"
+        },
+        {
+            q: "What does the macro command 'spanning-tree vlan 10 root primary' do to the bridge priority if the default is 32768?",
+            a: "It raises the priority to 65535.",
+            b: "It sets the priority to exactly 0.",
+            c: "It lowers the priority to 24576 or lower to win the root bridge election.",
+            d: "It changes the MAC address of the switch.",
+            correct: "c"
+        },
+        {
+            q: "Which global configuration command is required to allow a Cisco switch to forward IPv6 packets?",
+            a: "ipv6 enable",
+            b: "ipv6 unicast-routing",
+            c: "ip routing ipv6",
+            d: "sdm prefer ipv6",
+            correct: "b"
+        }
+    ];
+
+    const quizDiv = document.getElementById('quiz');
+    
+    questions.forEach((question, index) => {
+        let html = `<div class="question">${index + 1}. ${question.q}</div>`;
+        html += `<div class="options">`;
+        ['a', 'b', 'c', 'd'].forEach(option => {
+            html += `<label><input type="radio" name="q${index}" value="${option}"> ${option.toUpperCase()}) ${question[option]}</label>`;
+        });
+        html += `</div>`;
+        quizDiv.innerHTML += html;
+    });
+
+    function calculateScore() {
+        let score = 0;
+        questions.forEach((question, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected && selected.value === question.correct) {
+                score++;
+            }
+        });
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `You scored ${score} out of ${questions.length}.`;
+        if (score === questions.length) {
+            resultDiv.style.color = "green";
+        } else {
+            resultDiv.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
