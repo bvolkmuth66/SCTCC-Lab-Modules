@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4 Week 2 Formative Knowledge Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #004a99;
+            border-bottom: 2px solid #004a99;
+            padding-bottom: 10px;
+        }
+        .question {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .options {
+            margin-bottom: 20px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #004a99;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #003366;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Module 4 Week 2: EtherChannel Knowledge Check</h1>
+    <div id="quiz"></div>
+    <button id="submit">Submit Answers</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "1. Which protocol is the open standard defined by IEEE 802.3ad for dynamic link aggregation?",
+            a: "Port Aggregation Protocol",
+            b: "Link Aggregation Control Protocol",
+            c: "Spanning Tree Protocol",
+            d: "Rapid Per VLAN Spanning Tree Plus",
+            correct: "b"
+        },
+        {
+            question: "2. What is the result of configuring one end of an interface link as passive and the opposing end as passive?",
+            a: "The logical port channel will form successfully.",
+            b: "The switches will generate a broadcast storm.",
+            c: "The logical port channel will fail to negotiate and remain down.",
+            d: "The physical interfaces will transition to an errdisabled state.",
+            correct: "c"
+        },
+        {
+            question: "3. When executing the command to verify the bundle summary, what does the status flag SU indicate?",
+            a: "Suspended and Unusable",
+            b: "Layer 2 switchport and in use",
+            c: "Layer 3 routed port and up",
+            d: "Standalone and Unbundled",
+            correct: "b"
+        },
+        {
+            question: "4. Which configuration parameters must be identical across all physical interfaces prior to bundling?",
+            a: "Interface descriptions and media access control addresses",
+            b: "Spanning tree priorities and portfast settings",
+            c: "Speed, duplex, and allowed Virtual Local Area Networks",
+            d: "IPv4 and IPv6 management addresses",
+            correct: "c"
+        }
+    ];
+
+    const quiz = document.getElementById('quiz');
+    const resultElement = document.getElementById('result');
+    const submitButton = document.getElementById('submit');
+
+    function loadQuiz() {
+        let quizHTML = '';
+        quizData.forEach((currentQuizData, index) => {
+            quizHTML += `
+                <div class="question">${currentQuizData.question}</div>
+                <div class="options">
+                    <label><input type="radio" name="q${index}" value="a"> A) ${currentQuizData.a}</label>
+                    <label><input type="radio" name="q${index}" value="b"> B) ${currentQuizData.b}</label>
+                    <label><input type="radio" name="q${index}" value="c"> C) ${currentQuizData.c}</label>
+                    <label><input type="radio" name="q${index}" value="d"> D) ${currentQuizData.d}</label>
+                </div>
+            `;
+        });
+        quiz.innerHTML = quizHTML;
+    }
+
+    function calculateResults() {
+        let score = 0;
+        quizData.forEach((currentQuizData, index) => {
+            const answerContainer = document.querySelector(`input[name="q${index}"]:checked`);
+            if (answerContainer && answerContainer.value === currentQuizData.correct) {
+                score++;
+            }
+        });
+        resultElement.innerHTML = `You scored ${score} out of ${quizData.length}.`;
+        if(score === quizData.length) {
+            resultElement.style.color = 'green';
+        } else {
+            resultElement.style.color = 'red';
+        }
+    }
+
+    submitButton.addEventListener('click', calculateResults);
+    loadQuiz();
+</script>
+
+</body>
+</html>
