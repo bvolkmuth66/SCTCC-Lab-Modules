@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4 Week 2 Command Syntax Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .terminal-container {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #004a99;
+            border-bottom: 2px solid #004a99;
+            padding-bottom: 10px;
+        }
+        .instruction {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+        .prompt {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            flex-grow: 1;
+            outline: none;
+        }
+        #feedback {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff3333; }
+        .completed {
+            color: #00ff00;
+            font-size: 18px;
+            margin-top: 20px;
+            border-top: 1px solid #00ff00;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Module 4 Week 2: LACP Configuration Syntax Checker</h1>
+
+<div class="terminal-container">
+    <div id="instruction" class="instruction"></div>
+    <div class="input-line">
+        <span id="cli-prompt" class="prompt">Switch#</span>
+        <input type="text" id="command-input" autocomplete="off" spellcheck="false" autofocus>
+    </div>
+    <div id="feedback"></div>
+</div>
+
+<script>
+    const syntaxTasks = [
+        {
+            instruction: "Step 1: Transition the session into global configuration mode.",
+            prompt: "Switch#",
+            answer: "configure terminal"
+        },
+        {
+            instruction: "Step 2: Enter the configuration mode for Gigabit Ethernet ports 1 and 2 simultaneously.",
+            prompt: "Switch(config)#",
+            answer: "interface range GigabitEthernet0/1 - 2"
+        },
+        {
+            instruction: "Step 3: Bind the interfaces to group 1 and actively initiate LACP negotiation.",
+            prompt: "Switch(config-if-range)#",
+            answer: "channel-group 1 mode active"
+        },
+        {
+            instruction: "Step 4: Return to the global configuration context.",
+            prompt: "Switch(config-if-range)#",
+            answer: "exit"
+        },
+        {
+            instruction: "Step 5: Enter the configuration context for the newly created logical aggregate interface 1.",
+            prompt: "Switch(config)#",
+            answer: "interface port-channel 1"
+        },
+        {
+            instruction: "Step 6: Enforce a static 802.1Q trunking state on the logical aggregate interface.",
+            prompt: "Switch(config-if)#",
+            answer: "switchport mode trunk"
+        },
+        {
+            instruction: "Step 7: Return directly to the privileged execution mode.",
+            prompt: "Switch(config-if)#",
+            answer: "end"
+        },
+        {
+            instruction: "Step 8: Display the aggregate status codes for the logical bundle and member physical interfaces.",
+            prompt: "Switch#",
+            answer: "show etherchannel summary"
+        }
+    ];
+
+    let currentStep = 0;
+    const instructionEl = document.getElementById('instruction');
+    const cliPromptEl = document.getElementById('cli-prompt');
+    const commandInput = document.getElementById('command-input');
+    const feedbackEl = document.getElementById('feedback');
+
+    function loadStep() {
+        if (currentStep < syntaxTasks.length) {
+            instructionEl.textContent = syntaxTasks[currentStep].instruction;
+            cliPromptEl.textContent = syntaxTasks[currentStep].prompt;
+            commandInput.value = '';
+            feedbackEl.textContent = '';
+            commandInput.focus();
+        } else {
+            instructionEl.textContent = "Syntax verification complete. You may return to the learning module.";
+            cliPromptEl.style.display = 'none';
+            commandInput.style.display = 'none';
+            feedbackEl.innerHTML = '<span class="completed">100% Verification Score Achieved!</span>';
+        }
+    }
+
+    commandInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const userInput = commandInput.value.trim();
+            const correctAnswer = syntaxTasks[currentStep].answer;
+
+            if (userInput.toLowerCase() === correctAnswer.toLowerCase()) {
+                feedbackEl.textContent = "Command Accepted.";
+                feedbackEl.className = "success";
+                currentStep++;
+                setTimeout(loadStep, 1000);
+            } else {
+                feedbackEl.textContent = "Syntax Error. Please try again.";
+                feedbackEl.className = "error";
+            }
+        }
+    });
+
+    loadStep();
+</script>
+
+</body>
+</html>
