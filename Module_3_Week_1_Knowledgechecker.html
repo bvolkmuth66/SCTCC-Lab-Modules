@@ -1,113 +1,71 @@
-<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Module_3_Week_1_Knowledgechecker</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h2>Module_3_Week_1_Knowledgechecker</h2>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. What is the primary operational purpose of the Spanning Tree Protocol?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" value="a"> To dynamically route packets between isolated broadcast domains.</li>
+                <li><input type="radio" name="q1" value="b"> To prevent broadcast storms by blocking redundant physical paths.</li>
+                <li><input type="radio" name="q1" value="c"> To encrypt administrative command line traffic traversing the network.</li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. Which command instructs the hardware to utilize the Rapid Spanning Tree Protocol?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" value="a"> spanning-tree mode rapid-pvst</li>
+                <li><input type="radio" name="q2" value="b"> switchport mode trunk</li>
+                <li><input type="radio" name="q2" value="c"> spanning-tree vlan 10 root primary</li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Why must administrators deploy Bridge Protocol Data Unit Guard on access ports?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" value="a"> To disable the physical interface if an unauthorized switch attempts to alter the logical topology.</li>
+                <li><input type="radio" name="q3" value="b"> To bypass the listening and learning states for faster endpoint device connectivity.</li>
+                <li><input type="radio" name="q3" value="c"> To automatically calculate the lowest physical MAC address for the root bridge election.</li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result"></div>
+    </div>
 
-<h1 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px;">Module 3 Week 1: Spanning Tree Protocol</h1>
+    <script>
+        function gradeQuiz() {
+            let score = 0;
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
 
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">1. Introduction</h2>
-<p style="margin-bottom: 15px;">This module establishes the core competencies required to deploy Layer 2 redundancy without creating destructive traffic loops on Cisco Catalyst hardware. Network administrators must understand how to interconnect multiple switches for hardware fault tolerance while ensuring only a single active data path exists at any given time. This module covers the root bridge election process, port state transitions, the activation of Rapid Spanning Tree Protocol, and the implementation of edge port optimizations including PortFast and Bridge Protocol Data Unit Guard.</p>
+            if (q1 && q1.value === 'b') score++;
+            if (q2 && q2.value === 'a') score++;
+            if (q3 && q3.value === 'a') score++;
 
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">2. Real World Scenario: Securing the Campus Core Redundancy</h2>
-<p style="margin-bottom: 15px;">A network administrator at St. Cloud Technical & Community College must upgrade the distribution switches in the main academic building to ensure network availability during hardware failures. The administrator connects multiple redundant physical cables between the primary and secondary distribution switches. Without intervention, these redundant links will create a broadcast storm where untagged broadcast frames circulate infinitely, instantly consuming all available bandwidth and crashing the campus network.</p>
-<p style="margin-bottom: 15px;">To mitigate this catastrophic failure, the administrator must implement the Spanning Tree Protocol. This requires configuring a deterministic root bridge election by modifying bridge priorities, upgrading the default protocol to Rapid Spanning Tree Protocol to decrease convergence times, and securing the edge access ports with PortFast and Bridge Protocol Data Unit Guard to prevent unauthorized rogue switches from disrupting the logical topology.</p>
-
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">3. Supplementary Instructional Video Resources</h2>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><strong>Context:</strong> This video demonstrates the theoretical root bridge election process and the calculation of spanning tree path costs based on interface bandwidth.</li>
-<li style="margin-bottom: 8px;"><strong>Context:</strong> A technical walkthrough detailing the configuration of Rapid Spanning Tree Protocol and the deployment of PortFast on end user access ports.</li>
-</ul>
-
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">4. Domain Specific Definitions</h2>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><strong>Spanning Tree Protocol:</strong> A network protocol that builds a loop free logical topology for Ethernet networks by blocking redundant physical paths.</li>
-<li style="margin-bottom: 8px;"><strong>Root Bridge:</strong> The central reference switch within a spanning tree topology that serves as the focal point for all path cost calculations.</li>
-<li style="margin-bottom: 8px;"><strong>Bridge Protocol Data Unit:</strong> A multicast data frame utilized by switches to exchange spanning tree topology information and elect the root bridge.</li>
-<li style="margin-bottom: 8px;"><strong>Rapid Spanning Tree Protocol:</strong> An evolved standard that significantly reduces the time required for a network to converge and restore connectivity after a topology change.</li>
-<li style="margin-bottom: 8px;"><strong>PortFast:</strong> A Cisco proprietary optimization that bypasses standard listening and learning port states to immediately transition an access interface to a forwarding state.</li>
-</ul>
-
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">5. Core Operational Concepts and Configuration Architecture</h2>
-<p style="margin-bottom: 15px;">To systematically build a redundant and loop free physical infrastructure, an administrator must execute configurations that modify the dynamic spanning tree algorithm. The detailed operational breakdown of these components, their explicit technical purpose, and the corresponding Cisco IOS commands are detailed below.</p>
-
-<p style="margin-bottom: 15px;"><strong>A. Root Bridge Election and Priority Manipulation</strong><br>
-By default, switches elect the root bridge based on the lowest Bridge Protocol Data Unit priority value, followed by the lowest physical MAC address. Relying on the default priority value is a critical operational risk, as the oldest hardware with the lowest MAC address will become the root bridge. Administrators must manually configure the primary distribution switch with the lowest priority value to force a deterministic election.</p>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree vlan 10 priority 4096</span> : Modifies the bridge priority for a specific segment to force the hardware to become the root bridge.</li>
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree vlan 10 root primary</span> : A macro command that automatically calculates and applies a priority value lower than the current active root bridge.</li>
-</ul>
-
-<p style="margin-bottom: 15px;"><strong>B. Rapid Spanning Tree Protocol Activation</strong><br>
-Legacy Spanning Tree Protocol requires up to 50 seconds to converge and restore data flow after a link failure. Rapid Spanning Tree Protocol reduces this convergence time to milliseconds. Administrators must globally activate this modern protocol across all interconnected hardware to ensure high availability and minimize disruption to campus network traffic.</p>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree mode rapid-pvst</span> : Globally changes the operational mode of the switch to utilize Rapid Per VLAN Spanning Tree.</li>
-</ul>
-
-<p style="margin-bottom: 15px;"><strong>C. Edge Port Optimization</strong><br>
-Standard spanning tree port states intentionally delay port activation to verify that a loop does not exist. This delay causes problems for standard endpoint devices like Windows laptops or IP phones relying on Dynamic Host Configuration Protocol. Administrators deploy PortFast on access ports to bypass the listening and learning states, transitioning the port immediately to a forwarding state. This configuration must only be applied to ports connecting to endpoint devices and never to transit links between switches.</p>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree portfast</span> : Interface configuration command that immediately transitions an access port to the forwarding state.</li>
-</ul>
-
-<p style="margin-bottom: 15px;"><strong>D. Layer 2 Topology Security</strong><br>
-When PortFast is enabled on an access port, a severe vulnerability exists. If a student connects a rogue switch to that access port, it could transmit a Bridge Protocol Data Unit with a lower priority, hijacking the root bridge election and intercepting all campus traffic. To prevent this, administrators must deploy Bridge Protocol Data Unit Guard on all PortFast enabled interfaces. If the port receives a spanning tree control frame, the hardware immediately places the port into an error disabled state, isolating the threat.</p>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree bpduguard enable</span> : Interface configuration command that actively monitors an edge port for unauthorized spanning tree control frames.</li>
-</ul>
-
-<p style="margin-bottom: 15px;"><strong>E. Topology Verification and Diagnostics</strong><br>
-Administrators must systematically verify the spanning tree topology to ensure the root bridge election succeeded and redundant links are actively blocking loops.</p>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show spanning-tree</span> : Displays the complete spanning tree topology and port states.</li>
-<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show spanning-tree vlan 10</span> : Filters the output to display the spanning tree topology strictly for the specified isolated segment database.</li>
-</ul>
-
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">6. Cisco IOS Command Reference Matrix</h2>
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left;">
-<caption style="caption-side: bottom; text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Description: This matrix details the specific Cisco IOS command syntax, execution mode, and operational purpose for configuring the Spanning Tree Protocol.</caption>
-<thead>
-<tr>
-<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;">Full Command Syntax</th>
-<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;">Mode</th>
-<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;">Operational Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree mode rapid-pvst</span></td>
-<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
-<td style="border: 1px solid #ddd; padding: 10px;">Changes the operational mode to Rapid Per VLAN Spanning Tree</td>
-</tr>
-<tr style="background-color: #f9f9f9;">
-<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree vlan [ID] root primary</span></td>
-<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
-<td style="border: 1px solid #ddd; padding: 10px;">Automatically adjusts bridge priority to force root bridge election</td>
-</tr>
-<tr>
-<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree vlan [ID] priority [Value]</span></td>
-<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
-<td style="border: 1px solid #ddd; padding: 10px;">Manually defines the spanning tree bridge priority</td>
-</tr>
-<tr style="background-color: #f9f9f9;">
-<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree portfast</span></td>
-<td style="border: 1px solid #ddd; padding: 10px;">Interface Config</td>
-<td style="border: 1px solid #ddd; padding: 10px;">Bypasses listening and learning states on an access port</td>
-</tr>
-<tr>
-<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">spanning-tree bpduguard enable</span></td>
-<td style="border: 1px solid #ddd; padding: 10px;">Interface Config</td>
-<td style="border: 1px solid #ddd; padding: 10px;">Places the interface into an error disabled state if a spanning tree frame is received</td>
-</tr>
-<tr style="background-color: #f9f9f9;">
-<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show spanning-tree</span></td>
-<td style="border: 1px solid #ddd; padding: 10px;">Privileged EXEC</td>
-<td style="border: 1px solid #ddd; padding: 10px;">Displays the complete spanning tree topology and port states</td>
-</tr>
-</tbody>
-</table>
-
-<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">7. Interactive Formative Checkers</h2>
-<p style="margin-bottom: 15px;">To verify your conceptual comprehension and command line entry speed before participating in the weekly summative lab assessment, complete the following ungraded interactive practice tools. You must complete both the theoretical knowledge check and the sequential syntax verification tool.</p>
-<ul style="margin-bottom: 15px;">
-<li style="margin-bottom: 8px;"><strong>Launch Module_3_Week_1_Knowledgechecker</strong> to verify your understanding of the root bridge election and Rapid Spanning Tree Protocol convergence.</li>
-<li style="margin-bottom: 8px;"><strong>Launch Module_3_Week_1_Syntaxchecker</strong> to execute sequential root bridge assignments and edge port security configurations. Return to this module page once you have achieved a 100 percent verification score.</li>
-</ul>
-
-</div>
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "You scored " + score + " out of 3.";
+            if (score === 3) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+        }
+    </script>
+</body>
+</html>
