@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Module_3_Week_1_Knowledgechecker</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h2>Module_3_Week_1_Knowledgechecker</h2>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. What is the primary operational purpose of the Spanning Tree Protocol?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" value="a"> To dynamically route packets between isolated broadcast domains.</li>
+                <li><input type="radio" name="q1" value="b"> To prevent broadcast storms by blocking redundant physical paths.</li>
+                <li><input type="radio" name="q1" value="c"> To encrypt administrative command line traffic traversing the network.</li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. Which command instructs the hardware to utilize the Rapid Spanning Tree Protocol?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" value="a"> spanning-tree mode rapid-pvst</li>
+                <li><input type="radio" name="q2" value="b"> switchport mode trunk</li>
+                <li><input type="radio" name="q2" value="c"> spanning-tree vlan 10 root primary</li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Why must administrators deploy Bridge Protocol Data Unit Guard on access ports?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" value="a"> To disable the physical interface if an unauthorized switch attempts to alter the logical topology.</li>
+                <li><input type="radio" name="q3" value="b"> To bypass the listening and learning states for faster endpoint device connectivity.</li>
+                <li><input type="radio" name="q3" value="c"> To automatically calculate the lowest physical MAC address for the root bridge election.</li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function gradeQuiz() {
+            let score = 0;
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+
+            if (q1 && q1.value === 'b') score++;
+            if (q2 && q2.value === 'a') score++;
+            if (q3 && q3.value === 'a') score++;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "You scored " + score + " out of 3.";
+            if (score === 3) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+        }
+    </script>
+</body>
+</html>
