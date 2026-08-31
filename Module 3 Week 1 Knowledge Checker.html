@@ -2,100 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 3 Week 1 Knowledge Check</title>
+    <title>Module_3_Week_1_Knowledgechecker</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px auto; max-width: 800px; color: #333; }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
         h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
-        .intro-text { margin-bottom: 20px; font-size: 16px; }
-        .question-block { margin-bottom: 25px; padding: 20px; background-color: #f4f4f4; border-left: 5px solid #004a99; }
-        .question-text { font-weight: bold; margin-bottom: 10px; font-size: 16px; color: #333; }
-        .feedback { font-weight: bold; margin-top: 15px; display: none; padding: 12px; }
-        .correct { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
-        .incorrect { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
-        input[type="radio"] { margin-right: 10px; margin-bottom: 10px; }
-        button { margin-top: 20px; padding: 12px 24px; background-color: #004a99; color: white; border: none; font-size: 16px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        #finalScore { margin-top: 30px; font-size: 22px; font-weight: bold; color: #004a99; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
-
-    <h2>Module 3 Week 1: 802.1Q Transit Links Knowledge Check</h2>
-    <p class="intro-text">Select the correct answer for each question below and click submit to verify your understanding.</p>
-
-    <div id="quizForm">
-        <div class="question-block" id="q1-container">
-            <div class="question-text">1. What is the maximum Ethernet frame size after a transmitting switch inserts an 802.1Q tag?</div>
-            <input type="radio" name="q1" value="a"> A) 1500 bytes<br>
-            <input type="radio" name="q1" value="b"> B) 1518 bytes<br>
-            <input type="radio" name="q1" value="c" id="q1-correct"> C) 1522 bytes<br>
-            <input type="radio" name="q1" value="d"> D) 1526 bytes<br>
-            <div class="feedback" id="q1-feedback"></div>
+    <h2>Module_3_Week_1_Knowledgechecker</h2>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. What is the primary operational purpose of the Spanning Tree Protocol?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" value="a"> To dynamically route packets between isolated broadcast domains.</li>
+                <li><input type="radio" name="q1" value="b"> To prevent broadcast storms by blocking redundant physical paths.</li>
+                <li><input type="radio" name="q1" value="c"> To encrypt administrative command line traffic traversing the network.</li>
+            </ul>
         </div>
-
-        <div class="question-block" id="q2-container">
-            <div class="question-text">2. Which database automatically processes internal control traffic that arrives on a transit link without a mathematical tag?</div>
-            <input type="radio" name="q2" value="a" id="q2-correct"> A) The Native VLAN<br>
-            <input type="radio" name="q2" value="b"> B) The Default Gateway<br>
-            <input type="radio" name="q2" value="c"> C) The Management VLAN<br>
-            <input type="radio" name="q2" value="d"> D) The Parking Lot VLAN<br>
-            <div class="feedback" id="q2-feedback"></div>
+        <div class="question">
+            <p><strong>2. Which command instructs the hardware to utilize the Rapid Spanning Tree Protocol?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" value="a"> spanning-tree mode rapid-pvst</li>
+                <li><input type="radio" name="q2" value="b"> switchport mode trunk</li>
+                <li><input type="radio" name="q2" value="c"> spanning-tree vlan 10 root primary</li>
+            </ul>
         </div>
-
-        <div class="question-block" id="q3-container">
-            <div class="question-text">3. Which specific Cisco IOS command restricts a transit link to only carry traffic for explicitly defined logical segments?</div>
-            <input type="radio" name="q3" value="a"> A) switchport mode trunk<br>
-            <input type="radio" name="q3" value="b" id="q3-correct"> B) switchport trunk allowed vlan<br>
-            <input type="radio" name="q3" value="c"> C) switchport trunk native vlan<br>
-            <input type="radio" name="q3" value="d"> D) switchport access vlan<br>
-            <div class="feedback" id="q3-feedback"></div>
+        <div class="question">
+            <p><strong>3. Why must administrators deploy Bridge Protocol Data Unit Guard on access ports?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" value="a"> To disable the physical interface if an unauthorized switch attempts to alter the logical topology.</li>
+                <li><input type="radio" name="q3" value="b"> To bypass the listening and learning states for faster endpoint device connectivity.</li>
+                <li><input type="radio" name="q3" value="c"> To automatically calculate the lowest physical MAC address for the root bridge election.</li>
+            </ul>
         </div>
-
-        <div class="question-block" id="q4-container">
-            <div class="question-text">4. By default, which database identifier does Cisco hardware assign as the native segment before any administrative configuration is applied?</div>
-            <input type="radio" name="q4" value="a"> A) VLAN 99<br>
-            <input type="radio" name="q4" value="b" id="q4-correct"> B) VLAN 1<br>
-            <input type="radio" name="q4" value="c"> C) VLAN 1000<br>
-            <input type="radio" name="q4" value="d"> D) VLAN 1002<br>
-            <div class="feedback" id="q4-feedback"></div>
-        </div>
-
-        <div class="question-block" id="q5-container">
-            <div class="question-text">5. Which command must an administrator execute to view all active transit links and verify which databases are permitted to cross the physical connection?</div>
-            <input type="radio" name="q5" value="a"> A) show vlan brief<br>
-            <input type="radio" name="q5" value="b"> B) show mac address-table<br>
-            <input type="radio" name="q5" value="c"> C) show running-config<br>
-            <input type="radio" name="q5" value="d" id="q5-correct"> D) show interfaces trunk<br>
-            <div class="feedback" id="q5-feedback"></div>
-        </div>
-
-        <button onclick="gradeQuiz()">Submit Answers</button>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result"></div>
     </div>
-
-    <div id="finalScore"></div>
 
     <script>
         function gradeQuiz() {
             let score = 0;
-            const totalQuestions = 5;
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
 
-            if (document.getElementById('q1-correct').checked) {
-                score++;
-                document.getElementById('q1-feedback').innerHTML = "Correct. The 4 byte tag increases the maximum frame size to 1522 bytes.";
-                document.getElementById('q1-feedback').className = "feedback correct";
-            } else {
-                document.getElementById('q1-feedback').innerHTML = "Incorrect. Review the 802.1Q Frame Tagging Process section.";
-                document.getElementById('q1-feedback').className = "feedback incorrect";
-            }
-            document.getElementById('q1-feedback').style.display = "block";
+            if (q1 && q1.value === 'b') score++;
+            if (q2 && q2.value === 'a') score++;
+            if (q3 && q3.value === 'a') score++;
 
-            if (document.getElementById('q2-correct').checked) {
-                score++;
-                document.getElementById('q2-feedback').innerHTML = "Correct. Untagged traffic is automatically processed by the native database.";
-                document.getElementById('q2-feedback').className = "feedback correct";
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "You scored " + score + " out of 3.";
+            if (score === 3) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
             } else {
-                document.getElementById('q2-feedback').innerHTML = "Incorrect. Review the Native Segment and Untagged Traffic section.";
-                document.getElementById('q2-feedback').className = "feedback incorrect";
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
             }
-            document.getElementById('q2-feedback').style.
+        }
+    </script>
+</body>
+</html>
