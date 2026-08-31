@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://s.brightspace.com/lib/fonts/0.6.1/fonts.css">
+</head>
+<body style="color: rgb(32, 33, 34); font-family: Lato, sans-serif; font-size: 24px;">
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px;">
+
+<h1 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px;">Module 3 Week 2 Knowledgechecker</h1>
+
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">EtherChannel and Link Aggregation Assessment</h2>
+<p style="margin-bottom: 15px;">Complete the following theoretical knowledge check to verify your comprehension of EtherChannel port aggregation, negotiation protocols, and load-balancing algorithms. You must achieve a 100 percent score to proceed.</p>
+
+<div id="quiz-container">
+    <div class="question" style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <p><strong>1. What is the primary operational purpose of configuring an EtherChannel?</strong></p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><input type="radio" name="q1" value="a"> To dynamically route packets across multiple isolated virtual local area networks.</li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q1" value="b"> To combine multiple physical Ethernet links into a single logical high-bandwidth channel for increased throughput and redundancy.</li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q1" value="c"> To encrypt administrative command line traffic crossing a shared distribution switch.</li>
+        </ul>
+    </div>
+    
+    <div class="question" style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <p><strong>2. Which protocol is an open-standard IEEE protocol used to dynamically negotiate EtherChannel aggregation?</strong></p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><input type="radio" name="q2" value="a"> Port Aggregation Protocol</li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q2" value="b"> Link Aggregation Control Protocol</li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q2" value="c"> Spanning Tree Protocol</li>
+        </ul>
+    </div>
+    
+    <div class="question" style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <p><strong>3. Which command mode keyword initiates active Link Aggregation Control Protocol negotiation on a physical interface?</strong></p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><input type="radio" name="q3" value="a"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; font-size: 20px;">channel-group 1 mode active</span></li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q3" value="b"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; font-size: 20px;">channel-group 1 mode passive</span></li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q3" value="c"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; font-size: 20px;">channel-group 1 mode desirable</span></li>
+        </ul>
+    </div>
+
+    <div class="question" style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <p><strong>4. Why must all physical interfaces assigned to a port channel share identical configuration parameters such as speed, duplex, and trunking mode?</strong></p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><input type="radio" name="q4" value="a"> To ensure the spanning tree root bridge election prioritizes the correct MAC address.</li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q4" value="b"> To prevent configuration mismatches that cause member ports to be suspended from the aggregation group.</li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q4" value="c"> To allow native untagged traffic to bypass the 802.1Q tag insertion process.</li>
+        </ul>
+    </div>
+
+    <div class="question" style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <p><strong>5. Which command verifies the operational status and protocol state of all active port channels on a switch?</strong></p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="margin-bottom: 10px;"><input type="radio" name="q5" value="a"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; font-size: 20px;">show etherchannel summary</span></li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q5" value="b"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; font-size: 20px;">show vlan brief</span></li>
+            <li style="margin-bottom: 10px;"><input type="radio" name="q5" value="c"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; font-size: 20px;">show mac address-table</span></li>
+        </ul>
+    </div>
+
+    <button onclick="gradeQuiz()" style="background-color: #004a99; color: white; border: none; padding: 12px 20px; cursor: pointer; font-size: 18px; border-radius: 4px; font-weight: bold;">Submit Assessment</button>
+    <div id="result" style="margin-top: 20px; font-weight: bold; font-size: 20px;"></div>
+</div>
+
+<script>
+    function gradeQuiz() {
+        let score = 0;
+        const q1 = document.querySelector('input[name="q1"]:checked');
+        const q2 = document.querySelector('input[name="q2"]:checked');
+        const q3 = document.querySelector('input[name="q3"]:checked');
+        const q4 = document.querySelector('input[name="q4"]:checked');
+        const q5 = document.querySelector('input[name="q5"]:checked');
+
+        if (q1 && q1.value === 'b') score++;
+        if (q2 && q2.value === 'b') score++;
+        if (q3 && q3.value === 'a') score++;
+        if (q4 && q4.value === 'b') score++;
+        if (q5 && q5.value === 'a') score++;
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerText = "You scored " + score + " out of 5.";
+        if (score === 5) {
+            resultDiv.style.color = "green";
+            resultDiv.innerText += " Proceed to the syntax checker.";
+        } else {
+            resultDiv.style.color = "red";
+            resultDiv.innerText += " Review the module documentation and try again.";
+        }
+    }
+</script>
+
+</div>
+</body>
+</html>
