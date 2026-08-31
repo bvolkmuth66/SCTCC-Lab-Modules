@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Knowledge Checker</title>
+<style>
+  body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
+  .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; margin-bottom: 20px; }
+  .question-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+  .question-text { font-weight: bold; font-size: 18px; margin-bottom: 15px; }
+  .options label { display: block; margin-bottom: 10px; font-size: 16px; cursor: pointer; }
+  .options input[type="radio"] { margin-right: 10px; }
+  button { background-color: #004a99; color: white; border: none; padding: 12px 20px; font-size: 16px; cursor: pointer; border-radius: 4px; }
+  button:hover { background-color: #003366; }
+  .result { margin-top: 20px; font-size: 18px; font-weight: bold; display: none; }
+  .feedback { font-size: 14px; margin-top: 5px; color: #cc0000; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Knowledge Checker: Routing Fundamentals</h2>
+  <form id="quizForm">
+    
+    <div class="question-block">
+      <div class="question-text">1. Which subnet mask creates a precise static host route targeting a single endpoint?</div>
+      <div class="options">
+        <label><input type="radio" name="q1" value="A"> 0.0.0.0</label>
+        <label><input type="radio" name="q1" value="B"> 255.255.255.0</label>
+        <label><input type="radio" name="q1" value="C"> 255.255.255.255</label>
+        <label><input type="radio" name="q1" value="D"> 255.255.255.252</label>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="question-block">
+      <div class="question-text">2. How does the Internet Protocol eliminate undeliverable packets caught in a routing loop?</div>
+      <div class="options">
+        <label><input type="radio" name="q2" value="A"> The gateway of last resort automatically drops repeating packets.</label>
+        <label><input type="radio" name="q2" value="B"> The Time to Live field decrements by a value of 1 at each router hop until it reaches zero.</label>
+        <label><input type="radio" name="q2" value="C"> The default static route redirects the packet to a null interface.</label>
+        <label><input type="radio" name="q2" value="D"> The administrative distance forces the router to discard the packet.</label>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="question-block">
+      <div class="question-text">3. What is the primary operational advantage of implementing a fully specified default route on an Ethernet segment?</div>
+      <div class="options">
+        <label><input type="radio" name="q3" value="A"> It prevents Address Resolution Protocol broadcast exhaustion.</label>
+        <label><input type="radio" name="q3" value="B"> It decreases the administrative distance to ensure the route is preferred.</label>
+        <label><input type="radio" name="q3" value="C"> It allows the router to process tagged frames for multiple network identifiers.</label>
+        <label><input type="radio" name="q3" value="D"> It increments the routing metric to calculate an optimal data path.</label>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <div class="question-block">
+      <div class="question-text">4. Which command correctly configures the IEEE standard encapsulation protocol for a logical subinterface?</div>
+      <div class="options">
+        <label><input type="radio" name="q4" value="A"> interface GigabitEthernet0/0/0.10</label>
+        <label><input type="radio" name="q4" value="B"> encapsulation dot1Q 10</label>
+        <label><input type="radio" name="q4" value="C"> ip route 192.168.10.0 255.255.255.0</label>
+        <label><input type="radio" name="q4" value="D"> spanning tree portfast</label>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>
+
+    <button type="button" onclick="submitQuiz()">Submit Answers</button>
+    <div class="result" id="quizResult"></div>
+  </form>
+</div>
+
+<script>
+  function submitQuiz() {
+    let score = 0;
+    const answers = { q1: "C", q2: "B", q3: "A", q4: "B" };
+    const form = document.getElementById("quizForm");
+    
+    for (let key in answers) {
+      let selected = form.querySelector(`input[name="${key}"]:checked`);
+      let feedbackEl = document.getElementById(`fb${key.replace('q', '')}`);
+      if (selected) {
+        if (selected.value === answers[key]) {
+          score++;
+          feedbackEl.textContent = "Correct.";
+          feedbackEl.style.color = "#28a745";
+        } else {
+          feedbackEl.textContent = "Incorrect. Please review the instructional content and try again.";
+          feedbackEl.style.color = "#cc0000";
+        }
+      } else {
+        feedbackEl.textContent = "Please select an answer.";
+        feedbackEl.style.color = "#cc0000";
+      }
+    }
+    
+    const resultDiv = document.getElementById("quizResult");
+    resultDiv.style.display = "block";
+    resultDiv.textContent = `You scored ${score} out of 4.`;
+    if (score === 4) {
+      resultDiv.style.color = "#28a745";
+    } else {
+      resultDiv.style.color = "#cc0000";
+    }
+  }
+</script>
+</body>
+</html>
