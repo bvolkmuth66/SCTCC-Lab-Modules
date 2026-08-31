@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://s.brightspace.com/lib/fonts/0.6.1/fonts.css">
+</head>
+<body style="color: rgb(32, 33, 34); font-family: Lato, sans-serif; font-size: 24px;">
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px;">
+
+<h1 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px;">Module_3_Week_2_Syntaxchecker</h1>
+
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Command Line Interface Syntax Verification</h2>
+<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 20px;">
+    <p><strong>Scenario:</strong> You are configuring an EtherChannel link aggregation group between two distribution switches. Execute the following required commands sequentially in global and interface configuration modes.</p>
+    <ul style="margin-bottom: 0;">
+        <li>Create and access logical port channel interface 1.</li>
+        <li>Configure the logical interface to operate as an 802.1Q trunk.</li>
+        <li>Enter configuration mode for contiguous physical interfaces GigabitEthernet1/0/1 through 1/0/2.</li>
+        <li>Assign the physical interfaces to port channel 1 using active Link Aggregation Control Protocol negotiation.</li>
+        <li>Configure the global load-balancing hashing algorithm based on source and destination IP addresses.</li>
+    </ul>
+</div>
+
+<div style="background-color: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 5px; min-height: 200px; font-size: 20px;" id="terminal" onclick="document.getElementById('cmdInput').focus()">
+    <div id="history" style="white-space: pre-wrap; margin-bottom: 10px;"></div>
+    <div id="inputLine" style="display: flex; align-items: center;">
+        <span id="prompt" style="margin-right: 10px;">Switch(config)#</span>
+        <input type="text" id="cmdInput" autocomplete="off" autofocus style="background-color: transparent; border: none; color: #0f0; font-family: 'Courier New', Courier, monospace; font-size: 20px; width: 80%; outline: none;">
+    </div>
+</div>
+<div id="successMessage" style="color: #fff; font-weight: bold; background-color: green; padding: 15px; margin-top: 20px; display: none; font-size: 22px; text-align: center;">100 Percent Verification Score Achieved. Return to the D2L module page.</div>
+
+<script>
+    const expectedCommands = [
+        "interface port-channel 1",
+        "switchport mode trunk",
+        "interface range gigabitethernet1/0/1 - 2",
+        "channel-group 1 mode active",
+        "port-channel load-balance src-dst-ip"
+    ];
+    
+    let currentStep = 0;
+    const inputField = document.getElementById('cmdInput');
+    const historyDiv = document.getElementById('history');
+    const promptSpan = document.getElementById('prompt');
+    const successMessage = document.getElementById('successMessage');
+    const inputLine = document.getElementById('inputLine');
+
+    inputField.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const rawInput = this.value.trim();
+            const normalizedInput = rawInput.toLowerCase().replace(/\s+/g, ' ');
+            
+            if (normalizedInput !== "") {
+                historyDiv.innerHTML += promptSpan.innerText + " " + rawInput + "\n";
+                
+                if (normalizedInput === expectedCommands[currentStep]) {
+                    currentStep++;
+                    if (currentStep === 1) {
+                        promptSpan.innerText = "Switch(config-if)#";
+                    } else if (currentStep === 3) {
+                        promptSpan.innerText = "Switch(config)#";
+                    } else if (currentStep === 4) {
+                        promptSpan.innerText = "Switch(config-if-range)#";
+                    } else if (currentStep === 5) {
+                        promptSpan.innerText = "Switch(config)#";
+                    }
+                    
+                    if (currentStep === expectedCommands.length) {
+                        inputLine.style.display = "none";
+                        successMessage.style.display = "block";
+                    }
+                } else {
+                    historyDiv.innerHTML += "% Invalid input detected. Review the required syntax.\n";
+                }
+            }
+            this.value = '';
+            const term = document.getElementById('terminal');
+            term.scrollTop = term.scrollHeight;
+        }
+    });
+</script>
+
+</div>
+</body>
+</html>
