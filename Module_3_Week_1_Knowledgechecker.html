@@ -41,6 +41,22 @@
                 <li><input type="radio" name="q3" value="c"> To automatically calculate the lowest physical MAC address for the root bridge election.</li>
             </ul>
         </div>
+        <div class="question">
+            <p><strong>4. Which bridge priority value, combined with a manual assignment, ensures a switch forces itself to become the root bridge?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" value="a"> 32768</li>
+                <li><input type="radio" name="q4" value="b"> 65535</li>
+                <li><input type="radio" name="q4" value="c"> 4096</li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. What is the explicit operational purpose of enabling PortFast on an access interface?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" value="a"> To bypass standard listening and learning port states and immediately transition to forwarding.</li>
+                <li><input type="radio" name="q5" value="b"> To allow untagged native traffic to cross an 802.1Q transit link safely.</li>
+                <li><input type="radio" name="q5" value="c"> To aggregate multiple physical interfaces into a single logical channel group.</li>
+            </ul>
+        </div>
         <button onclick="gradeQuiz()">Submit Assessment</button>
         <div id="result"></div>
     </div>
@@ -51,14 +67,18 @@
             const q1 = document.querySelector('input[name="q1"]:checked');
             const q2 = document.querySelector('input[name="q2"]:checked');
             const q3 = document.querySelector('input[name="q3"]:checked');
+            const q4 = document.querySelector('input[name="q4"]:checked');
+            const q5 = document.querySelector('input[name="q5"]:checked');
 
             if (q1 && q1.value === 'b') score++;
             if (q2 && q2.value === 'a') score++;
             if (q3 && q3.value === 'a') score++;
+            if (q4 && q4.value === 'c') score++;
+            if (q5 && q5.value === 'a') score++;
 
             const resultDiv = document.getElementById('result');
-            resultDiv.innerText = "You scored " + score + " out of 3.";
-            if (score === 3) {
+            resultDiv.innerText = "You scored " + score + " out of 5.";
+            if (score === 5) {
                 resultDiv.style.color = "green";
                 resultDiv.innerText += " Proceed to the syntax checker.";
             } else {
