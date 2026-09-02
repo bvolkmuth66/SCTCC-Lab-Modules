@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Syntax Checker</title>
+<style>
+  body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
+  .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+  .instructions { margin-bottom: 20px; font-size: 16px; line-height: 1.5; }
+  .terminal { background-color: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 5px; height: 350px; overflow-y: auto; margin-bottom: 15px; }
+  .prompt-line { display: flex; align-items: center; margin-top: 10px; }
+  .prompt { margin-right: 10px; font-weight: bold; }
+  input[type="text"] { background: transparent; border: none; color: #0f0; font-family: 'Courier New', Courier, monospace; font-size: 16px; outline: none; width: 80%; }
+  .success { color: #28a745; font-weight: bold; margin-top: 20px; display: none; text-align: center; font-size: 18px; }
+  .hint { color: #dc3545; font-size: 14px; margin-top: 10px; display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Command Syntax Checker: Route Summarization & OSPF</h2>
+  <div class="instructions">
+    <p id="instructionText">Task 1: Configure a static summary route to 192.168.0.0 using a 22-bit mask (255.255.252.0) with next hop 10.10.10.2.</p>
+  </div>
+  <div class="terminal" id="terminalBox">
+    <div>System bootstrap complete. Press Enter to begin configuration.</div>
+    <div id="outputArea"></div>
+    <div class="prompt-line">
+      <span class="prompt" id="promptText">Router(config)#</span>
+      <input type="text" id="commandInput" autocomplete="off" autofocus>
+    </div>
+  </div>
+  <div class="hint" id="hintText">Incorrect syntax. Review the command matrix and try again.</div>
+  <div class="success" id="successMessage">Syntax verification complete. 100 percent score achieved. Return to the module page.</div>
+</div>
+
+<script>
+  const tasks = [
+    { instruction: "Task 1: Configure a static summary route to 192.168.0.0 using a 22-bit mask (255.255.252.0) with next hop 10.10.10.2.", command: "ip route 192.168.0.0 255.255.252.0 10.10.10.2", prompt: "Router(config)#" },
+    { instruction: "Task 2: Enter global OSPF configuration mode utilizing process ID 10.", command: "router ospf 10", prompt: "Router(config)#" },
+    { instruction: "Task 3: Manually assign the predictable router ID 1.1.1.1 to the active OSPF process.", command: "router-id 1.1.1.1", prompt: "Router(config-router)#" },
+    { instruction: "Task 4: Advertise the 192.168.20.0 network into backbone area 0 using a standard 24-bit wildcard mask.", command: "network 192.168.20.0 0.0.0.255 area 0", prompt: "Router(config-router)#" },
+    { instruction: "Task 5: Secure the student LAN by suppressing routing updates out of GigabitEthernet0/0/1.", command: "passive-interface GigabitEthernet0/0/1", prompt: "Router(config-router)#" },
+    { instruction: "Task 6: Exit router configuration mode and return to global configuration mode.", command: "exit", prompt: "Router(config-router)#" },
+    { instruction: "Task 7: Enter interface configuration mode for the backbone link on GigabitEthernet0/0/0.", command: "interface GigabitEthernet0/0/0", prompt: "Router(config)#" },
+    { instruction: "Task 8: Force this interface to win the designated router election by setting its OSPF priority to the maximum value of 255.", command: "ip ospf priority 255", prompt: "Router(config-if)#" }
+  ];
+
+  let currentTaskIndex = 0;
+  const inputField = document.getElementById("commandInput");
+  const outputArea = document.getElementById("outputArea");
+  const instructionText = document.getElementById("instructionText");
+  const promptText = document.getElementById("promptText");
+  const hintText = document.getElementById("hintText");
+  const successMessage = document.getElementById("successMessage");
+  const terminalBox = document.getElementById("terminalBox");
+
+  inputField.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      const userInput = inputField.value.trim();
+      const expectedCommand = tasks[currentTaskIndex].command;
+      
+      const newOutput = document.createElement("div");
+      newOutput.textContent = promptText.textContent + " " + userInput;
+      outputArea.appendChild(newOutput);
+
+      if (userInput === expectedCommand) {
+        hintText.style.display = "none";
+        currentTaskIndex++;
+        
+        if (currentTaskIndex < tasks.length) {
+          instructionText.textContent = tasks[currentTaskIndex].instruction;
+          promptText.textContent = tasks[currentTaskIndex].prompt;
+        } else {
+          instructionText.textContent = "All tasks completed successfully.";
+          document.querySelector(".prompt-line").style.display = "none";
+          successMessage.style.display = "block";
+        }
+      } else {
+        hintText.style.display = "block";
+      }
+      
+      inputField.value = "";
+      terminalBox.scrollTop = terminalBox.scrollHeight;
+    }
+  });
+</script>
+</body>
+</html>
