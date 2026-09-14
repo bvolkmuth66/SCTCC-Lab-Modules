@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5 Syntax Checker: IPv4 Access Control Lists</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h2>Module 5 Syntax Checker: IPv4 Access Control Lists</h2>
+    <p class="intro">This ungraded formative activity verifies your Cisco IOS command line accuracy before you attempt the Packet Tracer activities. You will enter one command at a time. Each entry is validated immediately, and you must enter a command correctly before the next objective is released. Work through all seven commands to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>Router R1 connects the Student segment 192.168.10.0/24 on GigabitEthernet0/0/0 to the Faculty server segment 192.168.30.0/24 on GigabitEthernet0/0/1. Routing is fully converged and all segments are currently reachable.</p>
+        <p>The security policy requires that student endpoints be denied Telnet access to the faculty server at 192.168.30.10, that all other traffic continue to be forwarded normally, and that remote management sessions to R1 be accepted only from the addresses permitted by an existing standard list named MGMT_ONLY.</p>
+        <p>Enter commands exactly as you would at the R1 command line. Keyword abbreviations that Cisco IOS accepts are also accepted here.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Command</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have entered all seven commands correctly. You configured a named extended access control list, built the deny and permit entries with the correct wildcard and port syntax, bound the filter to the correct interface in the correct direction, protected the management plane, and verified the result. Return to the Module 5 page and begin Packet Tracer Assignment 1.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <script>
+        var steps = [
+            {
+                title: "Command 1: Create the Named Extended List",
+                objective: "The policy must distinguish one application from another between the same pair of hosts, so a standard list cannot satisfy it. Create a named extended access control list called BLOCK_TELNET. You are currently in global configuration mode.",
+                prompt: "R1(config)#",
+                accept: [/^ip access-list extended block_telnet$/],
+                hint: "The command begins with the ip keyword, names the list type, and ends with the list name. Syntax: ip access-list [standard | extended] [name]",
+                explanation: "Correct. This creates the named list and moves the router into named access control list configuration mode, where each entry is stored with a sequence number that allows it to be removed individually later.",
+                errors: [
+                    { pattern: /standard/, message: "You specified a standard list. A standard list evaluates the source address only and cannot match a destination or a port number, so it cannot deny Telnet while permitting other traffic to the same server." },
+                    { pattern: /^access-list/, message: "That is the numbered list syntax. The objective requires a named list, which begins with the ip keyword." }
+                ]
+            },
+            {
+                title: "Command 2: Deny the Telnet Flow",
+                objective: "Build the entry that discards Telnet traffic from the entire Student segment to the single faculty server at 192.168.30.10. Telnet uses TCP port 23. Remember that specific entries must appear above general entries, so this deny statement is entered first.",
+                prompt: "R1(config-ext-nacl)#",
+                accept: [/^deny tcp 192\.168\.10\.0 0\.0\.0\.255 host 192\.168\.30\.10 eq (23|telnet)$/],
+                hint: "Syntax: deny [protocol] [source] [wildcard] [destination] [wildcard] eq [port]. The source is an entire /24 segment, so it needs a wildcard mask. The destination is one address, so the host keyword replaces its wildcard mask.",
+                explanation: "Correct. The wildcard mask 0.0.0.255 ignores the final octet and matches every student endpoint, the host keyword matches the single server, and the eq 23 operator limits the match to Telnet so that all other services on that server remain reachable.",
+                errors: [
+                    { pattern: /255\.255\.255\.0/, message: "You entered a subnet mask. An access control list compares addresses with a wildcard mask, in which a zero requires an exact match and a one is ignored. Subtract the subnet mask from 255.255.255.255 to obtain the wildcard mask." },
+                    { pattern: /^deny ip /, message: "The ip keyword matches all traffic between the addresses and accepts no port operator, which would block every service on the server. Specify the Layer 4 protocol that Telnet uses." },
+                    { pattern: /^deny udp /, message: "Telnet is a TCP application. Specify the correct Layer 4 protocol." },
+                    { pattern: /192\.168\.30\.0/, message: "The policy names one specific server rather than the entire faculty segment. Match the single host address at 192.168.30.10." },
+                    { pattern: /^deny tcp 192\.168\.30/, message: "The source and destination are reversed. The source address is always entered first, and traffic in this policy is sourced from the Student segment." },
+                    { pattern: /eq (22|80|443|25)/, message: "That port number belongs to a different application. Telnet uses port 23." },
+                    { pattern: /^permit/, message: "This entry must discard the matched traffic rather than forward it." }
+                ]
+            },
+            {
+                title: "Command 3: Permit the Remaining Traffic",
+                objective: "Every access control list terminates in a hidden implicit deny. Add the entry that prevents that implicit deny from discarding all other traffic on the interface.",
+                prompt: "R1(config-ext-nacl)#",
+                accept: [/^permit ip any any$/],
+                hint: "An extended entry requires both a source and a destination. The any keyword substitutes for the address and wildcard pair 0.0.0.0 255.255.255.255, and the protocol keyword must match all traffic rather than one application.",
+                explanation: "Correct. Without this entry the implicit deny would discard one hundred percent of the traffic evaluated by the list. Because it sits below the deny statement, the Telnet flow already matched and stopped processing before reaching this line.",
+                errors: [
+                    { pattern: /^permit any any$/, message: "An extended entry requires a protocol keyword before the source address. Specify the protocol that matches all traffic." },
+                    { pattern: /^permit ip any$/, message: "An extended entry requires both a source and a destination. Add the destination." },
+                    { pattern: /^deny/, message: "A list containing only deny entries discards all traffic on the interface. This entry must forward the traffic the policy did not block." },
+                    { pattern: /^permit tcp/, message: "That keyword limits the entry to a single Layer 4 protocol, which would allow the implicit deny to discard all other traffic. Use the keyword that matches every protocol." }
+                ]
+            },
+            {
+                title: "Command 4: Select the Enforcement Interface",
+                objective: "An extended list is placed as close to the source as possible so that unwanted traffic is discarded before it consumes bandwidth on the transit path. You have returned to global configuration mode with the exit command. Enter configuration mode for the interface facing the Student segment.",
+                prompt: "R1(config)#",
+                accept: [/^int(erface)? (g|gi|gig|gigabit|gigabitethernet)ethernet0\/0\/0$/, /^int(erface)? (g|gi|gig|gigabit)0\/0\/0$/, /^int(erface)? gigabitethernet0\/0\/0$/],
+                hint: "Use the interface command followed by the interface identifier. The Student segment 192.168.10.0/24 is attached to GigabitEthernet0/0/0.",
+                explanation: "Correct. The router is now in interface configuration mode. Selecting the interface closest to the source means student traffic bound for the faculty server is discarded at the first routed hop rather than after crossing the campus.",
+                errors: [
+                    { pattern: /0\/0\/1/, message: "That interface faces the faculty server segment. An extended list is placed close to the source, which is the Student segment." },
+                    { pattern: /vlan/, message: "This is a router interface rather than a switch virtual interface. Select the physical GigabitEthernet interface." }
+                ]
+            },
+            {
+                title: "Command 5: Apply the Filter",
+                objective: "A configured list performs no filtering until it is bound to an interface, and the router issues no warning if this step is omitted. Apply BLOCK_TELNET so that packets are evaluated as they arrive on this interface, before the routing table lookup occurs.",
+                prompt: "R1(config-if)#",
+                accept: [/^ip access-group block_telnet in$/],
+                hint: "Syntax: ip access-group [number | name] [in | out]. Evaluation before the routing table lookup requires the inbound direction.",
+                explanation: "Correct. The filter is now enforced. The inbound direction causes evaluation as the packet arrives, so denied traffic is discarded before the router spends resources performing the routing table lookup.",
+                errors: [
+                    { pattern: /out$/, message: "The outbound direction evaluates packets after the routing decision, as they leave the interface. Student traffic arrives on this interface, so it must be evaluated on the way in." },
+                    { pattern: /^ip access-list/, message: "That command creates or edits a list. A different command binds an existing list to an interface." },
+                    { pattern: /^access-class/, message: "That command filters management sessions to the virtual terminal lines rather than traffic the router forwards through an interface." },
+                    { pattern: /^ip access-group [0-9]/, message: "The list is identified by name rather than by number. Reference BLOCK_TELNET." }
+                ]
+            },
+            {
+                title: "Command 6: Protect the Management Plane",
+                objective: "Packets addressed to the router itself are processed separately from packets the router forwards, so an interface filter is the wrong instrument for restricting administrative access. You have entered line configuration mode with the line vty 0 15 command. Apply the existing standard list MGMT_ONLY to inbound management sessions.",
+                prompt: "R1(config-line)#",
+                accept: [/^access-class mgmt_only in$/],
+                hint: "Syntax: access-class [number | name] in. This command is entered in line configuration mode rather than interface configuration mode.",
+                explanation: "Correct. Filtering at the virtual terminal lines protects the device regardless of which interface a connection attempt arrives on, which is far more efficient than applying a management filter to every physical interface.",
+                errors: [
+                    { pattern: /^ip access-group/, message: "That command binds a list to a physical interface. Traffic destined for the management plane is filtered at the line instead." },
+                    { pattern: /out$/, message: "Inbound restriction is required. The policy controls which source addresses may open a session to this router." },
+                    { pattern: /block_telnet/, message: "That list filters forwarded traffic. Apply the standard list built for management access." }
+                ]
+            },
+            {
+                title: "Command 7: Verify the Result",
+                objective: "A syntactically valid list bound to the wrong interface or in the wrong direction produces no error message, so verification is the only evidence that the policy is in force. You have returned to privileged EXEC mode with the end command. Display every configured list with its entries and match counters.",
+                prompt: "R1#",
+                accept: [/^show access-lists?$/, /^sh access-lists?$/],
+                hint: "This is a privileged EXEC show command. The keyword after show is the plural form of the object you configured.",
+                explanation: "Correct. The match counters in this output are your primary diagnostic instrument. A counter that stays at zero during a connectivity test proves the traffic never reached the filter, which points to the interface binding, the direction, or the routing path rather than to your statement syntax.",
+                errors: [
+                    { pattern: /^show running-config/, message: "That output displays the configuration but omits the per entry match counters you need for diagnosis. Use the command dedicated to access control lists." },
+                    { pattern: /^show ip interface/, message: "That command confirms which list is bound to an interface, which is useful, but the objective is to display the list entries and their match counters." },
+                    { pattern: /^show ip access/, message: "Close. The verification command does not include the ip keyword." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Command " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Command.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + " " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Command accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That command was not accepted. Check the keyword order and the required parameters, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) {
+                showHint();
+            }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the syntax in Section 5 of the module content, then enter the command again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+        }
+
+        function restart() {
+            current = 0;
+            attempts = 0;
+            verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkCommand();
+            }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>
