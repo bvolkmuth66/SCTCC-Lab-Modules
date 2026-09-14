@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5 Knowledge Checker: IPv4 Access Control Lists</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Module 5 Knowledge Checker: IPv4 Access Control Lists</h2>
+    <p class="intro">This ungraded formative activity verifies your conceptual understanding of access control list evaluation order, wildcard mask calculation, list placement, and verification before you attempt the Packet Tracer activities. Answer all ten questions and select Submit Assessment. Return to the module page and launch the Command Syntax Checker once you have achieved a score of ten out of ten.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. What is the primary operational purpose of an IPv4 access control list in a routed enterprise network?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">To advertise reachable networks to neighboring routers running a dynamic routing protocol.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">To permit or deny traffic at a routed boundary so that reachable networks are not automatically accessible networks.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">To separate a physical switch into multiple isolated broadcast domains.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. A packet matches the deny statement on line 10 of an access control list. What does the router do next?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">It continues evaluating the remaining entries and applies the last statement that matches.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">It evaluates every remaining entry and permits the packet if any permit statement also matches.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">It stops evaluating the list immediately and discards the packet.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. An administrator configures an access control list containing only deny statements and applies it to an interface. What is the operational result?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">All traffic on that interface in the applied direction is discarded because of the implicit deny.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">Only the traffic named in the deny statements is discarded and all other traffic is forwarded.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">The router rejects the configuration and displays an error message.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. Which wildcard mask matches every host address on a network that uses the subnet mask 255.255.255.0?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">255.255.255.0</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">0.0.0.255</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">0.0.0.0</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. What does a binary zero in a wildcard mask instruct the router to do?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">Ignore the corresponding address bit during the comparison.</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">Require the corresponding address bit to match exactly.</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">Convert the corresponding address bit to a broadcast address.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. Why must a standard access control list be placed as close to the destination as possible?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">Because it evaluates the source address only, placement near the source would discard all traffic from that source including permitted flows.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">Because standard lists can only be applied in the outbound direction on the final router.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">Because standard lists require the destination router to calculate the wildcard mask.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. An administrator must deny Telnet traffic from the Student segment to one server while permitting web traffic from that same segment to that same server. Which list type satisfies this policy?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">A standard access control list, because it evaluates the source address of every packet.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">An extended access control list, because it evaluates destination address, protocol, and port in addition to source address.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">Either list type, because both evaluate Layer 4 port numbers.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. Which command applies an access control list to traffic arriving on an interface, before the router performs the routing table lookup?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a"><code>ip access-group 100 in</code></label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b"><code>ip access-list extended 100</code></label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c"><code>access-class 100 in</code></label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. Which command restricts the source addresses permitted to open a remote management session to the virtual terminal lines?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a"><code>ip access-group 5 in</code> entered in interface configuration mode.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b"><code>access-class 5 in</code> entered in line configuration mode.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c"><code>access-list 5 permit vty</code> entered in global configuration mode.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. During a connectivity test the match counter on every entry of an applied access control list remains at zero. What does this evidence indicate?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">The test traffic is not reaching the filter, so the interface binding, the direction, or the routing path should be investigated.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">The list is operating correctly and is silently discarding all test traffic.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">The wildcard masks are inverted and must be replaced with subnet masks.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'b', review: 'Question 1: Routing establishes whether a path exists. Filtering establishes whether traffic should be permitted to use that path. Review Section 1 of the module content.' },
+            q2: { correct: 'c', review: 'Question 2: A router evaluates a list from the top down and stops at the first match. Entries below the matching statement are never examined, which is why specific entries must be placed above general entries. Review Section 5 Part A.' },
+            q3: { correct: 'a', review: 'Question 3: Every list terminates in a hidden implicit deny statement. Traffic that does not match a deny entry falls through to that implicit deny, so every deployed list must contain at least one permit statement. Review Section 5 Part A.' },
+            q4: { correct: 'b', review: 'Question 4: The wildcard mask is calculated by subtracting the subnet mask from 255.255.255.255, so 255.255.255.0 becomes 0.0.0.255. Review Section 5 Part B.' },
+            q5: { correct: 'b', review: 'Question 5: A binary zero requires an exact match and a binary one instructs the router to ignore that bit. Review Section 5 Part B.' },
+            q6: { correct: 'a', review: 'Question 6: A standard list carries no destination information, so a denial placed near the source blocks every flow from that source. Review Section 5 Part C.' },
+            q7: { correct: 'b', review: 'Question 7: Only an extended list can distinguish one application from another between the same pair of hosts. Review Section 5 Part D.' },
+            q8: { correct: 'a', review: 'Question 8: The ip access-group command binds a list to an interface, and the in keyword causes evaluation before the routing table lookup. Review Section 5 Part F.' },
+            q9: { correct: 'b', review: 'Question 9: Traffic destined for the management plane is filtered with access-class in line configuration mode rather than with an interface filter. Review Section 5 Part F.' },
+            q10: { correct: 'a', review: 'Question 10: A counter at zero proves the traffic never reached the filter, which redirects troubleshooting toward interface binding, direction, or the routing path rather than toward statement syntax. Review Section 5 Part G.' }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>
