@@ -33,6 +33,7 @@
         .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
         .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
         .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
     </style>
 </head>
 <body>
@@ -74,6 +75,8 @@
         <div class="transcript" id="transcript"></div>
     </div>
 
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
     <script>
         var steps = [
             {
@@ -93,7 +96,7 @@
                 objective: "Build the entry that discards Telnet traffic from the entire Student segment to the single faculty server at 192.168.30.10. Telnet uses TCP port 23. Remember that specific entries must appear above general entries, so this deny statement is entered first.",
                 prompt: "R1(config-ext-nacl)#",
                 accept: [/^deny tcp 192\.168\.10\.0 0\.0\.0\.255 host 192\.168\.30\.10 eq (23|telnet)$/],
-                hint: "Syntax: deny [protocol] [source] [wildcard] [destination] [wildcard] eq [port]. The source is an entire /24 segment, so it needs a wildcard mask. The destination is one address, so the host keyword replaces its wildcard mask.",
+                hint: "Syntax: deny [protocol] [source] [source-wildcard] host [destination] eq [port]. The source is an entire segment, so it takes a wildcard mask. The destination is a single server address, so the host keyword is used in place of a wildcard mask.",
                 explanation: "Correct. The wildcard mask 0.0.0.255 ignores the final octet and matches every student endpoint, the host keyword matches the single server, and the eq 23 operator limits the match to Telnet so that all other services on that server remain reachable.",
                 errors: [
                     { pattern: /255\.255\.255\.0/, message: "You entered a subnet mask. An access control list compares addresses with a wildcard mask, in which a zero requires an exact match and a one is ignored. Subtract the subnet mask from 255.255.255.255 to obtain the wildcard mask." },
@@ -261,6 +264,91 @@
         function finish() {
             document.getElementById('activity').className = "hidden";
             document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [
+                { x: 0, angle: -1.0 },
+                { x: confettiCanvas.width, angle: -2.1 }
+            ];
+
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x,
+                        y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6,
+                        height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI,
+                        spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1
+                    });
+                }
+            }
+
+            if (!confettiRunning) {
+                confettiRunning = true;
+                window.requestAnimationFrame(drawConfetti);
+            }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35;
+                piece.vx *= 0.99;
+                piece.vy *= 0.99;
+                piece.x += piece.vx;
+                piece.y += piece.vy;
+                piece.rotation += piece.spin;
+                piece.life -= 0.006;
+
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) {
+                    confettiPieces.splice(i, 1);
+                    continue;
+                }
+
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+
+            if (confettiPieces.length > 0) {
+                window.requestAnimationFrame(drawConfetti);
+            } else {
+                confettiRunning = false;
+                confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
         }
 
         function restart() {
