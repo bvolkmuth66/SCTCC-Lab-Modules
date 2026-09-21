@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7 Knowledge Checker: Wireless LAN Controllers</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Module 7 Knowledge Checker: Wireless LAN Controllers</h2>
+    <p class="intro">This ungraded formative activity verifies your conceptual understanding of wireless service sets, the split media access control architecture, the access point join process, interface mapping, and wireless security methods before you attempt the Packet Tracer activities. Answer all ten questions and select Submit Assessment. Return to the module page and launch the Command Syntax Checker once you have achieved a score of ten out of ten.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. Several access points throughout a building advertise the same network name and connect to the same wired infrastructure. What has been formed?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">A basic service set, because all the access points share one identifier.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">An extended service set, which permits a client to move between coverage areas without losing its connection.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">An independent service set, because each access point operates on its own radio.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. What distinguishes the basic service set identifier from the service set identifier?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">The basic service set identifier is the media access control address of one radio, while the service set identifier is the network name that many access points share.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">The basic service set identifier is the network name, while the service set identifier is assigned by the controller at join time.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">They are two names for the same value and are used interchangeably.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Under the split media access control model, which function remains on the access point rather than moving to the controller?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">Authenticating a user against a directory service.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">Transmitting the periodic beacon and acknowledging received frames.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">Assigning radio channels and power levels across the coverage area.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. A lightweight access point loses contact with its controller. What does it do?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">It continues serving clients using the configuration it stored during its last join.</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">It reverts to autonomous operation and advertises a default network name.</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">It stops serving clients and begins searching for a controller again, because it holds no standalone configuration.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. Which port numbers does the tunnel between an access point and its controller use?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">5246 for the control channel and 5247 for the data channel.</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">443 for the control channel and 80 for the data channel.</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">1812 for the control channel and 1813 for the data channel.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. An access point is connected to a switch port in one wing of a building. Where does the client traffic it receives enter the wired network?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">On that switch port, because the access point bridges client frames directly onto the local segment.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">At the controller, which places the traffic onto the segment the wireless network is mapped to.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">On whichever segment the client requests during association.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. An access point is placed on a different segment from the controller management interface. No address option and no name service record have been configured. What is the result?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">The access point searches indefinitely and never joins, because broadcast discovery does not cross a router.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">The access point joins normally, because discovery requests are routed like any other traffic.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">The controller detects the access point and initiates the join from its side.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. What does a dynamic interface on the controller accomplish?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a">It binds a wireless network to a specific Virtual Local Area Network on the wired side.</label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b">It provides the address that access points use when they join the controller.</label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c">It assigns radio channels dynamically to reduce interference between access points.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. An institution must be able to revoke wireless access for one departing employee without affecting anyone else. Which security method satisfies this requirement?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a">The personal variant, because the shared passphrase can be changed at any time.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b">The enterprise variant, because each user authenticates individually against an authentication server.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c">An open network combined with filtering on the wired side.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. A wireless client associates successfully, receives an address on the expected segment, and cannot reach an internal server. Where should the investigation continue?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">In the routing and filtering configuration, because the wireless portion of the path has already been proven.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">In the radio settings, because association can succeed while the radio remains partially disabled.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">In the tunnel configuration, because client traffic is not reaching the controller.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'b', review: 'Question 1: A single access point and its clients form a basic service set. Several joined by a common distribution system and advertising the same name form an extended service set, which is what makes roaming possible. Review Section 5 Part A.' },
+            q2: { correct: 'a', review: 'Question 2: The network name is shared deliberately so clients recognize the network anywhere in the building. The radio address is unique to each access point and identifies which one a client is actually using. Review Section 5 Part A.' },
+            q3: { correct: 'b', review: 'Question 3: The access point retains only the functions that must occur within microseconds of a radio event, because a round trip to the controller would take far too long. Everything that can tolerate a few milliseconds moves to the controller. Review Section 5 Part B.' },
+            q4: { correct: 'c', review: 'Question 4: A lightweight access point has no standalone configuration to fall back on. This is the intended behavior of the architecture and is why controller redundancy is a design concern in production. Review Section 5 Part B.' },
+            q5: { correct: 'a', review: 'Question 5: The control channel uses port 5246 and the data channel uses port 5247, both over the connectionless transport protocol. Ports 1812 and 1813 belong to the authentication server. Review Section 5 Part C.' },
+            q6: { correct: 'b', review: 'Question 6: Client traffic is encapsulated and carried inside the tunnel to the controller, which places it onto the mapped segment. This is why an access point port is configured as an access port carrying only the management segment. Review Section 5 Part C.' },
+            q7: { correct: 'a', review: 'Question 7: Broadcast discovery succeeds only when a controller is present on the same segment. With no stored address, no address option, and no name service record, no discovery mechanism can succeed. Review Section 5 Part E.' },
+            q8: { correct: 'a', review: 'Question 8: The dynamic interface is what causes a wireless client to appear on a particular segment, which is how the access control lists from Module 5 come to apply to it. The management interface is the one access points use to join. Review Section 5 Part D.' },
+            q9: { correct: 'b', review: 'Question 9: A shared passphrase must be changed on every device to revoke it for one person. Enterprise authentication validates individual credentials, so access can be revoked for one user alone. Review Section 5 Part F.' },
+            q10: { correct: 'a', review: 'Question 10: Verification follows the dependency chain. Once the client is associated and addressed on the expected segment, the wireless portion is proven and any remaining failure is investigated with the routing and filtering tools from earlier modules. Review Section 5 Part G.' }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>
