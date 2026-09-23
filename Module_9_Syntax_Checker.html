@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 9 Syntax Checker: Quality of Service Policy</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 9 Syntax Checker: Quality of Service Policy</h2>
+    <p class="intro">This ungraded formative activity verifies your Cisco IOS command line accuracy before you attempt the formative practice activities. You will enter one command at a time. Each entry is validated immediately, and you must enter a command correctly before the next objective is released. Work through all twelve commands to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>You are configuring R1 at the main campus. GigabitEthernet0/0/0 faces the 20 Mbps wide area link to the instructional site, and that link is the congestion point. Interactive business traffic arrives already marked AF31 by the access switch, which is the trust boundary. Voice media arrives unmarked from a handset outside that boundary and must be identified by its transport ports.</p>
+        <p>The policy, named <code>WAN-EDGE</code>, must give voice a strict priority queue bounded at 10 percent of the link and guarantee interactive business traffic 30 percent. Build it in the three stages the configuration model requires: identify the traffic, state what happens to each class, then attach the result to the interface.</p>
+        <p>Enter commands exactly as you would at the R1 command line. Keyword abbreviations that Cisco IOS accepts are also accepted here.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Command</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have entered all twelve commands correctly. You identified voice by its transport ports and business traffic by the marking it already carried, stated the treatment each class receives, attached the policy to the congested interface in the outbound direction, and displayed the per class counters. Remember that none of it takes effect until the link is actually congested. Return to the Module 9 page and begin the formative practice activities.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Command 1: Identify the Voice Media",
+                objective: "Voice media arrives unmarked, so it must be identified by its transport ports. Create extended list 101 permitting the connectionless transport protocol from any source to any destination across the port range 16384 to 32767.",
+                prompt: "R1(config)#",
+                accept: [/^access-list 101 permit udp any any range 16384 32767$/],
+                hint: "Syntax: access-list [number] permit udp any any range [first] [last]. Voice media uses the connectionless transport protocol, and the range operator matches a span of ports rather than a single one.",
+                explanation: "Correct. Voice media is carried over the connectionless transport protocol in this port range. The range operator matches a span, unlike the eq operator from Module 5 which matches one port. This list will be referenced by a class map rather than applied to an interface.",
+                errors: [
+                    { pattern: /permit tcp/, message: "Voice media is carried over the connectionless transport protocol, not the connection oriented one. A call cannot wait for retransmission." },
+                    { pattern: /\beq\b/, message: "The eq operator matches a single port. Voice media uses a span of ports, which needs a different operator." },
+                    { pattern: /255\.255\.255\./, message: "No subnet mask is needed here. The keyword that matches every possible address is shorter." },
+                    { pattern: /^access-list ([1-9]|[1-9][0-9])\b/, message: "That number falls in the standard range, which matches source addresses only. Matching a protocol and a port range requires the extended range." },
+                    { pattern: /match protocol/, message: "That form of classification relies on deep packet inspection, which is not licensed on the routers in this course. Identify the traffic by protocol and port instead." }
+                ]
+            },
+            {
+                title: "Command 2: Create the Voice Class Map",
+                objective: "Create a class map named VOICE that requires every one of its criteria to match.",
+                prompt: "R1(config)#",
+                accept: [/^class-map (match-all )?voice$/],
+                hint: "Syntax: class-map match-all [name]. This is the first of the three stages: identifying traffic.",
+                explanation: "Correct. A class map with match-all requires every criterion to match, while match-any requires only one. With a single criterion the two behave identically, and match-all is the default if neither is stated, but naming it makes the intent explicit for anyone reading the configuration later.",
+                errors: [
+                    { pattern: /match-any/, message: "match-any requires only one criterion to match. With one criterion the result is the same, but the policy states that every criterion must be satisfied." },
+                    { pattern: /^policy-map/, message: "A policy map states what happens to a class and belongs to the second stage. Identify the traffic first." },
+                    { pattern: /^class voice$/, message: "That command selects a class inside a policy map. At global configuration level the command creates the class map itself." }
+                ]
+            },
+            {
+                title: "Command 3: Attach the List to the Class Map",
+                objective: "Inside the class map, identify traffic using the access control list you created.",
+                prompt: "R1(config-cmap)#",
+                accept: [/^match access-group 101$/],
+                hint: "Two words followed by the list number. The class map is matching traffic against a group defined by an access list.",
+                explanation: "Correct. This is the fourth distinct role the access control list syntax has played in this course. In Module 5 a permit entry meant forward, in Module 6 translate, in Module 8 encrypt, and here it means classify into this category.",
+                errors: [
+                    { pattern: /^match access-list/, message: "Close. The keyword names the group the list defines rather than the list itself." },
+                    { pattern: /^access-list/, message: "That creates a list in global configuration mode. You already created list 101; this step references it from inside the class map." },
+                    { pattern: /^match ip dscp/, message: "That identifies traffic by a marking already in the header. Voice arrives unmarked in this scenario, which is why it is identified by its ports." },
+                    { pattern: /^match access-group$/, message: "The command is incomplete. Name the list." }
+                ]
+            },
+            {
+                title: "Command 4: Create the Business Class Map",
+                objective: "Return to global configuration mode and create a second class map named BUSINESS, again requiring every criterion to match.",
+                prompt: "R1(config)#",
+                accept: [/^class-map (match-all )?business$/],
+                hint: "The same command as the voice class map, with a different name.",
+                explanation: "Correct. A policy can contain as many classes as the design requires. Traffic matching no class map falls into the default class, which is where the bulk transfers in this scenario end up.",
+                errors: [
+                    { pattern: /voice/, message: "That class map already exists. This objective creates the second one." },
+                    { pattern: /^policy-map/, message: "Both class maps must exist before the policy map references them." }
+                ]
+            },
+            {
+                title: "Command 5: Match the Existing Marking",
+                objective: "Business traffic arrives already marked AF31 by the access switch. Identify it by that marking rather than by inspecting it again.",
+                prompt: "R1(config-cmap)#",
+                accept: [/^match (ip )?dscp af31$/],
+                hint: "The command names the field in the header and the value to look for. AF31 may be entered by its keyword rather than its decimal value.",
+                explanation: "Correct. This is why marking exists. Classifying by ports costs processing at every device that does it, while reading a single field costs almost nothing, which is what allows a marking applied once at the edge to be acted on everywhere downstream.",
+                errors: [
+                    { pattern: /access-group|access-list/, message: "That re-examines the traffic. This class identifies traffic by the marking it already carries, which is the point of marking at the trust boundary." },
+                    { pattern: /match protocol/, message: "That form relies on deep packet inspection, which is not licensed on the routers in this course." },
+                    { pattern: /\bef\b/, message: "Expedited Forwarding identifies voice media. Interactive business traffic carries a different marking in this design." },
+                    { pattern: /^match (ip )?dscp 34$/, message: "34 is Assured Forwarding 41, which identifies interactive video. Business traffic is marked one class lower." }
+                ]
+            },
+            {
+                title: "Command 6: Create the Policy Map",
+                objective: "Begin the second stage. Create the policy map named WAN-EDGE, which states what happens to each identified class.",
+                prompt: "R1(config)#",
+                accept: [/^policy-map wan-edge$/],
+                hint: "Syntax: policy-map [name]. The class maps identified traffic; the policy map decides its treatment.",
+                explanation: "Correct. The separation is deliberate: one class map can be referenced by several policy maps, so the work of identifying traffic is done once and reused.",
+                errors: [
+                    { pattern: /^class-map/, message: "The class maps are complete. This stage decides what happens to the traffic they identify." },
+                    { pattern: /^service-policy/, message: "That attaches a finished policy to an interface and is the third stage. The policy must exist first." }
+                ]
+            },
+            {
+                title: "Command 7: Select the Voice Class",
+                objective: "Inside the policy map, select the VOICE class so its treatment can be defined.",
+                prompt: "R1(config-pmap)#",
+                accept: [/^class voice$/],
+                hint: "One word followed by the name of the class map. Inside a policy map the command is shorter than the one that created the class map.",
+                explanation: "Correct. The router has entered policy map class configuration mode, where the treatment for this one class is defined. The order in which classes are listed matters: traffic is tested against them in sequence.",
+                errors: [
+                    { pattern: /^class-map/, message: "That creates a class map in global configuration mode. Inside a policy map the command that selects an existing class is shorter." },
+                    { pattern: /^match/, message: "Matching criteria belong in the class map. Inside the policy map you select a class and then state its treatment." }
+                ]
+            },
+            {
+                title: "Command 8: Grant Strict Priority",
+                objective: "Give the voice class a strict priority queue bounded at 10 percent of the link.",
+                prompt: "R1(config-pmap-c)#",
+                accept: [/^priority percent 10$/],
+                hint: "The keyword names the treatment, then percent and the value. Expressing it as a percentage keeps the policy correct if the link speed changes.",
+                explanation: "Correct. The bound is not optional protection added separately; it is built into the mechanism. Voice traffic beyond 10 percent of the link is discarded rather than served, so a flood of voice-marked traffic degrades only itself.",
+                errors: [
+                    { pattern: /^bandwidth/, message: "A bandwidth guarantee does not prevent a packet waiting behind a large one already being transmitted. Voice needs to be served ahead of the other queues, not merely allocated a share." },
+                    { pattern: /^priority 10$/, message: "Without the percent keyword the value is read as a rate in kilobits per second, which would reserve 10 kbps rather than a tenth of the link." },
+                    { pattern: /^priority$/, message: "Unbounded strict priority allows voice traffic to starve every other class. State the share of the link it may consume." },
+                    { pattern: /^police/, message: "The priority queue is policed automatically at the rate you configure for it. State the priority and its bound in one command." }
+                ]
+            },
+            {
+                title: "Command 9: Select the Business Class",
+                objective: "Return to policy map configuration mode and select the BUSINESS class.",
+                prompt: "R1(config-pmap)#",
+                accept: [/^class business$/],
+                hint: "The same command as the voice class, with the other class map name.",
+                explanation: "Correct. Each class is configured in turn within the same policy map.",
+                errors: [
+                    { pattern: /voice/, message: "The voice class is configured. This objective selects the second class." },
+                    { pattern: /class-default/, message: "The default class catches traffic matching no class map, and it is not what this objective configures." }
+                ]
+            },
+            {
+                title: "Command 10: Guarantee a Bandwidth Share",
+                objective: "Guarantee the business class 30 percent of the link whenever the interface is congested.",
+                prompt: "R1(config-pmap-c)#",
+                accept: [/^bandwidth percent 30$/],
+                hint: "The keyword names the treatment, then percent and the value, following the same pattern as the priority command.",
+                explanation: "Correct. A guarantee is a minimum rather than a limit. When the link is not congested this class may use more than its share, and the guarantee only takes effect when there is competition for capacity.",
+                errors: [
+                    { pattern: /^priority/, message: "A second strict priority class would compete with voice for the priority queue and undermine the protection. A guaranteed share is what interactive data requires." },
+                    { pattern: /^bandwidth 30$/, message: "Without the percent keyword the value is read as a rate in kilobits per second." },
+                    { pattern: /^police|^shape/, message: "Those impose a limit. This class needs a guaranteed minimum, not a ceiling." }
+                ]
+            },
+            {
+                title: "Command 11: Attach the Policy to the Interface",
+                objective: "You have entered configuration mode for GigabitEthernet0/0/0, the interface facing the congested link. Begin the third stage by attaching the policy in the correct direction.",
+                prompt: "R1(config-if)#",
+                accept: [/^service-policy output wan-edge$/],
+                hint: "Syntax: service-policy [direction] [policy-name]. Queuing acts on traffic the interface is trying to transmit.",
+                explanation: "Correct. Until this command is entered nothing is queued differently, however complete the rest of the configuration looks. Queuing happens when an interface cannot transmit everything offered to it, which is why the direction is outbound.",
+                errors: [
+                    { pattern: /input/, message: "A queuing policy applied inbound is accepted by the command line and does nothing useful. Queuing is what happens when an interface cannot transmit everything offered to it." },
+                    { pattern: /^service-policy wan-edge$/, message: "The direction is missing, and the command requires it." },
+                    { pattern: /^policy-map/, message: "That creates or edits a policy in global configuration mode. This step attaches the finished policy to an interface." }
+                ]
+            },
+            {
+                title: "Command 12: Verify the Policy",
+                objective: "You have returned to privileged EXEC mode. Display the per class match, transmit, and drop counters for the policy attached to GigabitEthernet0/0/0.",
+                prompt: "R1#",
+                accept: [/^sh(ow)? policy-map int(erface)? gigabitethernet0\/0\/0$/, /^sh(ow)? policy-map int(erface)? (g|gi|gig|gigabit)0\/0\/0$/],
+                hint: "A privileged EXEC show command naming the policy map, the interface keyword, and the interface itself.",
+                explanation: "Correct. The match counters answer the first diagnostic question: whether traffic is being classified into the class you intended. A class with a large configured share and no matches means the classification is wrong, not the queuing. Remember that on an idle link every counter reads zero and the policy is working correctly.",
+                errors: [
+                    { pattern: /^sh(ow)? policy-map$/, message: "That displays how the policy is configured, not what it has done. Name the interface to see the counters." },
+                    { pattern: /^sh(ow)? class-map/, message: "That displays the matching criteria, which is useful when classification is suspect, but it reports no counters." },
+                    { pattern: /^sh(ow)? int(erface)?s? /, message: "The interface counters report total traffic and errors but say nothing about how the policy classified it." },
+                    { pattern: /^sh(ow)? run/, message: "The running configuration shows what you entered rather than what the policy has actually done." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Command " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Command.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + " " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Command accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That command was not accepted. Check the keyword order and the required parameters, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) { showHint(); }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the syntax in Section 5 of the module content, then enter the command again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [{ x: 0, angle: -1.0 }, { x: confettiCanvas.width, angle: -2.1 }];
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x, y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6, height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI, spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)], life: 1
+                    });
+                }
+            }
+            if (!confettiRunning) { confettiRunning = true; window.requestAnimationFrame(drawConfetti); }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35; piece.vx *= 0.99; piece.vy *= 0.99;
+                piece.x += piece.vx; piece.y += piece.vy;
+                piece.rotation += piece.spin; piece.life -= 0.006;
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) { confettiPieces.splice(i, 1); continue; }
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+            if (confettiPieces.length > 0) { window.requestAnimationFrame(drawConfetti); }
+            else { confettiRunning = false; confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+        }
+
+        function restart() {
+            current = 0; attempts = 0; verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") { event.preventDefault(); checkCommand(); }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>
