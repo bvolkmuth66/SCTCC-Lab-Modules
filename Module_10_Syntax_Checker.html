@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 10 Syntax Checker: Network Management Services</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 10 Syntax Checker: Network Management Services</h2>
+    <p class="intro">This ungraded formative activity verifies your Cisco IOS command line accuracy before you attempt the formative practice activities. You will enter one command at a time. Each entry is validated immediately, and you must enter a command correctly before the next objective is released. Work through all twelve commands to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>You are configuring R1 at the main campus. The management segment is 192.168.30.0/24 and holds a syslog server at 192.168.30.25 and a management station at 192.168.30.30. The public time source is 129.6.15.28. GigabitEthernet0/0/1 faces the student segment.</p>
+        <p>The policy requires that R1 take its time from the public source, stamp and forward log messages down to informational severity, expose read-only monitoring to the management segment only using the community string <code>SCTCCRO</code>, send notifications unasked, run the vendor neutral discovery protocol, and stop advertising the proprietary one to student endpoints.</p>
+        <p>Configure the services in the order their dependencies require. Enter commands exactly as you would at the R1 command line; keyword abbreviations that Cisco IOS accepts are also accepted here.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Command</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have entered all twelve commands correctly. R1 now takes its time from a public source, stamps and forwards log messages to a server that outlives the device, exposes read-only monitoring restricted to the management segment, reports urgent conditions without being asked, and advertises itself to infrastructure neighbors but not to student endpoints. Return to the Module 10 page and begin the formative practice activities.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Command 1: Set the Time Source",
+                objective: "Time is configured first, because log messages and monitoring records are worthless without it. Point R1 at the public source 129.6.15.28. You are in global configuration mode.",
+                prompt: "R1(config)#",
+                accept: [/^ntp server 129\.6\.15\.28$/],
+                hint: "Syntax: ntp server [ip-address]. The relationship is client initiated: this device asks that source for the time.",
+                explanation: "Correct. R1 becomes one stratum further from the reference than the source it queries. The campus switches will later take their time from R1 rather than each querying the internet, which gives the institution one consistent reference.",
+                errors: [
+                    { pattern: /^ntp master/, message: "That declares this device to be an authoritative source itself, which is useful only when no external source is reachable. The policy points R1 at a public source." },
+                    { pattern: /^ntp peer/, message: "A peer relationship is used between devices of equal standing that exchange time. Taking time from a more authoritative source uses a different keyword." },
+                    { pattern: /^clock set/, message: "Setting the clock by hand works until the clock drifts or the device restarts, which is the problem synchronization exists to solve." },
+                    { pattern: /^ntp server$/, message: "The command is incomplete. Name the source." }
+                ]
+            },
+            {
+                title: "Command 2: Stamp Log Messages With the Time",
+                objective: "A synchronized clock is of no use to the log unless messages carry it. Configure messages to be stamped with the date and time to the millisecond.",
+                prompt: "R1(config)#",
+                accept: [/^service timestamps log datetime msec$/],
+                hint: "Syntax: service timestamps log datetime msec. The keyword after timestamps selects which output is stamped.",
+                explanation: "Correct. Millisecond resolution matters more than it appears. Several events on the same device within the same second are common, and ordering them is exactly what an investigation needs.",
+                errors: [
+                    { pattern: /^service timestamps debug/, message: "That stamps debug output rather than log messages. The two are configured separately." },
+                    { pattern: /uptime/, message: "Stamping with uptime records how long the device had been running, which cannot be compared against another device. Use the date and time." },
+                    { pattern: /^logging datetime|^logging timestamp/, message: "Timestamping is a service setting rather than part of the logging configuration." }
+                ]
+            },
+            {
+                title: "Command 3: Direct Messages to the Logging Server",
+                objective: "Send log messages to the syslog server at 192.168.30.25, which is the only destination that survives a restart of this device.",
+                prompt: "R1(config)#",
+                accept: [/^logging host 192\.168\.30\.25$/, /^logging 192\.168\.30\.25$/],
+                hint: "Syntax: logging host [ip-address]. Older releases accept the address without the host keyword.",
+                explanation: "Correct. The console shows messages to whoever is physically connected and keeps nothing, and the buffer is cleared on restart. Only the server retains messages after the device that generated them has failed.",
+                errors: [
+                    { pattern: /192\.168\.30\.30/, message: "That is the management station, which receives monitoring notifications. Log messages go to the syslog server at a different address." },
+                    { pattern: /^logging buffered/, message: "The buffer holds recent messages in device memory and is cleared on restart. This objective sends messages off the device." },
+                    { pattern: /^logging console/, message: "Console output is visible only to someone physically connected and is retained nowhere." },
+                    { pattern: /^logging (host )?$/, message: "The command is incomplete. Name the server." }
+                ]
+            },
+            {
+                title: "Command 4: Set the Severity Threshold",
+                objective: "Send informational severity and everything more severe to the server, while suppressing debugging output.",
+                prompt: "R1(config)#",
+                accept: [/^logging trap informational$/, /^logging trap 6$/],
+                hint: "Syntax: logging trap [level]. The level may be given by keyword or by its number, and it acts as a threshold rather than selecting one level alone.",
+                explanation: "Correct. This sends levels 0 through 6. Level 7 is excluded deliberately: debugging can generate thousands of messages per second, consuming the device processor and saturating the link to the server.",
+                errors: [
+                    { pattern: /debugging|trap 7/, message: "Debugging is a diagnostic tool enabled briefly and deliberately. As a standing threshold it can generate more messages than the link to the server can carry." },
+                    { pattern: /emergencies|trap 0|alerts|trap 1/, message: "That threshold is far too high. The interface failure that starts most investigations is an error at level 3 and would never be recorded." },
+                    { pattern: /^logging trap$/, message: "The command is incomplete. Name the severity level." },
+                    { pattern: /^logging level|^logging severity/, message: "The keyword that sets the threshold for messages sent to a server is trap, which is unrelated to a monitoring trap." }
+                ]
+            },
+            {
+                title: "Command 5: Identify the Management Segment",
+                objective: "Before monitoring is exposed, create standard list 20 permitting the management segment 192.168.30.0/24, which will restrict who may query this device.",
+                prompt: "R1(config)#",
+                accept: [/^access-list 20 permit 192\.168\.30\.0 0\.0\.0\.255$/],
+                hint: "Syntax: access-list [number] permit [source] [wildcard]. The list matches source addresses only, so it belongs in the standard range.",
+                explanation: "Correct. This is the fifth distinct role the access control list syntax has played in this course: not forwarding, translating, encrypting, or classifying, but restricting which addresses may query the device at all.",
+                errors: [
+                    { pattern: /255\.255\.255\.0/, message: "You entered a subnet mask. An access control list compares addresses with a wildcard mask." },
+                    { pattern: /^access-list (1[0-9][0-9]|2[0-9][0-9])/, message: "That number falls in the extended range. Restricting by source address alone uses the standard range." },
+                    { pattern: /permit any/, message: "That permits every address to query the device, which defeats the purpose of the restriction." },
+                    { pattern: /192\.168\.30\.30/, message: "Naming the single station is defensible but the policy restricts access to the management segment as a whole." }
+                ]
+            },
+            {
+                title: "Command 6: Expose Read-Only Monitoring",
+                objective: "Define the community string SCTCCRO as read-only and restrict its use to the addresses permitted by list 20.",
+                prompt: "R1(config)#",
+                accept: [/^snmp-server community sctccro ro 20$/],
+                hint: "Syntax: snmp-server community [string] ro [acl]. The keyword after the string sets the access level, and the number after it attaches the restricting list.",
+                explanation: "Correct. Version 2c sends this string in clear text with every message, so both mitigations matter: read-only access, and a list limiting where queries may come from. Version 3 would authenticate individual users and encrypt the exchange instead.",
+                errors: [
+                    { pattern: /\brw\b/, message: "Read-write access permits configuration changes by anyone who obtains the string, and the string travels in clear text. The policy requires read-only." },
+                    { pattern: /^snmp-server community sctccro ro$/, message: "The access level is correct but nothing restricts where queries may come from. Attach the list you created." },
+                    { pattern: /^snmp-server community sctccro$/, message: "Without an access level the default is read-only on most releases, but the policy requires it to be stated explicitly, along with the restricting list." },
+                    { pattern: /public|private/, message: "Those are the well known default strings and are among the first an attacker tries. Use the string the policy specifies." }
+                ]
+            },
+            {
+                title: "Command 7: Name the Management Station",
+                objective: "Identify 192.168.30.30 as the station that will receive notifications from this device, using version 2c and the community string.",
+                prompt: "R1(config)#",
+                accept: [/^snmp-server host 192\.168\.30\.30 version 2c sctccro$/],
+                hint: "Syntax: snmp-server host [ip] version 2c [string]. This is the destination for notifications the device sends, not the source of queries.",
+                explanation: "Correct. This statement concerns traffic the device originates. Polling arrives at the device and is governed by the community statement you entered previously; the two are configured separately because they travel in opposite directions.",
+                errors: [
+                    { pattern: /192\.168\.30\.25/, message: "That is the syslog server. Monitoring notifications go to the management station at a different address." },
+                    { pattern: /^snmp-server host 192\.168\.30\.30$/, message: "The station is named but the version and community string are missing." },
+                    { pattern: /version 1\b/, message: "Version 1 is older still and offers nothing version 2c does not. The policy specifies 2c." },
+                    { pattern: /^snmp-server community/, message: "That governs queries arriving at the device. This objective names where the device sends notifications." }
+                ]
+            },
+            {
+                title: "Command 8: Permit Unsolicited Notifications",
+                objective: "Allow the device to report conditions on its own initiative rather than only answering queries.",
+                prompt: "R1(config)#",
+                accept: [/^snmp-server enable traps$/],
+                hint: "Three words. The final one names the notifications a device sends without being asked.",
+                explanation: "Correct. This closes the gap in polling. A manager polling every five minutes would not learn of an interface that failed seconds after a poll until the next one, whereas a notification is sent the instant the condition occurs.",
+                errors: [
+                    { pattern: /^snmp-server host/, message: "That names where notifications are sent. This objective permits the device to generate them at all." },
+                    { pattern: /^snmp-server enable$/, message: "The command is incomplete. Name what is being enabled." },
+                    { pattern: /inform/, message: "An inform is an acknowledged notification and is a refinement worth knowing about, but the policy asks for traps." }
+                ]
+            },
+            {
+                title: "Command 9: Enable Vendor Neutral Discovery",
+                objective: "Enable the discovery protocol that works across manufacturers, which is off by default on Cisco hardware.",
+                prompt: "R1(config)#",
+                accept: [/^lldp run$/],
+                hint: "Two words. The protocol is the standards based equivalent of the Cisco proprietary one.",
+                explanation: "Correct. The proprietary protocol is already running by default and works only between Cisco devices. Running both means neighbors are discovered whatever equipment they happen to be.",
+                errors: [
+                    { pattern: /^cdp run$/, message: "The proprietary protocol is enabled by default and works only between Cisco devices. This objective enables the vendor neutral one." },
+                    { pattern: /^lldp enable/, message: "That form enables the protocol on a single interface. Enabling it for the whole device uses a different keyword at global configuration level." },
+                    { pattern: /^no lldp/, message: "That disables it. The policy requires it to run." }
+                ]
+            },
+            {
+                title: "Command 10: Stop Advertising to Student Endpoints",
+                objective: "You have entered configuration mode for GigabitEthernet0/0/1, which faces the student segment. Stop the proprietary discovery protocol advertising on this port.",
+                prompt: "R1(config-if)#",
+                accept: [/^no cdp enable$/],
+                hint: "Three words, negating the interface level command that permits the proprietary protocol on a port.",
+                explanation: "Correct. Anything connected to this port would otherwise receive the model and software version of the router without asking for it. Discovery belongs on links between infrastructure devices and not on ports facing users.",
+                errors: [
+                    { pattern: /^no cdp run$/, message: "That disables the protocol on the entire device, including the links to other infrastructure where it is useful. Disable it on this port only." },
+                    { pattern: /^no lldp/, message: "The vendor neutral protocol was just enabled deliberately. This objective stops the proprietary one on this port." },
+                    { pattern: /^shutdown/, message: "That disables the interface entirely, which would disconnect the student segment." }
+                ]
+            },
+            {
+                title: "Command 11: Verify Time Synchronization",
+                objective: "You have returned to privileged EXEC mode. Verification follows the order of configuration, so confirm the clock first. Display whether it is synchronized and to what stratum.",
+                prompt: "R1#",
+                accept: [/^sh(ow)? ntp status$/],
+                hint: "A privileged EXEC show command naming the protocol and the word for its current condition.",
+                explanation: "Correct. A clock reporting stratum 16 is unsynchronized regardless of what the configuration says, and every timestamp that follows would be worthless. This is why it is checked before anything else.",
+                errors: [
+                    { pattern: /associations/, message: "That lists the sources this device is using and their condition, which is useful for diagnosing why synchronization failed. The objective asks whether it succeeded." },
+                    { pattern: /^sh(ow)? clock/, message: "That reports what the device believes the time is, but not whether it obtained that belief from a trusted source." },
+                    { pattern: /^sh(ow)? run/, message: "The running configuration shows the source you configured rather than whether synchronization actually succeeded." }
+                ]
+            },
+            {
+                title: "Command 12: Verify Logging",
+                objective: "Confirm the logging configuration, the thresholds in use, the count of messages sent, and the contents of the buffer.",
+                prompt: "R1#",
+                accept: [/^sh(ow)? logging$/, /^sh(ow)? log$/],
+                hint: "A privileged EXEC show command naming the service. A single word after show.",
+                explanation: "Correct. A message count that remains at zero means messages are being generated but not delivered, which points at reachability to the server or at a threshold set too high rather than at the logging configuration itself. Shutting and reopening an unused interface is the quickest way to generate a test event.",
+                errors: [
+                    { pattern: /^sh(ow)? logging history/, message: "That reports the notification history rather than the logging destinations and counts." },
+                    { pattern: /^sh(ow)? snmp/, message: "That verifies monitoring, which comes later in the sequence. Confirm logging first." },
+                    { pattern: /^sh(ow)? run/, message: "The running configuration shows what was entered rather than how many messages have actually been sent." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) { return value.trim().toLowerCase().replace(/\s+/g, ' '); }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Command " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Command.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + " " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Command accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) { window.setTimeout(loadStep, 2600); }
+                else { window.setTimeout(finish, 2600); }
+                return;
+            }
+
+            attempts++;
+            var message = "That command was not accepted. Check the keyword order and the required parameters, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) { showHint(); }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the syntax in Section 5 of the module content, then enter the command again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+        function sizeConfettiCanvas() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [{ x: 0, angle: -1.0 }, { x: confettiCanvas.width, angle: -2.1 }];
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x, y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6, height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI, spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)], life: 1
+                    });
+                }
+            }
+            if (!confettiRunning) { confettiRunning = true; window.requestAnimationFrame(drawConfetti); }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35; piece.vx *= 0.99; piece.vy *= 0.99;
+                piece.x += piece.vx; piece.y += piece.vy;
+                piece.rotation += piece.spin; piece.life -= 0.006;
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) { confettiPieces.splice(i, 1); continue; }
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+            if (confettiPieces.length > 0) { window.requestAnimationFrame(drawConfetti); }
+            else { confettiRunning = false; confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+        }
+
+        function restart() {
+            current = 0; attempts = 0; verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") { event.preventDefault(); checkCommand(); }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>
