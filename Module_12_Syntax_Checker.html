@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 12 Syntax Checker: Virtual Adapter Modes</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .evidence { border-left: 4px solid #6b6b6b; background-color: #f1f3f5; padding: 10px 12px; margin: 12px 0; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; }
+        .evidence-heading { font-family: Arial, sans-serif; font-weight: bold; font-size: 12.5px; color: #555; margin-bottom: 6px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 12 Syntax Checker: Virtual Adapter Modes</h2>
+    <p class="intro">This ungraded formative activity verifies that you can place a virtual machine on the network deliberately and prove where it ended up. Configuration steps are entered as hypervisor settings paths using the greater than symbol between levels; verification steps are entered as commands, inside the guest or at the switch. Work through all eleven stages to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>The Setup</strong></p>
+        <p>Your laptop is connected to pod switch S1 on FastEthernet0/6. The pod network is 192.168.10.0/24 and the pod router is 192.168.10.1. A workstation on the pod is at 192.168.10.25. A Linux virtual machine named VM1 is installed and currently powered off.</p>
+        <p>The task is to place VM1 on the pod network as a host in its own right, prove it from both sides of the boundary, then change it to address translation and observe precisely what changes.</p>
+        <p>Settings paths are not case sensitive and spacing around the greater than symbol is ignored.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <div id="evidence-block" class="hidden">
+                <div class="evidence-heading">What the previous step reported</div>
+                <div class="evidence" id="evidence"></div>
+            </div>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the settings path or command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Step</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You placed a virtual machine on the pod network, proved it from inside the guest and from the switch, then changed the mode and watched the guest disappear from the switch table while still reaching the router. That last pair of results is the whole lesson: outbound connectivity looks the same in both modes, and only the switch table tells you which one you are actually in. Return to the Module 12 page and begin the laboratory work.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Step Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Stage 1: Open the Adapter Settings",
+                objective: "VM1 is powered off. Navigate to the settings page for its first network adapter.",
+                prompt: "VirtualBox Manager",
+                evidence: null,
+                accept: [/^settings > network > adapter 1$/],
+                hint: "Three levels: the machine's settings, the category that covers networking, and the first adapter's tab.",
+                explanation: "Correct. A virtual machine may have several adapters, and a machine that needs to reach two different networks is given one adapter in each mode. This exercise uses the first only.",
+                errors: [
+                    { pattern: /^settings > system/, message: "That page covers processor, memory, and boot order. Networking has its own category." },
+                    { pattern: /^settings > storage/, message: "That page covers virtual disks and optical drives." },
+                    { pattern: /^settings > network$/, message: "Correct category. Continue to the tab for the first adapter." }
+                ]
+            },
+            {
+                title: "Stage 2: Attach the Adapter to the Pod Network",
+                objective: "Set the adapter so the guest becomes a host on the pod network in its own right, able to be reached from the workstation at 192.168.10.25.",
+                prompt: "VirtualBox Manager",
+                evidence: "Adapter 1  [x] Enable Network Adapter\n           Attached to:  NAT\n           Name:         --",
+                accept: [/^settings > network > adapter 1 > attached to > bridged adapter$/, /^attached to > bridged adapter$/],
+                hint: "The mode that attaches the guest to the physical network directly, where it obtains its own address rather than sharing the host's.",
+                explanation: "Correct. The guest will now request an address from the pod router, appear in the switch address table, and be subject to the same filtering, translation, and queuing policies as any physical host on that segment.",
+                errors: [
+                    { pattern: /nat/, message: "Address translation lets the guest reach the network through the host's own address. Nothing on the network can start a connection toward it, and the task requires it to be reachable." },
+                    { pattern: /host-only|host only/, message: "Host-only connects the guest to the host operating system and to other guests, but not to the physical network at all." },
+                    { pattern: /internal/, message: "An internal network connects guests to one another and to nothing else, in either direction." },
+                    { pattern: /not attached/, message: "That leaves the adapter present but unconnected, which simulates a cable being unplugged." }
+                ]
+            },
+            {
+                title: "Stage 3: Confirm the Guest's Address",
+                objective: "VM1 is now running and you have a shell on it. Report the addresses assigned to its interfaces.",
+                prompt: "student@vm1:~$",
+                evidence: "Adapter 1  [x] Enable Network Adapter\n           Attached to:  Bridged Adapter\n           Name:         Intel(R) Ethernet Connection I219-LM",
+                accept: [/^ip addr show$/, /^ip a$/, /^ip addr$/],
+                hint: "The modern Linux command for interface addressing. Two words, the second naming what you want to see.",
+                explanation: "Correct. The guest holds 192.168.10.62, which came from the pod router. That address alone identifies the mode: a guest using address translation would hold an address from a private range the hypervisor manages, typically beginning 10.0.2.",
+                errors: [
+                    { pattern: /^ifconfig/, message: "That older command still exists on some systems and is absent from many minimal installations. The modern replacement is the preferred form." },
+                    { pattern: /^show ip int/, message: "That is IOS syntax. You are on a Linux guest." },
+                    { pattern: /^ipconfig/, message: "That is the Windows command. This guest runs Linux." }
+                ]
+            },
+            {
+                title: "Stage 4: Confirm the Guest's Gateway",
+                objective: "An address is not proof of a working path. Report the guest's routing table and default gateway.",
+                prompt: "student@vm1:~$",
+                evidence: "2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500\n    inet 192.168.10.62/24 brd 192.168.10.255 scope global dynamic enp0s3",
+                accept: [/^ip route show$/, /^ip r$/, /^ip route$/],
+                hint: "The same command family as the previous step, with the object changed from addresses to routes.",
+                explanation: "Correct. The default route points at 192.168.10.1, the pod router, which confirms the guest is routing through the network you built rather than through the hypervisor. A guest using address translation would show a gateway inside the hypervisor's own range instead.",
+                errors: [
+                    { pattern: /^route -n|^netstat -r/, message: "Those older commands work on some systems but are being retired. Use the modern command family." },
+                    { pattern: /^show ip route/, message: "That is IOS syntax. You are on a Linux guest." },
+                    { pattern: /^ip addr/, message: "That reported the address, which you already have. The question now is which gateway the guest will send traffic to." }
+                ]
+            },
+            {
+                title: "Stage 5: Test the Pod Router",
+                objective: "Test reachability to the pod router from inside the guest.",
+                prompt: "student@vm1:~$",
+                evidence: "default via 192.168.10.1 dev enp0s3 proto dhcp metric 100\n192.168.10.0/24 dev enp0s3 proto kernel scope link src 192.168.10.62",
+                accept: [/^ping 192\.168\.10\.1$/, /^ping -c ?\d+ 192\.168\.10\.1$/],
+                hint: "Test the gateway the previous output reported.",
+                explanation: "Correct, and it replies. Note carefully that this result does not by itself prove the guest is bridged, because a guest using address translation also reaches the router successfully. Outbound connectivity cannot distinguish the two modes.",
+                errors: [
+                    { pattern: /8\.8\.8\.8|google/, message: "The pod has no path to the internet. Test something on the pod network." },
+                    { pattern: /127\.0\.0\.1|localhost/, message: "The loopback proves the guest's own stack works, which its addressing already implied." }
+                ]
+            },
+            {
+                title: "Stage 6: Look From the Other Side",
+                objective: "You are now at pod switch S1. Display what the switch has learned, and on which ports.",
+                prompt: "S1#",
+                evidence: "64 bytes from 192.168.10.1: icmp_seq=1 ttl=255 time=0.9 ms\n64 bytes from 192.168.10.1: icmp_seq=2 ttl=255 time=0.7 ms",
+                accept: [/^sh(ow)? mac address-table$/, /^sh(ow)? mac-address-table$/],
+                hint: "The privileged EXEC command displaying learned hardware addresses against ports and VLANs.",
+                explanation: "Correct, and this is the proof the ping could not give. Two addresses now appear on FastEthernet0/6: the laptop itself and the guest. Several addresses on one access port is the signature of a virtualized host, and it confirms bridging is genuinely in effect.",
+                errors: [
+                    { pattern: /^sh(ow)? int(erfaces)? status/, message: "That reports the port is up, which it plainly is. The question is how many hosts are behind it." },
+                    { pattern: /^sh(ow)? arp/, message: "The address resolution table lives on devices doing Layer 3. The switch's own table of learned hardware addresses is the evidence here." },
+                    { pattern: /^sh(ow)? cdp/, message: "Neighbour discovery reports infrastructure devices, not virtual machines." }
+                ]
+            },
+            {
+                title: "Stage 7: Prove It to a Peer",
+                objective: "Back on the guest, confirm it can reach the pod workstation at 192.168.10.25, which is an ordinary physical host on the same segment.",
+                prompt: "student@vm1:~$",
+                evidence: "Vlan    Mac Address       Type      Ports\n   1    8c16.4570.11ab    DYNAMIC   Fa0/6\n   1    0800.2765.9c31    DYNAMIC   Fa0/6",
+                accept: [/^ping 192\.168\.10\.25$/, /^ping -c ?\d+ 192\.168\.10\.25$/],
+                hint: "Test the physical workstation named in the setup.",
+                explanation: "Correct. The guest and a physical workstation exchange traffic as peers on one segment, with the switch forwarding between them and no awareness that one of them is software. This is what it means to say a virtual host is a host.",
+                errors: [
+                    { pattern: /192\.168\.10\.1$/, message: "The router already replied in Stage 5. Reaching a peer host proves the guest is part of the segment rather than merely able to reach its gateway." },
+                    { pattern: /192\.168\.10\.62/, message: "That is the guest's own address." }
+                ]
+            },
+            {
+                title: "Stage 8: Change the Mode",
+                objective: "Now change the adapter so the guest reaches the network through the host's own address instead of holding its own.",
+                prompt: "VirtualBox Manager",
+                evidence: "64 bytes from 192.168.10.25: icmp_seq=1 ttl=128 time=1.4 ms",
+                accept: [/^settings > network > adapter 1 > attached to > nat$/, /^attached to > nat$/],
+                hint: "The mode named for the translation technique you configured on a router in Module 6.",
+                explanation: "Correct. The hypervisor will now perform address translation for this guest exactly as the border router did for the campus in Module 6, and with the same consequence: outbound connections work, and nothing outside can start one inward.",
+                errors: [
+                    { pattern: /bridged/, message: "That is the mode the guest is already in. This stage changes it in order to compare." },
+                    { pattern: /host-only|host only|internal/, message: "Those modes remove access to the physical network entirely, and the comparison requires a mode that still reaches it." }
+                ]
+            },
+            {
+                title: "Stage 9: Re-examine the Guest's Address",
+                objective: "The guest has been restarted. Report its addressing again and compare it with Stage 3.",
+                prompt: "student@vm1:~$",
+                evidence: "Adapter 1  Attached to:  NAT",
+                accept: [/^ip addr show$/, /^ip a$/, /^ip addr$/],
+                hint: "The same command as Stage 3, so the outputs can be compared directly.",
+                explanation: "Correct. The guest now holds 10.0.2.15, which is the hypervisor's private range rather than the pod network. Nothing on the pod can address this guest, because from the pod's point of view it no longer exists.",
+                errors: [
+                    { pattern: /^ip route/, message: "That is the next thing worth checking, but compare the address against Stage 3 first, because the change is most obvious there." },
+                    { pattern: /^ifconfig/, message: "Use the same modern command as Stage 3 so the two outputs are directly comparable." }
+                ]
+            },
+            {
+                title: "Stage 10: Test the Router Again",
+                objective: "Repeat the Stage 5 test and predict the result before you run it.",
+                prompt: "student@vm1:~$",
+                evidence: "2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500\n    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic enp0s3",
+                accept: [/^ping 192\.168\.10\.1$/, /^ping -c ?\d+ 192\.168\.10\.1$/],
+                hint: "Repeat the Stage 5 test exactly.",
+                explanation: "Correct, and it still replies. This is the result students find surprising and it is the reason the module warns about testing outbound only. The hypervisor translates the guest's address onto the host's, so the router answers a packet that appears to come from the laptop. Two very different modes have just produced identical output.",
+                errors: [
+                    { pattern: /192\.168\.10\.25/, message: "That test comes later if you wish. Repeat the Stage 5 test first so the comparison is exact." },
+                    { pattern: /10\.0\.2\.2/, message: "That is the hypervisor's own gateway, which would prove only that the guest reaches the hypervisor." }
+                ]
+            },
+            {
+                title: "Stage 11: Look From the Other Side Again",
+                objective: "Return to S1 and repeat the Stage 6 command. This is the evidence that distinguishes the two modes.",
+                prompt: "S1#",
+                evidence: "64 bytes from 192.168.10.1: icmp_seq=1 ttl=255 time=1.1 ms\n64 bytes from 192.168.10.1: icmp_seq=2 ttl=255 time=0.8 ms",
+                accept: [/^sh(ow)? mac address-table$/, /^sh(ow)? mac-address-table$/],
+                hint: "Repeat the Stage 6 command and compare the entries on FastEthernet0/6.",
+                explanation: "Correct. Only one address remains on FastEthernet0/6, the laptop's own. The guest is gone from the switch's view entirely, even though it pinged the router successfully seconds ago. When a report says a machine is on the network, this is the evidence that settles it.",
+                errors: [
+                    { pattern: /^sh(ow)? int(erfaces)?/, message: "The port state has not changed and never was the question. Compare the learned addresses against Stage 6." },
+                    { pattern: /^ping/, message: "Pings from the guest have already been run and cannot distinguish the modes. The switch's view can." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(v) { return v.trim().toLowerCase().replace(/\s+/g,' ').replace(/\s*>\s*/g,' > '); }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Stage " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            if (step.evidence) {
+                document.getElementById('evidence').innerText = step.evidence;
+                document.getElementById('evidence-block').className = "";
+            } else {
+                document.getElementById('evidence-block').className = "hidden";
+            }
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a settings path or command before selecting Verify Step.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + "  " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Step accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) { window.setTimeout(loadStep, 3200); }
+                else { window.setTimeout(finish, 3200); }
+                return;
+            }
+
+            attempts++;
+            var message = "That entry was not accepted. Check the level names or the command form, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) { showHint(); }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this stage. Review Section 5 of the module content, then enter the step again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+        function sizeConfettiCanvas() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [{ x: 0, angle: -1.0 }, { x: confettiCanvas.width, angle: -2.1 }];
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x, y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6, height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI, spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)], life: 1
+                    });
+                }
+            }
+            if (!confettiRunning) { confettiRunning = true; window.requestAnimationFrame(drawConfetti); }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35; piece.vx *= 0.99; piece.vy *= 0.99;
+                piece.x += piece.vx; piece.y += piece.vy;
+                piece.rotation += piece.spin; piece.life -= 0.006;
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) { confettiPieces.splice(i, 1); continue; }
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+            if (confettiPieces.length > 0) { window.requestAnimationFrame(drawConfetti); }
+            else { confettiRunning = false; confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+        }
+
+        function restart() {
+            current = 0; attempts = 0; verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") { event.preventDefault(); checkCommand(); }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>
