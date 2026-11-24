@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 10 Knowledge Checker: Network Management and Monitoring</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Module 10 Knowledge Checker: Network Management and Monitoring</h2>
+    <p class="intro">This ungraded formative activity verifies your conceptual understanding of time synchronization, the syslog severity scheme, the monitoring architecture, and the discovery protocols before you attempt the formative practice activities. Answer all ten questions and select Submit Assessment. Return to the module page and launch the Command Syntax Checker once you have achieved a score of ten out of ten.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. Why is time synchronization configured before logging and monitoring rather than after?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">Because without a common clock, an event on one device cannot be placed before or after an event on another.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">Because the logging and monitoring processes will not start until the clock is synchronized.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">Because log messages carry no timestamp until a time source is configured.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. A device reports that it is operating at stratum 4. What does this tell you?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">It is four hops from an authoritative reference clock, so it is less authoritative than a stratum 2 device.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">It is serving time to four other devices.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">Its clock is accurate to within four milliseconds of the reference.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. An administrator configures <code>logging trap informational</code>. Which severity levels are sent to the server?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">Level 6 only, because the keyword names one level.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">Levels 0 through 6, because a severity keyword is a threshold that includes every more severe level.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">Levels 6 and 7, because the keyword includes everything less severe.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. Why is debugging an unsuitable threshold to leave configured on a production device?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">Because it can generate enough messages to consume the device processor and saturate the link to the server.</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">Because it suppresses the more severe levels in favour of diagnostic output.</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">Because debugging messages carry no timestamp and cannot be correlated.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. Why is the logging buffer an inadequate substitute for a logging server?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">Because it holds only the most severe levels and discards the rest.</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">Because it is cleared when the device restarts, which is exactly when the messages explaining the restart matter most.</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">Because messages in the buffer are not timestamped.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. What distinguishes a trap from a poll?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">A trap carries configuration data while a poll carries only counters.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">Which end starts the exchange. The manager initiates a poll; the device sends a trap on its own initiative.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">A trap is encrypted and a poll is not.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. What problem do traps solve that polling alone does not?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">An interface that fails immediately after a poll would otherwise go unnoticed until the next one.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">Polling cannot retrieve interface counters, only device uptime.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">Polling requires a community string and traps do not.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. What is the security weakness of a version 2c community string?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a">It expires after a fixed interval and must be renegotiated.</label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b">It is sent in clear text with every message, so anyone capturing the traffic reads it.</label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c">It can only be configured as read-write, never read-only.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. Why is a discovery protocol commonly disabled on ports facing users and guests?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a">Because anything connected to the port receives the switch model and software version without asking for it.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b">Because the protocol consumes excessive bandwidth on access ports.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c">Because it prevents the port from carrying ordinary user traffic while it advertises.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. A device is configured with a time source but reports stratum 16. What does this indicate?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">The clock is unsynchronized, regardless of what the configuration states.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">The device is synchronized to a highly accurate source sixteen hops away.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">The device has become the time source for sixteen other devices.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'a', review: 'Question 1: Establishing which of two events happened first is the comparison most troubleshooting turns on, and two devices whose clocks disagree by four minutes cannot answer it. Review Section 5 Part A.' },
+            q2: { correct: 'a', review: 'Question 2: A reference clock is stratum 0, a device taking time directly from one is stratum 1, and each further step adds one. A higher number means a less authoritative source. Review Section 5 Part A.' },
+            q3: { correct: 'b', review: 'Question 3: A severity keyword is a threshold rather than a filter. Specifying informational sends informational and everything more severe, which is levels 0 through 6. Review Section 5 Part B.' },
+            q4: { correct: 'a', review: 'Question 4: Debugging is a diagnostic tool enabled briefly and deliberately, never a logging threshold left in place. Review Section 5 Part B.' },
+            q5: { correct: 'b', review: 'Question 5: A logging server keeps messages on separate storage and is the only destination that survives the failure of the device that generated them. Review Section 5 Part B.' },
+            q6: { correct: 'b', review: 'Question 6: The difference is about who initiates rather than what information travels. Most deployments use both, polling for trends and traps for events that cannot wait. Review Section 5 Part C.' },
+            q7: { correct: 'a', review: 'Question 7: Polling has a gap between intervals. A trap closes it because the device reports the instant the condition occurs without waiting to be asked. Review Section 5 Part C.' },
+            q8: { correct: 'b', review: 'Question 8: A read-only string exposes the full inventory of a network to whoever obtains it, and a read-write string permits configuration changes. Version 3 authenticates users and encrypts the exchange. Review Section 5 Part D.' },
+            q9: { correct: 'a', review: 'Question 9: That is precisely what someone probing the network would like to know. Run discovery between infrastructure devices and disable it on ports facing users, guests, or anything leaving the organization. Review Section 5 Part E.' },
+            q10: { correct: 'a', review: 'Question 10: Stratum 16 means unsynchronized. The status display reports both whether synchronization succeeded and which source was used, and it is the first thing to check when timestamps look wrong. Review Section 5 Part F.' }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>

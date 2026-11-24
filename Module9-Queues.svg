@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 620" width="100%" style="max-width:560px;height:auto;display:block;margin:0 auto;" xmlns:c2pa="http://c2pa.org/manifest">
+<text x="30" y="34" text-anchor="start" font-family="Arial" font-size="15" font-weight="bold" fill="#004a99">How the policy schedules traffic onto the WAN link</text>
+<rect x="30" y="64" width="440" height="66" rx="4" fill="#ffffff" stroke="#9db4d0" stroke-width="1.3"/>
+<rect x="30" y="64" width="9" height="66" rx="2" fill="#cc0000"/>
+<text x="52" y="90" text-anchor="start" font-family="Arial" font-size="14" font-weight="bold" fill="#cc0000">Voice</text>
+<text x="52" y="112" text-anchor="start" font-family="Courier New, monospace" font-size="13" font-weight="normal" fill="#333333">DSCP EF (46)</text>
+<text x="456" y="90" text-anchor="end" font-family="Arial" font-size="13" font-weight="bold" fill="#333333">strict priority queue</text>
+<text x="456" y="112" text-anchor="end" font-family="Arial" font-size="12.5" font-weight="normal" fill="#6b6b6b">served first, but policed</text>
+<rect x="30" y="146" width="440" height="66" rx="4" fill="#ffffff" stroke="#9db4d0" stroke-width="1.3"/>
+<rect x="30" y="146" width="9" height="66" rx="2" fill="#004a99"/>
+<text x="52" y="172" text-anchor="start" font-family="Arial" font-size="14" font-weight="bold" fill="#004a99">Business data</text>
+<text x="52" y="194" text-anchor="start" font-family="Courier New, monospace" font-size="13" font-weight="normal" fill="#333333">DSCP AF31 (26)</text>
+<text x="456" y="172" text-anchor="end" font-family="Arial" font-size="13" font-weight="bold" fill="#333333">30 percent guaranteed</text>
+<text x="456" y="194" text-anchor="end" font-family="Arial" font-size="12.5" font-weight="normal" fill="#6b6b6b">served next</text>
+<rect x="30" y="228" width="440" height="66" rx="4" fill="#ffffff" stroke="#9db4d0" stroke-width="1.3"/>
+<rect x="30" y="228" width="9" height="66" rx="2" fill="#6b6b6b"/>
+<text x="52" y="254" text-anchor="start" font-family="Arial" font-size="14" font-weight="bold" fill="#6b6b6b">Bulk transfer</text>
+<text x="52" y="276" text-anchor="start" font-family="Courier New, monospace" font-size="13" font-weight="normal" fill="#333333">DSCP default (0)</text>
+<text x="456" y="254" text-anchor="end" font-family="Arial" font-size="13" font-weight="bold" fill="#333333">whatever remains</text>
+<text x="456" y="276" text-anchor="end" font-family="Arial" font-size="12.5" font-weight="normal" fill="#6b6b6b">served last</text>
+<line x1="250" y1="300" x2="250" y2="330" stroke="#7a8794" stroke-width="2.2"/><polygon points="244,330 256,330 250,338" fill="#7a8794"/>
+<rect x="120" y="338" width="320" height="50" rx="4" fill="#f4f7fb" stroke="#9db4d0" stroke-width="1.3"/>
+<text x="280" y="368" text-anchor="middle" font-family="Arial" font-size="14.5" font-weight="bold" fill="#333333">scheduler</text>
+<line x1="250" y1="388" x2="250" y2="418" stroke="#7a8794" stroke-width="2.2"/><polygon points="244,418 256,418 250,426" fill="#7a8794"/>
+<rect x="120" y="426" width="320" height="50" rx="4" fill="#fdf2f2" stroke="#cc0000" stroke-width="1.5"/>
+<text x="280" y="456" text-anchor="middle" font-family="Arial" font-size="14.5" font-weight="bold" fill="#cc0000">20 Mbps WAN link</text>
+<line x1="30" y1="506" x2="530" y2="506" stroke="#d9e1ea" stroke-width="1.3"/>
+<text x="30" y="532" text-anchor="start" font-family="Arial" font-size="13" font-weight="normal" fill="#6b6b6b">The priority queue is served first but is policed, so a flood of voice</text>
+<text x="30" y="552" text-anchor="start" font-family="Arial" font-size="13" font-weight="normal" fill="#6b6b6b">traffic cannot starve the other classes.</text>
+<text x="30" y="580" text-anchor="start" font-family="Arial" font-size="13" font-weight="normal" fill="#6b6b6b">When the link is not congested the policy does nothing. Every queue</text>
+<text x="30" y="600" text-anchor="start" font-family="Arial" font-size="13" font-weight="normal" fill="#6b6b6b">drains immediately and no packet waits.</text>
+</svg>

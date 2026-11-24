@@ -1,87 +1,196 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Syntax Checker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 4 Week 1 Syntax Checker: Static Routing and Subinterfaces</title>
 <style>
   body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
   .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-  h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+  h1 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; font-size: 1.5em; margin-top: 0; }
   .instructions { margin-bottom: 20px; font-size: 16px; line-height: 1.5; }
-  .terminal { background-color: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 5px; height: 300px; overflow-y: auto; margin-bottom: 15px; }
+  .progress { font-size: 14px; color: #555; margin: 0 0 6px 0; }
+  .terminal { background-color: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; padding: 20px; border-radius: 5px; height: 350px; overflow-y: auto; margin-bottom: 15px; }
   .prompt-line { display: flex; align-items: center; margin-top: 10px; }
-  .prompt { margin-right: 10px; font-weight: bold; }
+  .prompt { margin-right: 10px; font-weight: bold; white-space: nowrap; }
   input[type="text"] { background: transparent; border: none; color: #0f0; font-family: 'Courier New', Courier, monospace; font-size: 16px; outline: none; width: 80%; }
-  .success { color: #28a745; font-weight: bold; margin-top: 20px; display: none; text-align: center; font-size: 18px; }
-  .hint { color: #dc3545; font-size: 14px; margin-top: 10px; display: none; }
+  input[type="text"]:focus { outline: 1px dashed #0f0; outline-offset: 2px; }
+  .success { color: #1e7e34; font-weight: bold; margin-top: 20px; display: none; text-align: center; font-size: 18px; }
+  .hint { color: #cc0000; font-size: 14px; margin-top: 10px; min-height: 1.2em; }
+  .note { font-size: 14px; color: #555; margin-top: 15px; }
+  button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; border-radius: 4px; }
+  button:hover, button:focus { background-color: #003366; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h2>Command Syntax Checker: Static Routing and Subinterfaces</h2>
+<main class="container">
+  <h1>Command Syntax Checker: Static Routing and Subinterfaces</h1>
   <div class="instructions">
-    <p id="instructionText">Task 1: Access the parent physical interface GigabitEthernet0/0/0 to prepare for subinterface creation.</p>
+    <p class="progress" id="progressText" aria-live="polite"></p>
+    <p id="instructionText" aria-live="polite"></p>
   </div>
   <div class="terminal" id="terminalBox">
-    <div>System bootstrap complete. Press Enter to begin configuration.</div>
+    <div>System bootstrap complete. Type each command and press Enter.</div>
     <div id="outputArea"></div>
-    <div class="prompt-line">
-      <span class="prompt" id="promptText">Router(config)#</span>
-      <input type="text" id="commandInput" autocomplete="off" autofocus>
+    <div class="prompt-line" id="promptLine">
+      <span class="prompt" id="promptText" aria-hidden="true"></span>
+      <label for="commandInput" class="visually-hidden">Command input</label>
+      <input type="text" id="commandInput" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus>
     </div>
   </div>
-  <div class="hint" id="hintText">Incorrect syntax. Review the command matrix and try again.</div>
-  <div class="success" id="successMessage">Syntax verification complete. 100 percent score achieved. Return to the module page.</div>
-</div>
+  <div class="hint" id="hintText" role="alert"></div>
+  <div class="success" id="successMessage" role="status">Syntax verification complete. 100 percent score achieved. Return to the module page.</div>
+  <p class="note">Commands are checked the way a Cisco router reads them: capitalization does not matter, and standard abbreviations such as <strong>int g0/0/0</strong> are accepted. IP addresses and numbers must be exact.</p>
+  <button type="button" id="restartButton">Restart</button>
+</main>
 
 <script>
   const tasks = [
-    { instruction: "Task 1: Access the parent physical interface GigabitEthernet0/0/0 to prepare for subinterface creation.", command: "interface GigabitEthernet0/0/0", prompt: "Router(config)#" },
-    { instruction: "Task 2: Create and enter configuration mode for the logical subinterface associated with VLAN 10.", command: "interface GigabitEthernet0/0/0.10", prompt: "Router(config-if)#" },
-    { instruction: "Task 3: Define the IEEE 802.1Q encapsulation standard for VLAN 10 on this subinterface.", command: "encapsulation dot1Q 10", prompt: "Router(config-subif)#" },
-    { instruction: "Task 4: Exit subinterface configuration mode and return to global configuration mode.", command: "exit", prompt: "Router(config-subif)#" },
-    { instruction: "Task 5: Configure a manual static route to remote network 192.168.50.0 using subnet mask 255.255.255.0 and next hop IP 10.10.10.2.", command: "ip route 192.168.50.0 255.255.255.0 10.10.10.2", prompt: "Router(config)#" },
-    { instruction: "Task 6: Configure a static host route directing traffic to the specific endpoint 192.168.70.5 via next hop IP 10.10.10.2.", command: "ip route 192.168.70.5 255.255.255.255 10.10.10.2", prompt: "Router(config)#" },
-    { instruction: "Task 7: Establish a fully specified default static route utilizing GigabitEthernet0/0/1 as the exit interface and 10.10.10.2 as the next hop.", command: "ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/0/1 10.10.10.2", prompt: "Router(config)#" }
-  ];
+  {
+    "instruction": "Task 1: Access the parent physical interface GigabitEthernet0/0/0 to prepare for subinterface creation.",
+    "command": "interface GigabitEthernet0/0/0",
+    "prompt": "Router(config)#"
+  },
+  {
+    "instruction": "Task 2: Enable the parent physical interface. Its subinterfaces cannot pass traffic while the parent is administratively down.",
+    "command": "no shutdown",
+    "prompt": "Router(config-if)#",
+    "hint": "The parent interface is enabled the same way as any other interface."
+  },
+  {
+    "instruction": "Task 3: Create and enter configuration mode for the logical subinterface associated with VLAN 10.",
+    "command": "interface GigabitEthernet0/0/0.10",
+    "prompt": "Router(config-if)#",
+    "hint": "A subinterface is the parent interface name followed by a period and the subinterface number."
+  },
+  {
+    "instruction": "Task 4: Define the IEEE 802.1Q encapsulation standard for VLAN 10 on this subinterface.",
+    "command": "encapsulation dot1Q 10",
+    "prompt": "Router(config-subif)#"
+  },
+  {
+    "instruction": "Task 5: Assign the subinterface the VLAN 10 gateway address 192.168.10.1 with subnet mask 255.255.255.0.",
+    "command": "ip address 192.168.10.1 255.255.255.0",
+    "prompt": "Router(config-subif)#",
+    "hint": "Subinterfaces are addressed with exactly the same command as physical interfaces."
+  },
+  {
+    "instruction": "Task 6: Exit subinterface configuration mode and return to global configuration mode.",
+    "command": "exit",
+    "prompt": "Router(config-subif)#"
+  },
+  {
+    "instruction": "Task 7: Configure a static route to remote network 192.168.50.0 with subnet mask 255.255.255.0, using next-hop address 10.10.10.2.",
+    "command": "ip route 192.168.50.0 255.255.255.0 10.10.10.2",
+    "prompt": "Router(config)#"
+  },
+  {
+    "instruction": "Task 8: Configure a static route to remote network 192.168.60.0 with subnet mask 255.255.255.0, using the local exit interface GigabitEthernet0/0/1.",
+    "command": "ip route 192.168.60.0 255.255.255.0 GigabitEthernet0/0/1",
+    "prompt": "Router(config)#",
+    "hint": "In the exit-interface form, the interface name takes the place of the next-hop address."
+  },
+  {
+    "instruction": "Task 9: Configure a static host route directing traffic to the single endpoint 192.168.70.5 via next-hop address 10.10.10.2.",
+    "command": "ip route 192.168.70.5 255.255.255.255 10.10.10.2",
+    "prompt": "Router(config)#",
+    "hint": "A host route matches exactly one address, so its mask has every bit set."
+  },
+  {
+    "instruction": "Task 10: Establish a fully specified default static route using GigabitEthernet0/0/1 as the exit interface and 10.10.10.2 as the next hop.",
+    "command": "ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/0/1 10.10.10.2",
+    "prompt": "Router(config)#",
+    "hint": "A fully specified route lists the exit interface first, then the next-hop address."
+  }
+];
+
+  // Interface names: accept g, gi, gig ... gigabitethernet (and fa for FastEthernet), with or without a space before the number.
+  function normalizeInterfaces(s) {
+    return s
+      .replace(/\b(g|gi|gig|giga|gigab|gigabi|gigabit|gigabite|gigabitet|gigabiteth|gigabitethe|gigabitether|gigabitethern|gigabitetherne|gigabitethernet)\s*(?=\d)/g, "gigabitethernet")
+      .replace(/\b(f|fa|fas|fast|faste|fastet|fasteth|fastethe|fastether|fastethern|fastetherne|fastethernet)\s*(?=\d)/g, "fastethernet")
+      .replace(/\b(lo|loo|loop|loopb|loopba|loopbac|loopback)\s*(?=\d)/g, "loopback");
+  }
+  function tokens(s) {
+    return normalizeInterfaces(s.toLowerCase().trim().replace(/\s+/g, " ")).split(" ");
+  }
+  // A typed keyword may be any leading part of the expected keyword, as IOS allows,
+  // provided it is at least 2 characters. Numbers, addresses and interface names must match exactly.
+  function matches(input, expected) {
+    const a = tokens(input), b = tokens(expected);
+    if (a.length !== b.length) return false;
+    return b.every((word, i) => {
+      const typed = a[i];
+      if (typed === word) return true;
+      const isKeyword = /^[a-z][a-z-]*$/.test(word);
+      return isKeyword && typed.length >= 2 && word.startsWith(typed);
+    });
+  }
 
   let currentTaskIndex = 0;
   const inputField = document.getElementById("commandInput");
   const outputArea = document.getElementById("outputArea");
   const instructionText = document.getElementById("instructionText");
+  const progressText = document.getElementById("progressText");
   const promptText = document.getElementById("promptText");
+  const promptLine = document.getElementById("promptLine");
   const hintText = document.getElementById("hintText");
   const successMessage = document.getElementById("successMessage");
   const terminalBox = document.getElementById("terminalBox");
 
-  inputField.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-      const userInput = inputField.value.trim();
-      const expectedCommand = tasks[currentTaskIndex].command;
-      
-      const newOutput = document.createElement("div");
-      newOutput.textContent = promptText.textContent + " " + userInput;
-      outputArea.appendChild(newOutput);
+  function showTask() {
+    const t = tasks[currentTaskIndex];
+    progressText.textContent = "Task " + (currentTaskIndex + 1) + " of " + tasks.length;
+    instructionText.textContent = t.instruction;
+    promptText.textContent = t.prompt;
+  }
 
-      if (userInput === expectedCommand) {
-        hintText.style.display = "none";
-        currentTaskIndex++;
-        
-        if (currentTaskIndex < tasks.length) {
-          instructionText.textContent = tasks[currentTaskIndex].instruction;
-          promptText.textContent = tasks[currentTaskIndex].prompt;
-        } else {
-          instructionText.textContent = "All tasks completed successfully.";
-          document.querySelector(".prompt-line").style.display = "none";
-          successMessage.style.display = "block";
-        }
+  function restart() {
+    currentTaskIndex = 0;
+    outputArea.textContent = "";
+    hintText.textContent = "";
+    successMessage.style.display = "none";
+    promptLine.style.display = "flex";
+    inputField.value = "";
+    showTask();
+    inputField.focus();
+  }
+
+  inputField.addEventListener("keydown", function(event) {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    const userInput = inputField.value.trim();
+    if (userInput === "") return;   // an empty Enter is not an answer
+
+    const t = tasks[currentTaskIndex];
+    const echo = document.createElement("div");
+    echo.textContent = t.prompt + " " + userInput;
+    outputArea.appendChild(echo);
+
+    if (matches(userInput, t.command)) {
+      hintText.textContent = "";
+      currentTaskIndex++;
+      if (currentTaskIndex < tasks.length) {
+        showTask();
       } else {
-        hintText.style.display = "block";
+        progressText.textContent = "All " + tasks.length + " tasks complete";
+        instructionText.textContent = "All tasks completed successfully.";
+        promptLine.style.display = "none";
+        successMessage.style.display = "block";
       }
-      
-      inputField.value = "";
-      terminalBox.scrollTop = terminalBox.scrollHeight;
+    } else {
+      const err = document.createElement("div");
+      err.textContent = "% Invalid input";
+      outputArea.appendChild(err);
+      hintText.textContent = "Incorrect syntax. " + (t.hint || "Review the Cisco IOS Command Reference Matrix on the module page and try again.");
     }
+    inputField.value = "";
+    terminalBox.scrollTop = terminalBox.scrollHeight;
   });
+
+  document.getElementById("restartButton").addEventListener("click", restart);
+  showTask();
 </script>
 </body>
 </html>

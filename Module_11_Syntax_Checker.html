@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 11 Syntax Checker: Working a Fault to Its Cause</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .evidence { border-left: 4px solid #6b6b6b; background-color: #f1f3f5; padding: 10px 12px; margin: 12px 0; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; }
+        .evidence-heading { font-family: Arial, sans-serif; font-weight: bold; font-size: 12.5px; color: #555; margin-bottom: 6px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 11 Syntax Checker: Working a Fault to Its Cause</h2>
+    <p class="intro">This ungraded formative activity verifies your diagnostic reasoning rather than your recall of syntax. At each stage you are shown what the previous command reported, and you enter the command that eliminates the most possibilities next. Work through all ten stages to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>The Ticket</strong></p>
+        <p>A user on the third floor reports that they cannot reach the records server at 192.168.30.10. You have already established scope by asking two questions. Every workstation on the third floor is affected. The second floor is unaffected, and reaches the records server normally.</p>
+        <p>The third floor is served by access switch S2, which connects by trunk to distribution switch S1. The third floor workstations are in VLAN 20 at 192.168.20.0/24, with their gateway at 192.168.20.1 on R1. Nothing is known to have changed.</p>
+        <p>You are at a workstation on the third floor. Enter one command at a time; keyword abbreviations that Cisco IOS accepts are also accepted here.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <div id="evidence-block" class="hidden">
+                <div class="evidence-heading">What the previous command reported</div>
+                <div class="evidence" id="evidence"></div>
+            </div>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Command</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You worked the fault from a vague symptom to a single cause without changing anything until you had evidence. The trunk between S2 and S1 was not carrying VLAN 20, so third floor traffic could not reach its gateway. Note what the record needs: the symptom, the cause, the exact change, and the time. Return to the Module 11 page and begin the formative practice activities.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Investigation Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Stage 1: Confirm the Workstation Is Configured",
+                objective: "Before suspecting the network, confirm the host holds an address and a gateway. Run the command that reports the workstation's own addressing.",
+                prompt: "C:\\>",
+                evidence: null,
+                accept: [/^ipconfig$/, /^ipconfig \/all$/],
+                hint: "This is a Windows command, not an IOS one. A single word reporting the address, mask, and gateway of the host.",
+                explanation: "Correct. The workstation holds 192.168.20.47 with a mask of 255.255.255.0 and a gateway of 192.168.20.1, which is exactly what the design calls for. The host is eliminated and the search moves outward.",
+                errors: [
+                    { pattern: /^show ip interface/, message: "That is an IOS command. You are at a workstation, so use the operating system equivalent." },
+                    { pattern: /^ping/, message: "Testing reachability before confirming the host is addressed at all risks chasing a network fault that is really a workstation with no gateway." }
+                ]
+            },
+            {
+                title: "Stage 2: Test the Nearest Hop",
+                objective: "The host is configured correctly. Test the closest thing to it that should answer, which is its own gateway.",
+                prompt: "C:\\>",
+                evidence: "IPv4 Address. . . . . . . . . . . : 192.168.20.47\nSubnet Mask . . . . . . . . . . . : 255.255.255.0\nDefault Gateway . . . . . . . . . : 192.168.20.1",
+                accept: [/^ping 192\.168\.20\.1$/],
+                hint: "Test the gateway address the previous output reported, not the server named in the ticket.",
+                explanation: "Correct, and the request times out. This is the single most useful result so far. The gateway is unreachable from the third floor, which means the fault lies between this workstation and R1. The records server, the campus routing, and everything beyond the gateway are all eliminated.",
+                errors: [
+                    { pattern: /192\.168\.30\.10/, message: "Testing the server first tells you only that something along a long path is broken. Testing the nearest hop divides the path instead of confirming it as a whole." },
+                    { pattern: /127\.0\.0\.1|localhost/, message: "The loopback proves the workstation's own stack works, which the addressing output already implied. Test the first device beyond the host." },
+                    { pattern: /192\.168\.20\.47/, message: "That is this workstation's own address. Test the gateway." }
+                ]
+            },
+            {
+                title: "Stage 3: Check the Access Port",
+                objective: "You have moved to switch S2, which serves the third floor. The workstation is on FastEthernet0/5. Display port state, VLAN, duplex, and speed for the switch's ports in one screen.",
+                prompt: "S2#",
+                evidence: "Pinging 192.168.20.1 with 32 bytes of data:\nRequest timed out.\nRequest timed out.\n\nPing statistics for 192.168.20.1:\n    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)",
+                accept: [/^sh(ow)? int(erfaces)? status$/],
+                hint: "A privileged EXEC show command reporting the condition of every port in a single table, including which VLAN each is assigned to.",
+                explanation: "Correct. FastEthernet0/5 is connected, assigned to VLAN 20, running full duplex at 100 megabits. The access port is doing what it should, so the fault is further up.",
+                errors: [
+                    { pattern: /^sh(ow)? vlan/, message: "A reasonable instinct, and it does report VLAN membership. One command reports membership alongside port state, duplex, and speed together, which eliminates more in a single look." },
+                    { pattern: /^sh(ow)? run/, message: "The configuration reports what the port was told to do. Port state reports what it is actually doing, which is the distinction that resolves silent faults." },
+                    { pattern: /^config|^interface /, message: "Nothing has been diagnosed yet. Changing configuration before there is evidence is the habit this module exists to prevent." }
+                ]
+            },
+            {
+                title: "Stage 4: Confirm the Switch Has Learned the Host",
+                objective: "The port looks healthy. Confirm that frames from the workstation are actually arriving, by displaying what the switch has learned and where.",
+                prompt: "S2#",
+                evidence: "Port      Name    Status        Vlan    Duplex  Speed Type\nFa0/5             connected     20      a-full  a-100 10/100BaseTX\nGi0/1     to S1   connected     trunk   a-full  a-1000 10/100/1000BaseTX",
+                accept: [/^sh(ow)? mac address-table$/, /^sh(ow)? mac-address-table$/],
+                hint: "A privileged EXEC show command displaying the table of learned hardware addresses against ports and VLANs.",
+                explanation: "Correct. The workstation's address appears on FastEthernet0/5 in VLAN 20, which proves frames are reaching the switch and being placed in the right segment. Everything from the host up to and including this switch port is now eliminated.",
+                errors: [
+                    { pattern: /^sh(ow)? arp/, message: "The address resolution table maps addresses at a different layer and lives on routers and hosts. On a switch, the table of learned hardware addresses is the one that proves frames arrived." },
+                    { pattern: /^sh(ow)? int(erfaces)? trunk/, message: "That is the right next question, but confirm frames are reaching the switch first. Otherwise a trunk fault and a dead access port look identical." }
+                ]
+            },
+            {
+                title: "Stage 5: Examine the Uplink",
+                objective: "Frames reach S2 correctly in VLAN 20, and the gateway beyond S1 is unreachable. Display which VLANs actually cross the trunk to S1.",
+                prompt: "S2#",
+                evidence: "Mac Address Table\nVlan    Mac Address       Type      Ports\n  20    0050.56a1.3c9f    DYNAMIC   Fa0/5",
+                accept: [/^sh(ow)? int(erfaces)? trunk$/],
+                hint: "A privileged EXEC show command reporting each trunk, its mode, and crucially the list of VLANs allowed and active across it.",
+                explanation: "Correct, and there is the cause. The trunk is up and passing traffic, but the allowed list contains VLANs 1, 10 and 30. VLAN 20 is absent, so third floor frames reach S2 and stop there. A trunk that is up is not the same as a trunk that carries what you need.",
+                errors: [
+                    { pattern: /^sh(ow)? vlan/, message: "That confirms VLAN 20 exists on this switch, which it plainly does since the port is in it and frames are arriving. The question is whether the VLAN crosses the link to S1." },
+                    { pattern: /^sh(ow)? spanning-tree/, message: "A blocked port is worth checking, but it would block the whole link rather than one VLAN's traffic, and the trunk is reported connected." },
+                    { pattern: /^sh(ow)? cdp/, message: "Neighbour discovery confirms which device is on the other end, which is not in doubt here." }
+                ]
+            },
+            {
+                title: "Stage 6: Correct the Allowed List",
+                objective: "You are in interface configuration mode for GigabitEthernet0/1, the trunk to S1. Add VLAN 20 to the allowed list without disturbing the VLANs already carried.",
+                prompt: "S2(config-if)#",
+                evidence: "Port      Mode    Encapsulation  Status     Native vlan\nGi0/1     on      802.1q         trunking   1\n\nPort      Vlans allowed on trunk\nGi0/1     1,10,30",
+                accept: [/^switchport trunk allowed vlan add 20$/],
+                hint: "Syntax: switchport trunk allowed vlan add [vlan-id]. The keyword before the VLAN number is what makes this an addition rather than a replacement.",
+                explanation: "Correct, and the keyword matters enormously. Without it the command replaces the entire list, so VLANs 1, 10 and 30 would stop crossing the trunk and you would convert a one floor fault into a building wide outage while apparently fixing something.",
+                errors: [
+                    { pattern: /^switchport trunk allowed vlan 20$/, message: "That replaces the allowed list with VLAN 20 alone, cutting off VLANs 1, 10 and 30. One keyword separates adding from replacing, and this is among the most damaging omissions on a production switch." },
+                    { pattern: /^switchport trunk allowed vlan all$/, message: "That works and is a poor habit. Permitting every VLAN across every trunk discards the segmentation the design depends on." },
+                    { pattern: /^switchport access vlan/, message: "That assigns an access port to a VLAN. This interface is a trunk." },
+                    { pattern: /^vlan 20$/, message: "VLAN 20 already exists on this switch. The problem is that it is not permitted across the trunk." }
+                ]
+            },
+            {
+                title: "Stage 7: Verify the Correction at the Device",
+                objective: "Confirm at the switch that the change took effect before testing from the workstation.",
+                prompt: "S2#",
+                evidence: "S2(config-if)# switchport trunk allowed vlan add 20\nS2(config-if)# end",
+                accept: [/^sh(ow)? int(erfaces)? trunk$/],
+                hint: "Re-run the command that revealed the fault, and compare the allowed list against what it showed before.",
+                explanation: "Correct. The allowed list now reads 1, 10, 20 and 30, and VLAN 20 appears in the active list as well. Verifying at the device first separates a change that did not apply from a change that applied and did not help, which are different problems.",
+                errors: [
+                    { pattern: /^sh(ow)? run/, message: "The configuration shows the line you entered. The trunk display shows which VLANs are actually allowed and active, which is the stronger evidence." },
+                    { pattern: /^ping/, message: "Testing from the workstation is the next stage. Confirm at the device first, so that a failed test distinguishes a change that did not apply from one that did not help." }
+                ]
+            },
+            {
+                title: "Stage 8: Retest the Nearest Hop",
+                objective: "Back at the third floor workstation, repeat the test that failed in Stage 2.",
+                prompt: "C:\\>",
+                evidence: "Port      Vlans allowed on trunk\nGi0/1     1,10,20,30\n\nPort      Vlans in spanning tree forwarding state and not pruned\nGi0/1     1,10,20,30",
+                accept: [/^ping 192\.168\.20\.1$/],
+                hint: "Repeat the Stage 2 test exactly, so the result is directly comparable.",
+                explanation: "Correct, and the gateway now replies. Repeating the exact test that failed is what makes the result meaningful: a different test proving success would leave open whether the original symptom was resolved.",
+                errors: [
+                    { pattern: /192\.168\.30\.10/, message: "Testing the server proves more but tells you less if it fails, because the path is long again. Confirm the hop that failed first, then extend." }
+                ]
+            },
+            {
+                title: "Stage 9: Confirm the Reported Symptom Is Resolved",
+                objective: "The gateway answers. Now test what the user actually reported, which is reachability to the records server.",
+                prompt: "C:\\>",
+                evidence: "Reply from 192.168.20.1: bytes=32 time=1ms TTL=255\nReply from 192.168.20.1: bytes=32 time<1ms TTL=255",
+                accept: [/^ping 192\.168\.30\.10$/],
+                hint: "Test the destination named in the original ticket.",
+                explanation: "Correct, and the server replies. A fault is not resolved when an intermediate test succeeds; it is resolved when the thing the user reported works. Confirming the original symptom is what allows the ticket to be closed honestly.",
+                errors: [
+                    { pattern: /192\.168\.20\.1/, message: "That test already succeeded. The ticket was about the records server, and only testing it confirms the reported symptom is gone." },
+                    { pattern: /^tracert|^traceroute/, message: "A trace is valuable when something still fails. Here the straightforward test of the reported destination is what closes the ticket." }
+                ]
+            },
+            {
+                title: "Stage 10: Make the Change Survive a Restart",
+                objective: "The fault is resolved. Save the corrected configuration on S2 so it is not lost when the switch next restarts.",
+                prompt: "S2#",
+                evidence: "Reply from 192.168.30.10: bytes=32 time=2ms TTL=126\nReply from 192.168.30.10: bytes=32 time=1ms TTL=126",
+                accept: [/^copy running-config startup-config$/, /^wr(ite)?$/, /^write memory$/],
+                hint: "Copy the configuration the device is running into the one it loads at startup.",
+                explanation: "Correct. An unsaved correction produces the same fault again at the next power cut, and the second occurrence is far harder to diagnose because the configuration will look correct to whoever inherits it. Record the symptom, the cause, the change, and the time.",
+                errors: [
+                    { pattern: /^copy startup-config running-config/, message: "That is the reverse, and would overwrite your correction with the saved configuration that still lacks VLAN 20 on the trunk." },
+                    { pattern: /^reload/, message: "Restarting now would discard the unsaved correction and reproduce the fault." },
+                    { pattern: /^erase/, message: "That removes the saved configuration entirely." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) { return value.trim().toLowerCase().replace(/\s+/g, ' '); }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Stage " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            if (step.evidence) {
+                document.getElementById('evidence').innerText = step.evidence;
+                document.getElementById('evidence-block').className = "";
+            } else {
+                document.getElementById('evidence-block').className = "hidden";
+            }
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Command.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + " " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Command accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) { window.setTimeout(loadStep, 3200); }
+                else { window.setTimeout(finish, 3200); }
+                return;
+            }
+
+            attempts++;
+            var message = "That command was not accepted. Ask what the previous output already eliminated, and choose the command that eliminates the most next.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) { showHint(); }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this stage. Review Section 5 of the module content, then enter the command again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+        function sizeConfettiCanvas() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [{ x: 0, angle: -1.0 }, { x: confettiCanvas.width, angle: -2.1 }];
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x, y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6, height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI, spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)], life: 1
+                    });
+                }
+            }
+            if (!confettiRunning) { confettiRunning = true; window.requestAnimationFrame(drawConfetti); }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35; piece.vx *= 0.99; piece.vy *= 0.99;
+                piece.x += piece.vx; piece.y += piece.vy;
+                piece.rotation += piece.spin; piece.life -= 0.006;
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) { confettiPieces.splice(i, 1); continue; }
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+            if (confettiPieces.length > 0) { window.requestAnimationFrame(drawConfetti); }
+            else { confettiRunning = false; confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+        }
+
+        function restart() {
+            current = 0; attempts = 0; verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") { event.preventDefault(); checkCommand(); }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7 Syntax Checker: Wireless LAN Controllers</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 7 Syntax Checker: Wireless LAN Controllers</h2>
+    <p class="intro">This ungraded formative activity verifies your controller configuration accuracy before you attempt the Packet Tracer activities. Configuration steps are entered as web interface navigation paths using the greater than symbol between levels, and verification steps are entered as controller command line commands. Each entry is validated immediately, and you must enter a step correctly before the next objective is released. Work through all eight steps to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>A wireless LAN controller is deployed on the campus management segment. One lightweight access point has been cabled to a switch access port on that same segment and has already joined the controller. A RADIUS authentication server is reachable at 192.168.30.20.</p>
+        <p>The policy requires a wireless network named SCTCC-Faculty carrying WLAN ID 1, placed on the faculty Virtual Local Area Network 20 through a dynamic interface named faculty-dyn at 192.168.20.5, and secured so that each user authenticates with individual institutional credentials rather than a shared passphrase.</p>
+        <p>Enter each step in the order the dependencies require. Navigation paths are not case sensitive and spacing around the greater than symbol is ignored.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the navigation path or command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Step</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have completed all eight steps correctly. You created a dynamic interface binding a wireless network to a wired segment, defined the authentication server the enterprise variant requires, created and mapped a wireless network, selected the security method, and verified the access point, the network mapping, and the associated client at the controller command line. Return to the Module 7 page and begin Packet Tracer Assignment 1.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Step 1: Create the Dynamic Interface",
+                objective: "A wireless network must be bound to a wired segment, and the binding is a dynamic interface. This interface must exist before the wireless network is created, because the wireless network configuration offers a list of existing interfaces to choose from. Navigate to the page that creates a new controller interface.",
+                prompt: "Controller web interface",
+                accept: [/^controller > interfaces > new$/],
+                hint: "The tab that manages the controller's own logical interfaces is CONTROLLER. Within it, Interfaces lists the existing interfaces and New begins the creation of another.",
+                explanation: "Correct. The interface is then assigned the name faculty-dyn, the Virtual Local Area Network identifier 20, the address 192.168.20.5, a mask, and a gateway. Once it exists, a wireless client mapped to it appears on the faculty segment and is subject to the same access control lists as a wired faculty host.",
+                errors: [
+                    { pattern: /^wlans/, message: "Creating the wireless network first leaves nothing to map it to. The wireless network configuration presents a list of existing interfaces, so the interface must be created before the network." },
+                    { pattern: /^wireless/, message: "The WIRELESS tab manages access points and their radios. The controller's own logical interfaces are managed under a different tab." },
+                    { pattern: /management/, message: "The management interface already exists and carries administrative access and access point joins. The objective is to create a new interface that binds a wireless network to a segment." },
+                    { pattern: /^controller > interfaces$/, message: "That page lists the existing interfaces. One more step is required to begin creating a new one." }
+                ]
+            },
+            {
+                title: "Step 2: Define the Authentication Server",
+                objective: "The policy requires individual credentials rather than a shared passphrase, which means the controller must forward authentication requests to a server. That server must be defined before any wireless network can reference it. Navigate to the page that adds a new authentication server at 192.168.30.20.",
+                prompt: "Controller web interface",
+                accept: [/^security > aaa > radius > authentication > new$/],
+                hint: "The SECURITY tab holds authentication, authorization, and accounting configuration. Within RADIUS, the Authentication page holds servers that validate credentials.",
+                explanation: "Correct. The server address, shared secret, and port are entered here. Defining the server before the wireless network is another ordering constraint: a network configured for enterprise authentication offers only servers that already exist.",
+                errors: [
+                    { pattern: /accounting/, message: "Accounting servers record session activity. Validating user credentials at association is the function of an authentication server." },
+                    { pattern: /tacacs/, message: "That protocol is used for administrative access to network devices. Wireless client authentication under the enterprise variant uses RADIUS." },
+                    { pattern: /^wlans/, message: "The wireless network can only select a server that already exists. Define the server under the SECURITY tab first." },
+                    { pattern: /^security > aaa > radius$/, message: "That level holds both authentication and accounting. Continue to the page that manages servers validating credentials, then begin a new entry." }
+                ]
+            },
+            {
+                title: "Step 3: Create the Wireless Network",
+                objective: "Both prerequisites now exist. Navigate to the page that begins the creation of a new wireless network, where the profile name, the advertised network name SCTCC-Faculty, and the WLAN ID are entered.",
+                prompt: "Controller web interface",
+                accept: [/^wlans > create new > go$/],
+                hint: "The WLANs tab lists the configured wireless networks. Creating another requires selecting Create New from the drop down and confirming with Go.",
+                explanation: "Correct. The network is created but is not yet usable. It has no segment mapping, no security method, and it is disabled by default, which is deliberate: a network that became active the moment it was named would briefly advertise itself with no security applied.",
+                errors: [
+                    { pattern: /^controller/, message: "That tab manages the controller's own interfaces. Wireless networks are managed under their own tab." },
+                    { pattern: /^wlans > 1/, message: "That path edits an existing wireless network. The network does not exist yet and must be created first." },
+                    { pattern: /^wireless/, message: "The WIRELESS tab manages access points and radios rather than the wireless networks they advertise." },
+                    { pattern: /^wlans$/, message: "That page lists the configured networks. Two further selections are required to begin creating one." }
+                ]
+            },
+            {
+                title: "Step 4: Map the Network to the Segment",
+                objective: "The wireless network exists but is not yet bound to a segment and remains disabled. Navigate to the page for WLAN ID 1 where the network is enabled and the dynamic interface faculty-dyn is selected.",
+                prompt: "Controller web interface",
+                accept: [/^wlans > 1 > general$/],
+                hint: "Selecting the WLAN ID from the list opens its configuration tabs. The status control and the interface selection both sit on the first of those tabs.",
+                explanation: "Correct. Selecting faculty-dyn here is the step that places wireless clients on Virtual Local Area Network 20. Enabling the network on this same page is required; a configured network left disabled advertises nothing and produces no error message.",
+                errors: [
+                    { pattern: /security/, message: "The Security tab selects the encryption and authentication method. The interface mapping and the enable control sit on the General tab." },
+                    { pattern: /advanced/, message: "The Advanced tab holds session timeouts and client exclusion settings. The interface mapping sits on the General tab." },
+                    { pattern: /^controller > interfaces/, message: "That page creates and edits the interface itself. The binding between a wireless network and an interface is made from the wireless network configuration." },
+                    { pattern: /^wlans > 1$/, message: "Selecting the WLAN ID opens its configuration. Name the tab that holds the status control and the interface selection." }
+                ]
+            },
+            {
+                title: "Step 5: Select the Security Method",
+                objective: "Navigate to the page where the security method for WLAN ID 1 is chosen. This is the page that offers the open, personal, and enterprise options for the encryption standard in use.",
+                prompt: "Controller web interface",
+                accept: [/^wlans > 1 > security > layer 2$/],
+                hint: "Wireless encryption and authentication operate at the data link layer, so the setting sits on the tab named for that layer within the Security section of the wireless network.",
+                explanation: "Correct. The enterprise variant is selected here, and the specific authentication server is then chosen on the AAA Servers tab alongside it. The personal variant would instead accept a shared passphrase on this same page.",
+                errors: [
+                    { pattern: /layer 3/, message: "Layer 3 security covers web authentication and passthrough, which run after a client already has an address. The encryption standard operates at the data link layer." },
+                    { pattern: /aaa servers/, message: "That tab selects which defined server this network will use, which comes after the method itself is chosen. Select the method first." },
+                    { pattern: /^wlans > 1 > general/, message: "The General tab holds the enable control and the interface mapping. The security method sits under its own tab." },
+                    { pattern: /^security > /, message: "The top level SECURITY tab holds controller wide settings such as the authentication servers. The method for one wireless network is set within that network's own configuration." }
+                ]
+            },
+            {
+                title: "Step 6: Verify the Access Point",
+                objective: "Verification follows the dependency chain, and nothing else can be true until the access point has joined. You are now at the controller command line. Display every joined access point with its name, model, radio address, and operational state.",
+                prompt: "(Cisco Controller) >",
+                accept: [/^show ap summary$/],
+                hint: "This is a controller show command. The object is the access point, abbreviated to two letters, and the keyword requests the overview rather than the detail of one device.",
+                explanation: "Correct. An access point missing from this output has not joined, and the investigation belongs in the discovery process rather than anywhere in the wireless network configuration. Nothing configured on the controller can reach a client through an access point that is not listed here.",
+                errors: [
+                    { pattern: /join stats/, message: "That output reports why a join attempt failed, which is valuable when an access point is missing. The objective is the inventory of access points that have succeeded." },
+                    { pattern: /^show access-point/, message: "The controller abbreviates the object to two letters." },
+                    { pattern: /^show ip /, message: "That is Cisco IOS syntax. The controller command line does not use the ip keyword for these commands." },
+                    { pattern: /^show client/, message: "Clients are verified later in the chain. Confirm the access point has joined first." }
+                ]
+            },
+            {
+                title: "Step 7: Verify the Network Mapping",
+                objective: "Confirm that the wireless network is enabled and mapped to the intended interface. Display every configured wireless network with its identifier, name, status, and interface.",
+                prompt: "(Cisco Controller) >",
+                accept: [/^show wlan summary$/],
+                hint: "The command follows the same pattern as the previous step, with the object changed to the wireless network.",
+                explanation: "Correct. This output is where a disabled network is caught. A network that is configured correctly in every other respect but left disabled advertises nothing, and the controller reports no error to indicate it.",
+                errors: [
+                    { pattern: /^show wlan 1$/, message: "That displays the full configuration of one network, which is useful for confirming the security method. The objective is the overview of every configured network." },
+                    { pattern: /^show wlan$/, message: "The command is incomplete. Add the keyword that requests the overview." },
+                    { pattern: /interface summary/, message: "That lists the controller's own interfaces rather than the wireless networks mapped to them." },
+                    { pattern: /^show ap/, message: "That verifies the access point, which was the previous step. This objective concerns the wireless network." }
+                ]
+            },
+            {
+                title: "Step 8: Verify the Associated Client",
+                objective: "The final link in the chain is the client itself. Display every associated client with its access point and the wireless network it joined.",
+                prompt: "(Cisco Controller) >",
+                accept: [/^show client summary$/],
+                hint: "The command follows the same pattern once more, with the object changed to the client.",
+                explanation: "Correct. A client listed here with an address on the expected segment proves the wireless portion of the path end to end. Any failure beyond this point is a routing or filtering question and is investigated with the tools from Modules 4 and 5 rather than anywhere in the controller.",
+                errors: [
+                    { pattern: /^show client detail/, message: "That form requires the media access control address of one specific client. The objective is the list of all associated clients." },
+                    { pattern: /^show ap summary/, message: "That was the first verification step. This objective concerns the clients associated through that access point." },
+                    { pattern: /^show wlan/, message: "That confirms the network configuration rather than whether any client has actually associated to it." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*>\s*/g, ' > ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Step " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a navigation path or command before selecting Verify Step.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + "  " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Step accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That entry was not accepted. Check the level names and their order, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) {
+                showHint();
+            }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the reference tables in Section 6 of the module content, then enter the step again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [
+                { x: 0, angle: -1.0 },
+                { x: confettiCanvas.width, angle: -2.1 }
+            ];
+
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x,
+                        y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6,
+                        height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI,
+                        spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1
+                    });
+                }
+            }
+
+            if (!confettiRunning) {
+                confettiRunning = true;
+                window.requestAnimationFrame(drawConfetti);
+            }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35;
+                piece.vx *= 0.99;
+                piece.vy *= 0.99;
+                piece.x += piece.vx;
+                piece.y += piece.vy;
+                piece.rotation += piece.spin;
+                piece.life -= 0.006;
+
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) {
+                    confettiPieces.splice(i, 1);
+                    continue;
+                }
+
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+
+            if (confettiPieces.length > 0) {
+                window.requestAnimationFrame(drawConfetti);
+            } else {
+                confettiRunning = false;
+                confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        function restart() {
+            current = 0;
+            attempts = 0;
+            verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkCommand();
+            }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>

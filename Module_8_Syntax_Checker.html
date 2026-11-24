@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 8 Syntax Checker: Site to Site VPN</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 8 Syntax Checker: Site to Site VPN</h2>
+    <p class="intro">This ungraded formative activity verifies your Cisco IOS command line accuracy before you attempt the Packet Tracer activities. You will enter one command at a time. Each entry is validated immediately, and you must enter a command correctly before the next objective is released. Work through all eleven commands to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>You are configuring R1 at the main campus. Its provider facing interface is GigabitEthernet0/0/0 at 209.165.200.225. The internal network is 192.168.10.0/24. The remote instructional site is served by R2, whose provider facing interface is 209.165.201.1, and its internal network is 192.168.40.0/24.</p>
+        <p>The policy requires a permanent protected tunnel between the two sites using a shared secret of <code>CISCO123</code>, encryption and authentication named <code>VPN-SET</code>, and a crypto map named <code>VPN-MAP</code>. Only traffic between the two internal networks is protected.</p>
+        <p>Enter commands exactly as you would at the R1 command line. Keyword abbreviations that Cisco IOS accepts are also accepted here.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Command</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have entered all eleven commands correctly. You defined how the two routers protect their own negotiation, set the shared secret and the peer, named the algorithms that protect user traffic, selected the traffic to encrypt, bound peer and transform set and selecting list into a crypto map, activated it on the provider facing interface, and verified the associations. Remember that R2 requires the matching configuration with the selecting list reversed. Return to the Module 8 page and begin Packet Tracer Assignment 1.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Command 1: Define the Negotiation Policy",
+                objective: "Before any user traffic can be protected, the two routers must agree how to protect their own negotiation. Create the policy with priority 10. You are in global configuration mode.",
+                prompt: "R1(config)#",
+                accept: [/^crypto isakmp policy 10$/],
+                hint: "Syntax: crypto isakmp policy [priority]. This is the first stage of the negotiation, which protects the conversation about keys rather than user traffic.",
+                explanation: "Correct. The router has entered policy configuration mode, where the encryption, hash, authentication method, and key exchange group are set. Every one of those values must match the policy configured on R2.",
+                errors: [
+                    { pattern: /^crypto ipsec/, message: "That family of commands configures the protection applied to user traffic, which is the second stage. The first stage protects the negotiation itself." },
+                    { pattern: /^crypto map/, message: "The crypto map binds the finished pieces together and comes later. Start by defining how the two routers will negotiate." },
+                    { pattern: /^crypto isakmp key/, message: "The shared secret comes after the policy exists. Create the numbered policy first." },
+                    { pattern: /^crypto isakmp policy$/, message: "The command is incomplete. A policy requires a priority number." }
+                ]
+            },
+            {
+                title: "Command 2: Select the Authentication Method",
+                objective: "Inside the policy, specify that the two routers will prove their identity to one another with a shared secret rather than with certificates.",
+                prompt: "R1(config-isakmp)#",
+                accept: [/^authentication pre-share$/],
+                hint: "The keyword names the method: a secret both ends already hold, shared in advance.",
+                explanation: "Correct. Certificates are the alternative and are stronger in a large deployment, because a shared secret must be distributed to every peer and changed everywhere if it is exposed. For two routers a shared secret is adequate and far simpler.",
+                errors: [
+                    { pattern: /rsa|certificate/, message: "Certificate based authentication requires a certificate authority, which this scenario does not have. Use the method based on a secret both routers already hold." },
+                    { pattern: /^authentication$/, message: "The command is incomplete. Name the method." },
+                    { pattern: /^crypto isakmp key/, message: "That defines the value of the secret and is entered in global configuration mode. This step selects the method within the policy." },
+                    { pattern: /^encryption |^hash |^group /, message: "Those are the other policy values and are equally required in practice, but this objective asks for the authentication method." }
+                ]
+            },
+            {
+                title: "Command 3: Define the Shared Secret and the Peer",
+                objective: "Return to global configuration mode and define the shared secret CISCO123 for the peer at 209.165.201.1.",
+                prompt: "R1(config)#",
+                accept: [/^crypto isakmp key cisco123 address 209\.165\.201\.1$/],
+                hint: "Syntax: crypto isakmp key [secret] address [peer-ip]. The peer address is the far router's provider facing interface.",
+                explanation: "Correct. R2 must carry the identical secret configured against this router's address, 209.165.200.225. A mismatch here produces a first stage negotiation that never completes, and the command line reports no error when the value is entered.",
+                errors: [
+                    { pattern: /209\.165\.200\.225/, message: "That is this router's own address. The key statement names the far endpoint it applies to." },
+                    { pattern: /192\.168\./, message: "The peer is identified by its public provider facing address, not by an internal network address." },
+                    { pattern: /^crypto isakmp key cisco123$/, message: "The secret is correct but the statement is incomplete. State which peer address it applies to." },
+                    { pattern: /hostname/, message: "Identifying the peer by name requires name resolution the routers do not have here. Use the address form." }
+                ]
+            },
+            {
+                title: "Command 4: Name the Algorithms That Protect User Traffic",
+                objective: "Create the transform set named VPN-SET, combining 256 bit AES encryption with SHA authentication. This is the second stage of the negotiation.",
+                prompt: "R1(config)#",
+                accept: [/^crypto ipsec transform-set vpn-set esp-aes 256 esp-sha-hmac$/],
+                hint: "Syntax: crypto ipsec transform-set [name] [encryption] [hash]. Both transforms carry the esp prefix, because the Encapsulating Security Payload is what provides them.",
+                explanation: "Correct. Both transforms carry the esp prefix because the Encapsulating Security Payload provides both the encryption and the authentication. R2 must configure an identical pair, though the set may carry a different name at the far end.",
+                errors: [
+                    { pattern: /\bah-/, message: "The Authentication Header provides integrity and authentication but no encryption, which leaves the traffic readable. Use the transforms that begin with esp." },
+                    { pattern: /^crypto isakmp/, message: "That family configures the first stage. The transform set belongs to the second stage, which protects user traffic." },
+                    { pattern: /^crypto ipsec transform-set vpn-set$/, message: "The set is named but empty. Add the encryption transform and the authentication transform." },
+                    { pattern: /esp-des|esp-3des/, message: "Those older algorithms are still accepted by the parser but are no longer considered adequate. The policy calls for 256 bit AES." }
+                ]
+            },
+            {
+                title: "Command 5: Select the Traffic to Protect",
+                objective: "Create extended list 110 selecting traffic from the main campus network 192.168.10.0/24 to the remote site network 192.168.40.0/24.",
+                prompt: "R1(config)#",
+                accept: [/^access-list 110 permit ip 192\.168\.10\.0 0\.0\.0\.255 192\.168\.40\.0 0\.0\.0\.255$/],
+                hint: "Syntax: access-list [number] permit ip [source] [wildcard] [destination] [wildcard]. The protocol keyword is ip, because the policy protects all traffic between the two networks rather than one application.",
+                explanation: "Correct. A permit entry here means encrypt this traffic, which is the third distinct meaning this syntax has carried in the course. R2 must configure the mirror image, permitting 192.168.40.0 to 192.168.10.0.",
+                errors: [
+                    { pattern: /255\.255\.255\.0/, message: "You entered a subnet mask. An access control list compares addresses with a wildcard mask, in which a zero requires an exact match and a one is ignored." },
+                    { pattern: /^access-list 110 deny/, message: "A deny entry here means do not protect this traffic, so it would leave unencrypted by the normal path. The policy requires this traffic to be encrypted." },
+                    { pattern: /^access-list ([1-9]|[1-9][0-9])\b/, message: "That number falls in the standard range, which matches source addresses only. Selecting traffic between two specific networks needs the extended range." },
+                    { pattern: /permit (tcp|udp|icmp)/, message: "The policy protects all traffic between the two networks, not a single protocol. Use the keyword that matches every IP protocol." },
+                    { pattern: /192\.168\.40\.0 0\.0\.0\.255 192\.168\.10\.0/, message: "Source and destination are reversed. That is the list R2 needs; on R1 the local network comes first." }
+                ]
+            },
+            {
+                title: "Command 6: Create the Crypto Map Entry",
+                objective: "Create entry 10 of the crypto map named VPN-MAP, specifying that its keys will be negotiated rather than entered by hand.",
+                prompt: "R1(config)#",
+                accept: [/^crypto map vpn-map 10 ipsec-isakmp$/],
+                hint: "Syntax: crypto map [name] [sequence] ipsec-isakmp. The final keyword states that the negotiation process establishes the keys.",
+                explanation: "Correct. The alternative keyword configures keys manually, which does not scale and is not used in practice. The router is now in crypto map configuration mode, where the peer, the transform set, and the selecting list are attached.",
+                errors: [
+                    { pattern: /ipsec-manual/, message: "Manual keying requires every key to be entered by hand at both ends and never rotates them. The policy calls for negotiated keys." },
+                    { pattern: /^crypto map vpn-map$/, message: "The command is incomplete. A map entry requires a sequence number and the keying method." },
+                    { pattern: /^crypto map vpn-map 10$/, message: "The sequence number is correct but the keying method is missing." },
+                    { pattern: /^crypto ipsec/, message: "That family creates the transform set, which you already defined. This objective creates the map that will reference it." }
+                ]
+            },
+            {
+                title: "Command 7: Identify the Far Endpoint",
+                objective: "Inside the crypto map entry, name the peer this entry protects traffic to.",
+                prompt: "R1(config-crypto-map)#",
+                accept: [/^set peer 209\.165\.201\.1$/],
+                hint: "Two words followed by the address of the far router's provider facing interface.",
+                explanation: "Correct. More than one peer can be listed for redundancy, in which case the router tries them in order. This scenario has a single remote site.",
+                errors: [
+                    { pattern: /209\.165\.200\.225/, message: "That is this router's own address. The peer is the far endpoint." },
+                    { pattern: /192\.168\.40\./, message: "The peer is the far router's public interface, not a host or network behind it." },
+                    { pattern: /^crypto isakmp key/, message: "That defines the shared secret in global configuration mode. This step names the peer within the map entry." }
+                ]
+            },
+            {
+                title: "Command 8: Attach the Transform Set",
+                objective: "Still inside the crypto map entry, attach the transform set VPN-SET so this entry knows which algorithms to apply.",
+                prompt: "R1(config-crypto-map)#",
+                accept: [/^set transform-set vpn-set$/],
+                hint: "The command follows the same two word pattern as the previous step, with the object changed to the transform set.",
+                explanation: "Correct. Several transform sets may be listed in order of preference, and the two endpoints use the first one they both support. Listing one keeps the negotiation unambiguous.",
+                errors: [
+                    { pattern: /^crypto ipsec transform-set/, message: "That creates a transform set in global configuration mode. You already created VPN-SET; this step attaches it to the map entry." },
+                    { pattern: /^set peer/, message: "The peer was named in the previous step. This objective attaches the algorithms." },
+                    { pattern: /esp-aes|esp-sha/, message: "Reference the set by the name you gave it rather than restating the individual transforms." }
+                ]
+            },
+            {
+                title: "Command 9: Attach the Selecting List",
+                objective: "Complete the crypto map entry by attaching list 110, which selects the traffic to be protected.",
+                prompt: "R1(config-crypto-map)#",
+                accept: [/^match address 110$/],
+                hint: "Two words followed by the list number. The verb is not set, because the entry is matching traffic rather than setting a parameter.",
+                explanation: "Correct. The map entry is now complete: it knows the peer, the algorithms, and the traffic. Nothing is encrypted yet, because the map has not been applied to an interface.",
+                errors: [
+                    { pattern: /^set address|^set match/, message: "The other entries in this map use set because they assign a parameter. This one selects traffic, so the verb is different." },
+                    { pattern: /^access-list/, message: "That creates a list in global configuration mode. You already created list 110; this step attaches it to the map entry." },
+                    { pattern: /^match address$/, message: "The command is incomplete. Name the list." }
+                ]
+            },
+            {
+                title: "Command 10: Activate the Policy on the Interface",
+                objective: "You have entered configuration mode for GigabitEthernet0/0/0, the interface facing the provider. Apply the crypto map.",
+                prompt: "R1(config-if)#",
+                accept: [/^crypto map vpn-map$/],
+                hint: "Two words: the object and the name. No direction keyword is used, because a crypto map is not applied inbound or outbound.",
+                explanation: "Correct. Until this command is entered nothing is encrypted, however complete the rest of the configuration looks. A crypto map takes no direction keyword, unlike the access group command from Module 5, because it governs traffic in both directions.",
+                errors: [
+                    { pattern: /\b(in|out)$/, message: "A crypto map takes no direction keyword. It governs traffic in both directions across the interface." },
+                    { pattern: /^ip access-group/, message: "That applies a filtering list to an interface. This objective applies the crypto map." },
+                    { pattern: /^crypto map vpn-map 10/, message: "The sequence number identifies an entry within the map and is used when creating it. Applying the map to an interface names the map only." }
+                ]
+            },
+            {
+                title: "Command 11: Verify the Associations",
+                objective: "You have returned to privileged EXEC mode. Display the associations protecting user traffic, including the encrypted and decrypted packet counters that prove the policy is working.",
+                prompt: "R1#",
+                accept: [/^sh(ow)? crypto ipsec sa$/],
+                hint: "A privileged EXEC show command naming the protocol family and the abbreviation for security associations.",
+                explanation: "Correct. The counters are the evidence. A successful ping proves only that traffic reached the far end, which it can do outside the tunnel if a route exists. Remember the tunnel is built on demand, so matching traffic must be sent before anything appears here.",
+                errors: [
+                    { pattern: /isakmp/, message: "That reports the first stage negotiation, which is the right place to start when nothing works at all. This objective asks for the associations protecting user traffic." },
+                    { pattern: /^sh(ow)? crypto map/, message: "That displays the configuration of the map rather than whether traffic is actually being encrypted." },
+                    { pattern: /^ping/, message: "A successful ping proves traffic reached the far end, not that it was encrypted. Inspect the counters instead." },
+                    { pattern: /^sh(ow)? ip route/, message: "The routing table shows how packets are forwarded, not whether they were protected." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Command " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Command.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + " " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Command accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That command was not accepted. Check the keyword order and the required parameters, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) { showHint(); }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the syntax in Section 5 of the module content, then enter the command again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [{ x: 0, angle: -1.0 }, { x: confettiCanvas.width, angle: -2.1 }];
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x, y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6, height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI, spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)], life: 1
+                    });
+                }
+            }
+            if (!confettiRunning) { confettiRunning = true; window.requestAnimationFrame(drawConfetti); }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35; piece.vx *= 0.99; piece.vy *= 0.99;
+                piece.x += piece.vx; piece.y += piece.vy;
+                piece.rotation += piece.spin; piece.life -= 0.006;
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) { confettiPieces.splice(i, 1); continue; }
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+            if (confettiPieces.length > 0) { window.requestAnimationFrame(drawConfetti); }
+            else { confettiRunning = false; confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+        }
+
+        function restart() {
+            current = 0; attempts = 0; verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") { event.preventDefault(); checkCommand(); }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>

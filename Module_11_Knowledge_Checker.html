@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 11 Knowledge Checker: Network Troubleshooting</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Module 11 Knowledge Checker: Network Troubleshooting</h2>
+    <p class="intro">This ungraded formative activity verifies your understanding of scope, the diagnostic approaches, and the fault signatures introduced across this course before you attempt the formative practice activities. Answer all ten questions and select Submit Assessment. Return to the module page and launch the Command Syntax Checker once you have achieved a score of ten out of ten.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. A ticket reads only that the third floor cannot reach the records server. What is the correct first action?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">Establish how many users and how many destinations are affected, before examining any device.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">Connect to the third floor access switch and inspect its running configuration.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">Restart the records server, since it is the resource named in the ticket.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. One workstation cannot reach anything, while the workstation beside it works normally. Where does the investigation belong?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">At that host and its access port, because everything the two machines share is demonstrably working.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">At the distribution switch, because it serves both machines.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">At the campus routing configuration, because reaching anything requires a route.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Users on every floor report that one particular server is unreachable, while everything else works. What does this scope indicate?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">The fault is at the destination or on the path in front of it, and the reporting users' locations are irrelevant.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">Each floor has developed the same access port fault independently.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">The fault is at whichever floor reported it first.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. Why must a change that did not resolve the symptom be reversed before the next change is tried?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">Because otherwise the investigation proceeds against a configuration matching neither the documentation nor the original fault.</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">Because a device accepts only one configuration change per session.</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">Because leaving it in place prevents the running configuration from being saved.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. A technician applies a correction that is certainly right, and the symptom does not improve. What should be considered?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">The network may hold two faults, so a correct fix can produce no visible change and should be kept.</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">The correction was evidently wrong and must be reversed immediately.</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">The symptom was reported inaccurately and the ticket should be closed.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. Forty users across three floors lose connectivity at the same moment. Which approach fits the evidence?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">Top down, beginning with the application each user was running.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">Bottom up, because what many users have in common is shared physical infrastructure.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">Substitution, replacing each user's workstation with a known good one.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. The evidence points nowhere in particular. Which approach is the sensible default?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">Divide and conquer, because a single reachability test divides the remaining possibilities roughly in half.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">Bottom up, because the physical layer is always the most likely fault.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">Whichever approach was used for the previous ticket.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. An access control list appears correct, and its match counters remain at zero throughout a connectivity test. What does this evidence point at?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a">The interface it is bound to, or the direction, because the test traffic is not reaching the filter at all.</label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b">The wildcard masks in the statements, which must be inverted.</label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c">The implicit deny, which is silently discarding the traffic before it is counted.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. A translation configuration looks correct, traffic has been sent, and the translation table is empty. What is the most likely cause?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a">One of the two interface designations is missing, so no packet ever crosses a designated pair.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b">The address pool has been exhausted by previous translations.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c">The translation entries expired before the table could be displayed.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. Why is reading the running configuration back an inadequate way to confirm that a feature works?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">Because a device reports errors about syntax and nothing about intent, so a valid configuration can still be wrong.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">Because the running configuration omits commands entered in interface configuration mode.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">Because the running configuration is only updated after the device restarts.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'a', review: 'Question 1: The same ticket produces four entirely different investigations depending on scope, which is why the questions come before any device is touched. Review Section 5 Part B.' },
+            q2: { correct: 'a', review: 'Question 2: One source failing to everything points at the host itself or its access port. The working neighbour proves every shared component is healthy. Review Section 5 Part B.' },
+            q3: { correct: 'a', review: 'Question 3: Every source failing to one destination points at that destination or the path in front of it. Where the first report came from is a coincidence of who noticed first. Review Section 5 Part B.' },
+            q4: { correct: 'a', review: 'Question 4: This is the discipline students find hardest. A change that did not resolve the symptom must be undone, or the next test runs against a configuration nobody has a record of. Review Section 5 Part A.' },
+            q5: { correct: 'a', review: 'Question 5: Correcting one of two faults produces no visible improvement. Reversing a correct fix at that moment guarantees the problem cannot be solved. Keep it and note it as one of possibly several causes. Review Section 5 Part A.' },
+            q6: { correct: 'b', review: 'Question 6: Many users failing at once points at something they share, and shared components are physical. Review Section 5 Part C.' },
+            q7: { correct: 'a', review: 'Question 7: Beginning in the middle by testing reachability is the right default when the evidence points nowhere, because the result tells you which direction to work in. Review Section 5 Part C.' },
+            q8: { correct: 'a', review: 'Question 8: A counter at zero proves the traffic never reached the filter, which redirects the investigation toward interface binding, direction, or the routing path rather than toward the statements. Review Section 5 Part E.' },
+            q9: { correct: 'a', review: 'Question 9: Translation occurs only for packets crossing between an interface designated inside and one designated outside. A missing designation is accepted without error and leaves the table empty. Review Section 5 Part E.' },
+            q10: { correct: 'a', review: 'Question 10: Every silent fault in this course is syntactically valid and semantically wrong. The diagnostic evidence is always a counter, a table, or a state, never a configuration line. Review Section 5 Part E.' }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>

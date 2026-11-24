@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6 Syntax Checker: Network Address Translation</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 6 Syntax Checker: Network Address Translation</h2>
+    <p class="intro">This ungraded formative activity verifies your Cisco IOS command line accuracy before you attempt the Packet Tracer activities. You will enter one command at a time. Each entry is validated immediately, and you must enter a command correctly before the next objective is released. Work through all eight commands to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>Border router R1 connects the campus to the service provider. GigabitEthernet0/0/0 faces the provider and carries the address 209.165.200.225/27. GigabitEthernet0/0/1 faces the campus and carries the address 192.168.10.1/24. The provider has assigned the public block 209.165.200.224/27 to the site.</p>
+        <p>The policy requires that the faculty web server at 192.168.30.10 be permanently reachable from the internet at 209.165.200.227, that every host on the Student segment 192.168.10.0/24 share the pool 209.165.200.228 through 209.165.200.232 using port based multiplexing, and that the result be verified before the change window closes.</p>
+        <p>Enter commands exactly as you would at the R1 command line. Keyword abbreviations that Cisco IOS accepts are also accepted here.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Command</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have entered all eight commands correctly. You created a permanent one to one mapping for a published server, identified the eligible internal hosts with an access control list, defined a public address pool, enabled port based multiplexing across that pool, designated both participating interfaces, and verified the translation table. Return to the Module 6 page and begin Packet Tracer Assignment 1.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Command 1: Create the Static Mapping for the Published Server",
+                objective: "The web server is published in a public name service record, so its public address must never change. Create the permanent one to one mapping between the server at 192.168.30.10 and the assigned public address 209.165.200.227. You are currently in global configuration mode.",
+                prompt: "R1(config)#",
+                accept: [/^ip nat inside source static 192\.168\.30\.10 209\.165\.200\.227$/],
+                hint: "Syntax: ip nat inside source static [inside-local] [inside-global]. The private address the server is actually configured with is entered first, followed by the public address the outside world will observe.",
+                explanation: "Correct. This entry appears in the translation table immediately, before any traffic has been sent, which is what allows a connection to be initiated from the outside toward the server.",
+                errors: [
+                    { pattern: /^ip nat inside source static 209\.165/, message: "The addresses are reversed. The inside local address, which is the private address configured on the server, is always entered first." },
+                    { pattern: /outside source/, message: "That form translates the addresses of external hosts and is used when two merged organizations have chosen overlapping private ranges. The web server is an internal host." },
+                    { pattern: /list/, message: "That form creates dynamic translations for a group of hosts. A published server requires a permanent, manually configured mapping." },
+                    { pattern: /^ip nat pool/, message: "A pool supplies addresses on demand and releases them when entries expire, so the server address would change between sessions. Create a static mapping instead." }
+                ]
+            },
+            {
+                title: "Command 2: Identify the Hosts Eligible for Translation",
+                objective: "Dynamic translation requires an access control list that identifies which internal hosts may draw from the pool. Create numbered standard list 1 so that it matches every host on the Student segment 192.168.10.0/24.",
+                prompt: "R1(config)#",
+                accept: [/^access-list 1 permit 192\.168\.10\.0 0\.0\.0\.255$/],
+                hint: "Syntax: access-list [number] permit [source] [source-wildcard]. A translation list evaluates the source address only, so it uses the standard numbered range.",
+                explanation: "Correct. In a translation statement a permit entry means this traffic is eligible for translation, not that it is forwarded and not that anything is discarded. This is a different meaning from the filtering role the same syntax carried in Module 5.",
+                errors: [
+                    { pattern: /255\.255\.255\.0/, message: "You entered a subnet mask. An access control list compares addresses with a wildcard mask, in which a zero requires an exact match and a one is ignored. Subtract the subnet mask from 255.255.255.255." },
+                    { pattern: /^access-list 1 deny/, message: "A deny entry in a translation list means the traffic is not eligible for translation and will be routed without rewriting. The policy requires these hosts to be translated." },
+                    { pattern: /permit any/, message: "That makes every source address on the router eligible for translation, including traffic that should never be rewritten. Match only the Student segment." },
+                    { pattern: /^access-list (1[0-9][0-9]|2[0-9][0-9])/, message: "That number falls in the extended range. A translation list identifies source addresses only, so it uses a number in the standard range 1 through 99." }
+                ]
+            },
+            {
+                title: "Command 3: Define the Public Address Pool",
+                objective: "Define the pool named CAMPUS_POOL containing the public addresses 209.165.200.228 through 209.165.200.232. The provider assigned the block 209.165.200.224/27.",
+                prompt: "R1(config)#",
+                accept: [/^ip nat pool campus_pool 209\.165\.200\.228 209\.165\.200\.232 netmask 255\.255\.255\.224$/],
+                hint: "Syntax: ip nat pool [name] [start-ip] [end-ip] netmask [mask]. The trailing value is a subnet mask describing the public block, not a wildcard mask.",
+                explanation: "Correct. The pool statement is the one place in this module where a genuine subnet mask is required. A /27 block carries the mask 255.255.255.224, and the netmask keyword must be present before it.",
+                errors: [
+                    { pattern: /0\.0\.0\.31/, message: "That is a wildcard mask. The pool statement describes a real public subnet and therefore takes a subnet mask. The wildcard form belongs in the access control list you built in the previous step." },
+                    { pattern: /netmask 255\.255\.255\.(0|128|192|240|248|252)$/, message: "That mask does not describe the assigned block. The provider assigned a /27, which carries 32 addresses." },
+                    { pattern: /^ip nat pool campus_pool 209\.165\.200\.228 209\.165\.200\.232$/, message: "The address range is correct but the statement is incomplete. The pool definition requires the netmask keyword followed by the mask of the public block." },
+                    { pattern: /prefix-length/, message: "Cisco IOS accepts a prefix length form on some platforms, but this activity requires the netmask keyword followed by a dotted decimal mask." },
+                    { pattern: /209\.165\.200\.22[57]/, message: "Those addresses are already in use. 209.165.200.225 is the outside interface and 209.165.200.227 is the static mapping you created in Command 1. The pool begins at 209.165.200.228." }
+                ]
+            },
+            {
+                title: "Command 4: Enable Port Address Translation Across the Pool",
+                objective: "Bind access control list 1 to CAMPUS_POOL so that the eligible hosts are translated. The campus contains several hundred endpoints and the pool holds five addresses, so conversations must be distinguished by port number rather than by address.",
+                prompt: "R1(config)#",
+                accept: [/^ip nat inside source list 1 pool campus_pool overload$/],
+                hint: "Syntax: ip nat inside source list [acl] pool [name] overload. The final keyword is what converts a one to one mapping into a many to one mapping using Layer 4 port numbers.",
+                explanation: "Correct. The overload keyword adds the source port to the mapping, which allows many internal hosts to share each address in the pool. Without it the pool would support only five simultaneous hosts.",
+                errors: [
+                    { pattern: /^ip nat inside source list 1 pool campus_pool$/, message: "The statement is otherwise correct but creates one to one dynamic translation. With five addresses the sixth simultaneous host would receive no translation and its packets would be discarded. Add the keyword that enables port based multiplexing." },
+                    { pattern: /interface/, message: "That form translates to the address configured on the outside interface. The objective requires translation across the pool you defined." },
+                    { pattern: /^ip nat outside source/, message: "That form translates the addresses of external hosts. The hosts being translated here are internal." },
+                    { pattern: /^ip nat inside source static/, message: "That form creates a permanent one to one mapping for a single host. This objective covers a group of hosts identified by an access control list." },
+                    { pattern: /^ip nat inside source list 1 campus_pool/, message: "The pool keyword is missing. The statement must state that the identifier following it is a pool name." }
+                ]
+            },
+            {
+                title: "Command 5: Select the Interface Facing the Campus",
+                objective: "Translation occurs only for packets crossing between an interface designated inside and an interface designated outside, and neither designation is inferred from the addressing. Enter configuration mode for the interface attached to the campus network. You have returned to global configuration mode.",
+                prompt: "R1(config)#",
+                accept: [/^int(erface)? gigabitethernet0\/0\/1$/, /^int(erface)? (g|gi|gig|gigabit)0\/0\/1$/],
+                hint: "Use the interface command followed by the interface identifier. The campus network 192.168.10.0/24 is attached to GigabitEthernet0/0/1.",
+                explanation: "Correct. The router is now in interface configuration mode for the campus facing port.",
+                errors: [
+                    { pattern: /0\/0\/0/, message: "That interface faces the service provider. The campus network is attached to GigabitEthernet0/0/1." },
+                    { pattern: /loopback/, message: "A logical interface carries no campus traffic. Select the physical GigabitEthernet interface attached to the campus network." },
+                    { pattern: /vlan/, message: "This is a router interface rather than a switch virtual interface. Select the physical GigabitEthernet interface." }
+                ]
+            },
+            {
+                title: "Command 6: Designate the Inside Interface",
+                objective: "Identify this interface as the one facing the internal private network so that the translation process recognizes traffic arriving here as a candidate for rewriting.",
+                prompt: "R1(config-if)#",
+                accept: [/^ip nat inside$/],
+                hint: "The designation is a three word interface configuration command. It names the protocol, the feature, and the side of the boundary this interface represents.",
+                explanation: "Correct. Omitting this designation is the most frequent error in this module. The translation statements would still be accepted, the running configuration would look correct, and the translation table would remain empty with no error message produced.",
+                errors: [
+                    { pattern: /outside/, message: "This interface faces the campus rather than the service provider. Designate it as the internal side of the boundary." },
+                    { pattern: /^ip nat inside source/, message: "That is the global configuration statement that defines how translation occurs. The interface designation is a shorter command that simply identifies which side of the boundary this interface represents." },
+                    { pattern: /^ip address/, message: "The interface is already addressed. This objective designates the interface for the translation process." }
+                ]
+            },
+            {
+                title: "Command 7: Designate the Outside Interface",
+                objective: "You have entered configuration mode for GigabitEthernet0/0/0 with the interface command. Identify this interface as the one facing the external public network.",
+                prompt: "R1(config-if)#",
+                accept: [/^ip nat outside$/],
+                hint: "The command follows the same three word pattern as the previous designation, with the keyword that names the opposite side of the boundary.",
+                explanation: "Correct. Both designations are now in place, so packets crossing between these two interfaces will be evaluated by the translation process. A packet entering and leaving on two interfaces carrying the same designation is routed normally with no rewriting.",
+                errors: [
+                    { pattern: /inside/, message: "This interface faces the service provider. Designate it as the external side of the boundary." },
+                    { pattern: /^ip nat outside source/, message: "That global statement translates the addresses of external hosts. The interface designation is a shorter command entered in interface configuration mode." }
+                ]
+            },
+            {
+                title: "Command 8: Verify the Translation Table",
+                objective: "A successful ping does not distinguish between traffic that was translated correctly and traffic that reached its destination by another path, so the table itself is the evidence. You have returned to privileged EXEC mode with the end command. Display every active mapping with all four address columns.",
+                prompt: "R1#",
+                accept: [/^sh(ow)? ip nat translations$/],
+                hint: "This is a privileged EXEC show command. After the ip nat keywords, the final word is the plural form of what the router has created.",
+                explanation: "Correct. An empty table following a connectivity test points to a missing interface designation or to a source address the access control list did not make eligible. A table containing entries for hosts that should not have been translated points to a list written too broadly.",
+                errors: [
+                    { pattern: /statistics/, message: "That output reports hit and miss counters and pool allocation, which is useful for diagnosing exhaustion, but the objective is to display the active mappings themselves." },
+                    { pattern: /^sh(ow)? ip nat translation$/, message: "Close. The keyword is the plural form." },
+                    { pattern: /^sh(ow)? nat/, message: "The command requires the ip keyword between show and nat." },
+                    { pattern: /^sh(ow)? ip route/, message: "That output displays the routing table, which shows how packets are forwarded rather than how their addresses were rewritten." },
+                    { pattern: /^sh(ow)? run/, message: "That output displays the configuration you entered but not the translations the router has actually created. Use the command dedicated to the translation table." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Command " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Command.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + " " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Command accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That command was not accepted. Check the keyword order and the required parameters, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) {
+                showHint();
+            }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the syntax in Section 5 of the module content, then enter the command again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [
+                { x: 0, angle: -1.0 },
+                { x: confettiCanvas.width, angle: -2.1 }
+            ];
+
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x,
+                        y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6,
+                        height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI,
+                        spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1
+                    });
+                }
+            }
+
+            if (!confettiRunning) {
+                confettiRunning = true;
+                window.requestAnimationFrame(drawConfetti);
+            }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35;
+                piece.vx *= 0.99;
+                piece.vy *= 0.99;
+                piece.x += piece.vx;
+                piece.y += piece.vy;
+                piece.rotation += piece.spin;
+                piece.life -= 0.006;
+
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) {
+                    confettiPieces.splice(i, 1);
+                    continue;
+                }
+
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+
+            if (confettiPieces.length > 0) {
+                window.requestAnimationFrame(drawConfetti);
+            } else {
+                confettiRunning = false;
+                confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        function restart() {
+            current = 0;
+            attempts = 0;
+            verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkCommand();
+            }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 9 Knowledge Checker: Quality of Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Module 9 Knowledge Checker: Quality of Service</h2>
+    <p class="intro">This ungraded formative activity verifies your conceptual understanding of the impairments, application requirements, marking, queuing, and the difference between policing and shaping before you attempt the formative practice activities. Answer all ten questions and select Submit Assessment. Return to the module page and launch the Command Syntax Checker once you have achieved a score of ten out of ten.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. A wide area link is saturated for six hours every day. What can a quality of service policy do about it?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">Decide which traffic waits and which is discarded, but not increase the capacity of the link.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">Increase the effective capacity by compressing the queued traffic.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">Eliminate the congestion by preventing low priority applications from transmitting.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. What is the difference between delay and jitter?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">Delay is measured on the sending device and jitter on the receiving device.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">Delay is how long a packet takes to arrive; jitter is how much that delay varies between consecutive packets.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">Delay applies to data traffic and jitter applies to voice traffic.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Which set of targets is accepted for a voice stream?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">One way delay below 150 milliseconds, jitter below 30 milliseconds, loss below one percent.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">One way delay below 500 milliseconds, jitter below 100 milliseconds, loss below five percent.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">Any delay is acceptable provided no packets are lost, because lost packets are retransmitted.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. Why is the trust boundary established at the access switch rather than at the wide area router?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">Because an endpoint can set any marking it likes, and a marking from an uncontrolled device must not be believed.</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">Because only a switch is capable of writing the differentiated services field.</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">Because markings applied at a router are removed when the packet crosses a routed boundary.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. Which decimal value identifies Expedited Forwarding?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">34</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">46</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">24</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. Why is the priority queue policed rather than given unlimited strict priority?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">Because traffic beyond the configured rate would otherwise starve every other class on the link.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">Because a strict priority queue cannot transmit faster than a fixed hardware limit.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">Because voice traffic must be delayed slightly for the receiving device to reassemble it.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. A packet capture of a stream shows gaps in its sequence numbers and a measurable loss percentage, with no increase in delay. Which treatment produced this?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">Shaping, because the buffer overflowed and discarded the excess.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">Policing, because it discards traffic above the rate rather than buffering it.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">Neither. Loss without added delay indicates a physical layer fault.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. In which direction is a queuing policy applied, and why?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a">Inbound, so that excess traffic is discarded before it consumes router resources.</label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b">Outbound, because queuing is what happens when an interface cannot transmit everything offered to it.</label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c">Both directions, because congestion can occur on either side of the interface.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. The interface policy output shows a class with a large configured share and zero packets matched. Where does the investigation belong?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a">In the class map and its matching criteria, because traffic is not being classified into that class at all.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b">In the policy map, because the configured share is too large to be allocated.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c">In the interface hardware, because a class with no matches indicates a failed transmit queue.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. A policy is attached to an interface and every counter reads zero while the link is quiet. What does this indicate?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">Most likely nothing is wrong. A policy has no effect until the interface is congested.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">The service policy was applied in the wrong direction and must be reversed.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">The class maps reference an access control list that does not exist.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'a', review: 'Question 1: Quality of Service allocates the bandwidth that exists, deciding who waits and who is discarded. A link that is permanently oversubscribed needs more capacity, and no policy substitutes for it. Review Section 1 and Section 5 Part A.' },
+            q2: { correct: 'b', review: 'Question 2: A voice stream tolerates a consistent delay far better than an inconsistent one, which is why a link that looks fast on average can still carry unusable calls. Review Section 5 Part A.' },
+            q3: { correct: 'a', review: 'Question 3: Beyond those figures a listener hears the degradation. A voice stream cannot be retransmitted, because a packet that arrives late is useless whether or not it eventually arrives. Review Section 5 Part B.' },
+            q4: { correct: 'a', review: 'Question 4: A workstation whose user has discovered this can mark a file transfer as voice and have it served ahead of the telephones. Re-marking anything arriving from an untrusted endpoint prevents it. Review Section 5 Part C.' },
+            q5: { correct: 'b', review: 'Question 5: Expedited Forwarding is 46 and is reserved for voice media. 34 is Assured Forwarding 41 for interactive video, and 24 is Class Selector 3 for call signaling. Review the marking table in Section 5 Part C.' },
+            q6: { correct: 'a', review: 'Question 6: The protection is built into the mechanism. Traffic marked for the priority queue beyond the configured rate is discarded rather than served, so a flood degrades only itself. Review Section 5 Part D.' },
+            q7: { correct: 'b', review: 'Question 7: A policer acts on excess immediately and buffers nothing, so it produces loss without delay. A shaper buffers instead, producing delay and jitter with no loss. The two signatures are clearly distinguishable in a capture. Review Section 5 Part E.' },
+            q8: { correct: 'b', review: 'Question 8: A queuing policy applied inbound is accepted by the command line and does nothing useful. The policy belongs on the interface facing the congested link, outbound. Review Section 5 Part F.' },
+            q9: { correct: 'a', review: 'Question 9: Match counters answer the first diagnostic question, which is whether traffic is being classified as intended. No matches means the classification is wrong rather than the queuing. Review Section 5 Part G.' },
+            q10: { correct: 'a', review: 'Question 10: On an idle link every class is served immediately and a correctly configured policy is indistinguishable from an absent one. Testing requires generating enough traffic to fill the link. Review Section 5 Part G.' }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>

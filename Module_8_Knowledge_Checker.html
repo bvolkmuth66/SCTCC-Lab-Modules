@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 8 Knowledge Checker: WAN, VPN, and IPsec</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Module 8 Knowledge Checker: WAN, VPN, and IPsec</h2>
+    <p class="intro">This ungraded formative activity verifies your conceptual understanding of wide area transport, tunnel and encryption roles, the IPsec protections, and the negotiation sequence before you attempt the Packet Tracer activities. Answer all ten questions and select Submit Assessment. Return to the module page and launch the Command Syntax Checker once you have achieved a score of ten out of ten.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. Why does traffic between two sites of the same organization require protection when it crosses a service provider?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">Because the provider network is shared, and intermediate devices the organization does not control can read what passes through.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">Because provider routers cannot forward traffic between two sites of the same organization without it.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">Because private addresses are automatically encrypted when they leave the border router.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. What security does Generic Routing Encapsulation provide on its own?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">Encryption of the payload, but no authentication of the far endpoint.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">None. It creates a tunnel and provides no confidentiality, integrity, or authentication.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">Integrity checking only, which is why it is paired with an encryption protocol.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Why do enterprise designs commonly place a tunnel inside the encryption rather than using encryption alone?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">Because the tunnel carries multicast, which allows a routing protocol to form adjacencies across it.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">Because encryption alone cannot be applied to an interface facing a provider.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">Because the tunnel reduces the size of each packet and conserves bandwidth.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. A requirement calls for two branch networks to be joined so that hosts at either end reach the other by its ordinary private address, with no software installed on any host. Which arrangement is required?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">A remote access deployment, because each host establishes its own tunnel on demand.</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">A site to site deployment, configured once on the two network devices and transparent to the hosts.</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">Either arrangement, because both are transparent to the hosts at each end.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. Which IPsec protocol provides confidentiality?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">The Authentication Header, which encrypts the packet and authenticates its origin.</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">The Encapsulating Security Payload, which encrypts in addition to authenticating.</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">Both provide confidentiality; they differ only in performance.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. An observer on the provider network captures a packet belonging to the tunnel. What can they read?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">The outer header only, which carries the two public endpoint addresses.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">The outer header and the inner private addresses, but not the application data.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">Nothing at all, because the entire packet including its outer header is encrypted.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. In a crypto map, what does a permit entry in the attached access control list mean?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">Forward this traffic, as it did in Module 5.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">Encrypt this traffic. Traffic the list does not match is sent unprotected by the normal path.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">Discard this traffic unless the tunnel has already established.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. What must be true of the selecting access control lists configured at the two endpoints?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a">They must be exact mirror images of one another, with the same masks and reversed source and destination.</label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b">They must be identical, with the same source and destination in the same order at both ends.</label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c">Only the endpoint that initiates traffic requires a list.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. Why must the address translation list on a border router deny the traffic bound for the remote site?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a">Because a translated source address no longer matches the selecting list, so the traffic leaves unprotected.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b">Because translation and encryption cannot both be configured on the same router.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c">Because the deny entry discards the traffic so the tunnel is forced to rebuild it.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. A ping from a host at one site to a host at the other succeeds. What has this proven about encryption?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">Nothing. Traffic can reach the far end outside the tunnel if a route exists; the packet counters are the evidence.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">That the tunnel established and the traffic was encrypted, since no other path exists.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">That the first stage negotiation completed, though the second may not have.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'a', review: 'Question 1: Shared transport is what creates the requirement. On a dedicated circuit the traffic is already isolated; on shared infrastructure the protection must be added by the customer at the edge. Review Section 5 Part A.' },
+            q2: { correct: 'b', review: 'Question 2: The tunnel solves transport, not security. Traffic inside a tunnel with no further protection is as readable as traffic sent without one. Review Section 5 Part C.' },
+            q3: { correct: 'a', review: 'Question 3: IPsec on its own does not transport multicast, and a routing protocol forms adjacencies by sending it. Running the protocol across a tunnel interface lets the two sites exchange routes dynamically. Review Section 5 Part C.' },
+            q4: { correct: 'b', review: 'Question 4: A site to site tunnel is configured on the two network devices and stays up permanently. A remote access tunnel is established on demand by client software and identifies a user rather than a site. Review Section 5 Part B.' },
+            q5: { correct: 'b', review: 'Question 5: The Authentication Header provides integrity and authentication but no encryption, which leaves the traffic readable. Every deployment in this course uses the Encapsulating Security Payload. Review Section 5 Part D.' },
+            q6: { correct: 'a', review: 'Question 6: In tunnel mode the protected packet is given an entirely new outer header. The inner addresses, the application data, and even which internal hosts are communicating are all concealed. Review Section 5 Part D.' },
+            q7: { correct: 'b', review: 'Question 7: This is the third role the same syntax has played. Module 5: forward. Module 6: translate. Here: encrypt. The list is selecting rather than filtering. Review Section 5 Part F.' },
+            q8: { correct: 'a', review: 'Question 8: If one end permits its network to the remote network, the far end must permit the remote network to it, with the same masks. A list broader at one end than the other produces intermittent connectivity. Review Section 5 Part F.' },
+            q9: { correct: 'a', review: 'Question 9: A deny entry in a translation list does not discard traffic, it exempts it from translation, which is exactly the behavior required. Review Section 5 Part F and Module 6 Part E.' },
+            q10: { correct: 'a', review: 'Question 10: This is the failure that matters most, because everything appears to work while nothing is protected. The security association display reports packets encrypted and decrypted, and those counters must increase. Review Section 5 Part G.' }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the syntax checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the module documentation and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>

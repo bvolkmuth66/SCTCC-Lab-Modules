@@ -1,0 +1,121 @@
+<div style="font-family:'Segoe UI', Arial, sans-serif; color:#333333; line-height:1.6; background-color:#f4f7fb; border-radius:18px; overflow:hidden;">
+
+  <div style="background-color:#0b2e6b; background-image:linear-gradient(135deg, #072150, #0b2e6b, #1f5fd1); color:#ffffff; padding:48px 32px; text-align:center;">
+    <h2 style="margin:0; font-size:2.6rem; font-weight:700; color:#ffffff; line-height:1.2;">Chapter 2: Cloud Compute</h2>
+    <p style="margin:12px 0 0 0; font-size:1.2rem; color:#ffffff;">Virtual Machines, Containers, and Serverless: The Engines That Run Cloud Workloads</p>
+  </div>
+
+  <div style="padding:24px;">
+
+    <div style="background-color:#ffffff; border-radius:18px; box-shadow:0 5px 18px rgba(0,0,0,.08); padding:28px; margin-bottom:24px;">
+      <h3 style="color:#0d47a1; border-left:5px solid #1f5fd1; padding-left:12px; margin:0 0 20px 0; font-weight:700; font-size:1.6rem;">Four Ways to Run Compute</h3>
+      <a href="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/chapter2-cloud-compute.svg" target="_blank" rel="noopener" title="Open the full-size diagram"><img src="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/chapter2-cloud-compute.svg" width="1200" height="700" style="display:block; width:100%; max-width:1200px; height:auto; margin:0 auto;" alt="Diagram comparing four ways to run compute. A physical server runs one operating system and its apps directly on hardware; it takes days or weeks to deploy and you buy the hardware. Virtual machines run on a hypervisor, each with its own guest operating system and app; they start in minutes, are billed while running, and examples are Hyper-V, VMware, Azure VMs, and EC2. Containers share the host operating system through a container runtime, each holding an app and its libraries; they start in seconds, and examples are Docker, Kubernetes, AKS, and EKS. Serverless runs only your function code when an event occurs, on infrastructure the provider fully manages; it starts in milliseconds to seconds, is billed per run and its duration, and examples are Azure Functions and AWS Lambda. Moving toward serverless, the provider manages more, workloads start faster, and billing becomes more precise."></a>
+      <p style="text-align:center; font-style:italic; margin:20px 0 0 0;">Each step to the right hands more of the stack to the provider. Select the diagram to open it full size.</p>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:stretch;">
+
+      <div style="flex:2 1 340px; background-color:#ffffff; border-radius:18px; box-shadow:0 5px 18px rgba(0,0,0,.08); padding:28px;">
+        <h3 style="color:#0d47a1; border-left:5px solid #1f5fd1; padding-left:12px; margin:0 0 20px 0; font-weight:700; font-size:1.6rem;">Chapter Introduction</h3>
+        <p style="margin:0 0 16px 0;">Chapter 2, <strong>Cloud Compute</strong>, looks at the processing power behind every cloud service. It starts with virtualization, the technology that lets a hypervisor divide one physical server into many virtual machines, each with its own operating system. You will see how the same idea works in an on-premises data center running Hyper-V or VMware and in the cloud, where you choose a VM size and the provider takes care of the hardware and hypervisor.</p>
+        <p style="margin:0 0 16px 0;">The chapter then moves to lighter-weight options. Containers package an application with only the libraries it needs and share the host's operating system, so they start in seconds and run the same way everywhere. Serverless computing goes further: you upload a function, and the provider runs it only when an event triggers it, charging only for the time it runs.</p>
+        <div style="background-color:#edf8ee; border-left:6px solid #27ae60; padding:20px; border-radius:12px; margin-top:20px;">
+          <strong style="color:#0d47a1;">Why This Matters:</strong> Compute is usually the biggest part of a cloud bill and the first decision in any cloud project. Picking a VM when a container or a function would do, or leaving a VM running when no one needs it, wastes money every hour. Knowing the options lets you match each workload to the right tool.
+        </div>
+      </div>
+
+      <div style="flex:1 1 240px; background-color:#eef5ff; border-left:6px solid #1f5fd1; border-radius:18px; box-shadow:0 5px 18px rgba(0,0,0,.08); padding:28px;">
+        <h4 style="color:#0d47a1; border-left:5px solid #1f5fd1; padding-left:12px; margin:0 0 16px 0; font-weight:700; font-size:1.25rem;">Learning Objectives</h4>
+        <ul style="margin:0; padding-left:20px;">
+          <li style="margin-bottom:10px;">Explain compute virtualization technologies</li>
+          <li style="margin-bottom:10px;">Compare on-prem virtualization with VMs in the cloud</li>
+          <li style="margin-bottom:0;">Describe serverless computing and container technologies</li>
+        </ul>
+        <div style="margin-top:24px; padding-top:18px; border-top:1px solid #c9daf5;">
+          <p style="margin:0 0 10px 0; font-weight:700; color:#0d47a1;">Two Types of Hypervisor</p>
+          <div style="background-color:#ffffff; border-radius:10px; padding:12px 14px; margin-bottom:10px; border-left:5px solid #0d47a1;">
+            <strong style="color:#0d47a1;">Type 1 (bare metal):</strong> runs directly on the hardware. Hyper-V, VMware ESXi, and the hypervisors cloud providers use are Type 1.
+          </div>
+          <div style="background-color:#ffffff; border-radius:10px; padding:12px 14px; border-left:5px solid #67a7ff;">
+            <strong style="color:#1f5fd1;">Type 2 (hosted):</strong> runs as an app on a desktop OS. VirtualBox and VMware Workstation are Type 2, common for labs and testing.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="background-color:#fff4e6; border-left:6px solid #f39c12; border-radius:18px; box-shadow:0 5px 18px rgba(0,0,0,.08); padding:28px; margin-top:24px;">
+      <h4 style="color:#0d47a1; border-left:5px solid #1f5fd1; padding-left:12px; margin:0 0 16px 0; font-weight:700; font-size:1.25rem;">Cloud+ Exam Focus</h4>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Virtualization</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Type 1 Hypervisor</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Type 2 Hypervisor</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Virtual Machines</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">VM Sizing</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">vCPU and Memory</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Images and Templates</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Containers</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Docker</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Kubernetes</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Orchestration</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Serverless</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">Functions</span>
+      <span style="display:inline-block; background-color:#1f5fd1; color:#ffffff; padding:6px 12px; border-radius:20px; font-size:.85rem; margin:0 8px 8px 0;">CapEx vs. OpEx</span>
+    </div>
+
+    <div style="background-color:#ffffff; border-radius:18px; box-shadow:0 5px 18px rgba(0,0,0,.08); padding:28px; margin-top:24px;">
+      <h3 style="color:#0d47a1; border-left:5px solid #1f5fd1; padding-left:12px; margin:0 0 20px 0; font-weight:700; font-size:1.6rem;">On-Premises Virtualization vs. Cloud VMs</h3>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; min-width:540px; border-collapse:collapse; font-size:.95rem;">
+          <thead>
+            <tr>
+              <th scope="col" style="background-color:#0d47a1; color:#ffffff; text-align:left; padding:10px 12px;">Area</th>
+              <th scope="col" style="background-color:#0d47a1; color:#ffffff; text-align:left; padding:10px 12px;">On-premises</th>
+              <th scope="col" style="background-color:#0d47a1; color:#ffffff; text-align:left; padding:10px 12px;">In the cloud</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">Hardware</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">You buy, rack, power, cool, and replace the servers</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">The provider owns and maintains the physical servers</td>
+            </tr>
+            <tr style="background-color:#f7f9fc;">
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">Hypervisor</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">You install, patch, and license it (Hyper-V, VMware ESXi)</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">The provider runs it; you never see or manage it</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">Sizing</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Limited by the capacity of the hosts you own</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Pick a VM size and resize it when needs change</td>
+            </tr>
+            <tr style="background-color:#f7f9fc;">
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">Cost</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Large up-front purchase (capital expense)</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Pay as you go while VMs run (operating expense)</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">Scaling</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Order more hardware, which can take weeks</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Add VMs in minutes, or let autoscaling do it</td>
+            </tr>
+            <tr style="background-color:#f7f9fc;">
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">Availability</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">You design clusters and failover yourself</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Built-in options such as availability zones</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align:left; padding:10px 12px; border-bottom:1px solid #dde4ee; color:#0d47a1;">You manage</th>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">Everything from the hardware up</td>
+              <td style="padding:10px 12px; border-bottom:1px solid #dde4ee;">The guest OS, apps, and data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin:16px 0 0 0;"><strong style="color:#0d47a1;">Cost tip:</strong> In Azure, shutting a VM down from inside Windows or Linux leaves it allocated, and you keep paying for compute. Stop it from the portal so its status reads "Stopped (deallocated)" to stop compute charges.</p>
+    </div>
+
+    <p style="text-align:center; padding:20px 0 0 0; margin:0; color:#666666;">CompTIA Cloud+ &bull; Chapter 2 Preview &bull; Cloud Compute</p>
+
+  </div>
+</div>

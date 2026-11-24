@@ -1,0 +1,181 @@
+<p></p>
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px;">
+<h1 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px;">Module 5: IPv4 Access Control Lists</h1>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">1. Introduction</h2>
+<p style="margin-bottom: 15px;">This module establishes the core competencies required to filter IPv4 traffic as it transits a routed enterprise network. In the previous module you configured static routes and Single Area Open Shortest Path First to establish full reachability between all network segments. Full reachability is an engineering achievement, but it is rarely the desired operational end state. The moment a routing protocol converges, every host on every segment can reach every other host, including the servers that store payroll records and the command line interfaces of the infrastructure devices themselves. Routing answers the question of whether a path exists. Filtering answers the separate question of whether traffic should be allowed to use that path.</p>
+<p style="margin-bottom: 15px;">Access control lists are the mechanism Cisco IOS provides to answer that second question. They operate at the routed boundary between broadcast domains, which is the natural enforcement point in an enterprise design, because every packet moving between segments must pass through the router regardless of the physical path it takes. This placement makes the access control list the first layer of a defense in depth strategy. It does not replace endpoint protection, server permissions, or dedicated firewalls at the internet edge, but it does eliminate entire categories of unwanted traffic before that traffic ever reaches a server operating system or consumes bandwidth on a transit link.</p>
+<p style="margin-bottom: 15px;">Access control lists also serve purposes beyond security filtering. The same match logic identifies traffic for Network Address Translation in Module 6, for classification and marking in the Quality of Service module, and for route filtering within routing protocols. The syntax you learn in this module is therefore reused repeatedly throughout the remainder of the course, which is why precision with wildcard masks and statement order matters well beyond the immediate security application. This module covers access control list logic and evaluation order, wildcard mask calculation, standard and extended list construction, numbered and named configuration methods, correct placement within the topology, application to interfaces and virtual terminal lines, and the verification commands required to prove a filter is operating as designed.</p>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">2. Real World Scenario: Enforcing Segmentation Policy on the Campus Edge</h2>
+<p style="margin-bottom: 15px;">A network administrator at St. Cloud Technical &amp; Community College has completed the routing deployment for the main academic building. The Student, Faculty, and Management segments are now fully routable, and the dynamic routing protocol has distributed every network to every router in the campus. A security audit identifies the immediate consequence of this design. Any student workstation can now reach the faculty file server, the payroll application, and the administrative command line interfaces of the campus routers and switches. The segmentation implemented with Virtual Local Area Networks in Module 2 separated the broadcast domains successfully, but the routing deployment then reconnected them at Layer 3. Segmentation without filtering provides organizational structure, not security.</p>
+<p style="margin-bottom: 15px;">To remediate these findings, the administrator must deploy IPv4 access control lists on the routed boundary. The policy requires that student endpoints retain access to the internet and to the shared print services, while traffic sourced from the Student segment and destined for the Faculty server subnet is discarded at the first routed hop. The policy is deliberately specific. A blanket denial between the two segments would also break the learning management system that faculty host on that same subnet, so the administrator must filter by application rather than by address alone. The administrator must also restrict remote administrative access so that Secure Shell sessions to the campus infrastructure are accepted only from the Management segment, which prevents a compromised student endpoint from attempting to authenticate against a router.</p>
+<p style="margin-bottom: 15px;">Each filter must be constructed with the correct mask, placed at the correct point in the topology, applied in the correct direction, and verified with match counters before the change window closes. An access control list that is syntactically valid but bound to the wrong interface produces no error message at the command line. The router accepts the configuration and reports success while enforcing nothing, or worse, while silently discarding production traffic. Verification is therefore not an optional final step in this module. It is the only evidence that the policy is actually in force.</p>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">3. Supplementary Instructional Video Resources</h2>
+<p style="margin-bottom: 15px;">Review both instructional videos before attempting the formative practice activities. The first video establishes the conceptual model and the mask arithmetic. The second video demonstrates the configuration sequence on live hardware.</p>
+<p style="margin-bottom: 8px;"><strong>Video 1: Access Control List Fundamentals and Wildcard Masks</strong></p>
+<div style="border: 1px dashed #999; background-color: #f9f9f9; padding: 40px 20px; text-align: center; color: #555; margin-bottom: 8px;">[<iframe width="560" height="315" src="https://www.youtube.com/embed/_Pg38IrrsiQ?si=z92W7I_CRdRqsaAS" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="allowfullscreen"></iframe>]</div>
+<p style="margin-bottom: 15px;"><strong>Context:</strong> This video introduces the operational model of an access control list, demonstrates the top down evaluation of access control entries, and explains the function of the implicit deny statement that terminates every list. It also works through wildcard mask calculation in binary, which is the single most common source of configuration error for students new to filtering. Pay particular attention to the distinction between a subnet mask and a wildcard mask, because the two values look similar in the running configuration but serve opposite functions.</p>
+<p style="margin-bottom: 8px;"><strong>Video 2: Extended Access Control List Configuration</strong></p>
+<div style="border: 1px dashed #999; background-color: #f9f9f9; padding: 40px 20px; text-align: center; color: #555; margin-bottom: 8px;">[<iframe width="560" height="315" src="https://www.youtube.com/embed/FIVJUx1k3xA?si=Nnq0MgFfUlCv_U-c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="allowfullscreen"></iframe>]</div>
+<p style="margin-bottom: 15px;"><strong>Context:</strong> This video is a technical walkthrough detailing the configuration of extended access control lists, the application of those lists to router interfaces with the correct directional keyword, and the verification of the result. Observe how the presenter reasons about placement before entering any commands, and note the verification steps performed after each change. This is the same sequence you will follow in both formative Packet Tracer activities and in the summative assessment.</p>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">4. Domain Specific Definitions</h2>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><strong>Access Control List:</strong> An ordered set of permit and deny statements that a router applies to traffic entering or leaving an interface to enforce a filtering policy.</li>
+<li style="margin-bottom: 8px;"><strong>Access Control Entry:</strong> A single permit or deny statement within an access control list that defines one specific traffic match condition.</li>
+<li style="margin-bottom: 8px;"><strong>Wildcard Mask:</strong> A thirty two bit value that instructs the router which address bits must match exactly and which address bits are ignored during the comparison.</li>
+<li style="margin-bottom: 8px;"><strong>Standard Access Control List:</strong> A filter that evaluates the source IPv4 address of a packet only, without reference to destination, protocol, or port.</li>
+<li style="margin-bottom: 8px;"><strong>Extended Access Control List:</strong> A filter that evaluates source address, destination address, protocol, and Layer 4 port numbers to permit or deny individual application flows.</li>
+<li style="margin-bottom: 8px;"><strong>Implicit Deny:</strong> A hidden final statement present in every access control list that discards all traffic not explicitly permitted by a preceding entry.</li>
+<li style="margin-bottom: 8px;"><strong>Named Access Control List:</strong> A list identified by a descriptive alphanumeric name rather than a number, which supports the removal and insertion of individual entries by sequence number.</li>
+<li style="margin-bottom: 8px;"><strong>Sequence Number:</strong> The automatically assigned value that establishes the evaluation position of each entry within a list and serves as the handle for editing that entry.</li>
+<li style="margin-bottom: 8px;"><strong>Match Counter:</strong> The running total of packets evaluated against a specific access control entry, displayed in the verification output and used as diagnostic evidence that traffic is reaching the filter.</li>
+</ul>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">5. Core Operational Concepts and Configuration Architecture</h2>
+<p style="margin-bottom: 15px;">To systematically enforce a traffic filtering policy on a routed infrastructure, an administrator must select the correct list type, calculate the correct mask, order the statements correctly, and apply the result at the correct boundary in the correct direction. An error at any one of these four stages produces a filter that either fails to protect the network or fails to pass legitimate traffic. The detailed operational breakdown of these components, their explicit technical purpose, and the corresponding Cisco IOS commands are detailed below.</p>
+<p style="margin-bottom: 15px;"><strong>A. Packet Evaluation Order and the Implicit Deny</strong><br>A router evaluates an access control list from the top down and stops processing at the first entry that matches the packet. Every entry positioned after that match is never examined for that packet. This behavior is not an efficiency optimization that an administrator can safely ignore. It means statement order is a functional property of the configuration, and a specific host statement positioned below a broader network statement never takes effect at all. If an administrator denies an entire segment on line ten and then permits one instructor workstation within that segment on line twenty, the instructor workstation remains blocked, because the packet matched the deny on line ten and evaluation ceased. The operational rule that follows is that specific entries must always be placed above general entries.</p>
+<p style="margin-bottom: 15px;">Every list also terminates in an implicit deny statement that is never displayed in the running configuration. This design is deliberate and reflects a security principle. A filter defaults to denying anything the administrator did not explicitly authorize, rather than permitting anything the administrator did not think to block. The practical consequence is severe for students. A list containing only deny entries discards one hundred percent of traffic on the interface, because the traffic that fails to match the deny statements then falls through to the invisible deny at the bottom. Every deployed list must therefore contain at least one permit statement. Because the implicit deny is hidden, administrators frequently configure an explicit deny entry at the end of the list purely so that its match counter provides visible evidence of how much traffic is being discarded.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list 10 remark Deny the student segment</span> : Inserts a descriptive text comment into the list so that the next administrator can determine the business purpose of the entry without consulting external documentation.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list 10 permit any</span> : Explicitly permits all remaining traffic and prevents the implicit deny from discarding every flow the policy did not intend to block.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>B. Wildcard Mask Calculation</strong><br>An access control list compares addresses using a wildcard mask rather than a subnet mask. The reason for this separate construct is that a filter must be able to describe address groupings that a subnet mask cannot express, such as every odd numbered host or the same host address across multiple subnets. A binary zero in the wildcard mask requires the corresponding address bit to match exactly, and a binary one instructs the router to ignore that bit entirely. Reading a wildcard mask as though it were a subnet mask produces a filter that matches the wrong traffic while generating no error, which is why this calculation deserves deliberate attention.</p>
+<p style="margin-bottom: 15px;">The wildcard mask for a standard contiguous network is calculated by subtracting the subnet mask from 255.255.255.255. A network using the mask 255.255.255.0 is therefore matched with the wildcard mask 0.0.0.255, which requires the first three octets to match and ignores the host portion. Two keywords replace the most common values and improve configuration readability. The host keyword substitutes for the wildcard mask 0.0.0.0 and matches exactly one address, and the any keyword substitutes for the address and mask pair 0.0.0.0 255.255.255.255 and matches every possible address.</p>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left;"><caption style="caption-side: bottom; text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Description: This matrix details the relationship between common subnet masks and their corresponding access control list wildcard masks.</caption>
+<thead>
+<tr>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Subnet Mask</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Wildcard Mask</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Addresses Matched</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">255.255.255.255</td>
+<td style="border: 1px solid #ddd; padding: 10px;">0.0.0.0</td>
+<td style="border: 1px solid #ddd; padding: 10px;">One single host address</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;">255.255.255.240</td>
+<td style="border: 1px solid #ddd; padding: 10px;">0.0.0.15</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Sixteen consecutive addresses</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">255.255.255.0</td>
+<td style="border: 1px solid #ddd; padding: 10px;">0.0.0.255</td>
+<td style="border: 1px solid #ddd; padding: 10px;">All addresses within one Class C sized segment</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;">255.255.0.0</td>
+<td style="border: 1px solid #ddd; padding: 10px;">0.0.255.255</td>
+<td style="border: 1px solid #ddd; padding: 10px;">All addresses within one Class B sized range</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">0.0.0.0</td>
+<td style="border: 1px solid #ddd; padding: 10px;">255.255.255.255</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Every possible IPv4 address</td>
+</tr>
+</tbody>
+</table>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list 10 deny 192.168.10.0 0.0.0.255</span> : Matches every host address within a single Class C sized segment by ignoring the final octet.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list 10 deny host 192.168.10.25</span> : Matches one specific endpoint address, which the router stores internally as the wildcard mask 0.0.0.0.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>C. Standard Access Control Lists and Placement</strong><br>A standard access control list evaluates the source address of a packet only. This limitation determines where the list can be deployed. Because the entry carries no information about the intended destination, a standard list applied near the source discards all traffic originating from that address, including traffic bound for destinations the policy intended to permit. Denying the Student segment at the interface closest to the students would block their access to the internet and the print services along with their access to the faculty server. Administrators must therefore place standard access control lists as close to the destination as possible, where the router has already performed the routing decision and only the traffic actually arriving at the protected segment is subject to evaluation.</p>
+<p style="margin-bottom: 15px;">The tradeoff of this placement rule is that denied traffic consumes bandwidth across every transit link in the path before it is finally discarded at the far end. Standard lists are consequently appropriate for simple policy statements where the protected resource is a single segment, and for restricting management access to the device itself. Standard lists are identified by a number in the range 1 through 99 and 1300 through 1999, or by a descriptive name.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list 10 deny 192.168.10.0 0.0.0.255</span> : Creates a numbered standard entry that discards traffic sourced from the specified segment regardless of its destination.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip access-list standard NO_STUDENTS</span> : Creates a named standard access control list and enters named access control list configuration mode.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>D. Extended Access Control Lists and Placement</strong><br>An extended access control list evaluates source address, destination address, protocol, and Layer 4 port number. This additional matching capability is what allows an administrator to satisfy a policy that a standard list cannot express, such as denying remote terminal access to a server while permitting web access to that same server from the same clients. Because the destination is specified within the entry itself, the filter can be applied near the source without the collateral damage described in the previous subsection. This placement is preferred wherever possible, because discarding unwanted traffic at the first routed hop conserves bandwidth and processing capacity on every device further along the path.</p>
+<p style="margin-bottom: 15px;">The protocol keyword must be selected with care, because it determines which additional parameters the command line will accept. Specifying ip matches all traffic between the addresses and permits no port operators, while specifying tcp or udp exposes the port matching keywords. Port numbers may be entered numerically or by protocol keyword, and the eq operator matches a single port while the gt, lt, and range operators match larger groupings. Extended lists are identified by a number in the range 100 through 199 and 2000 through 2699, or by a descriptive name.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list 100 deny tcp 192.168.10.0 0.0.0.255 host 192.168.30.10 eq 23</span> : Discards remote terminal sessions from one segment to one server while leaving all other services on that server reachable.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">permit tcp any host 192.168.30.10 eq 80</span> : Named list entry that permits web traffic to a single server from any source address.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>E. Numbered and Named Configuration Methods</strong><br>Both list types may be identified by number or by name, and the choice has operational consequences beyond readability. A numbered list cannot be edited in place. Issuing the no form of a numbered access list command removes the entire list rather than the single entry, which means correcting one mistaken statement destroys the whole policy and, on a production router, leaves the interface temporarily unfiltered. Administrators working with numbered lists therefore build the corrected list in a text editor and paste the replacement.</p>
+<p style="margin-bottom: 15px;">A named list stores each entry with a sequence number, which the administrator can use as a handle to delete a single statement or to insert a new statement at a specific position in the evaluation order. This capability is why named lists are preferred in production environments, and it is reinforced by the self documenting value of a name such as BLOCK_STUDENT_TO_PAYROLL. Named lists are used throughout the remainder of this course.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip access-list extended BLOCK_PAYROLL</span> : Creates a named extended list and enters the configuration mode in which individual entries are added.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">no 20</span> : Removes only the entry occupying sequence position twenty, leaving the remainder of the named list intact.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>F. Filter Application to Interfaces and Management Lines</strong><br>A configured access control list performs no filtering until it is applied, and the router will not warn an administrator who forgets this step. Interface application follows the three P rule, which permits one list per protocol, per interface, per direction. The directional keyword determines when in the forwarding process the evaluation occurs. An inbound list is evaluated as the packet arrives and before the router performs the routing table lookup, which conserves processing resources because discarded packets are never routed. An outbound list is evaluated after the routing decision and immediately before the packet is placed on the egress interface, which is the correct choice when the policy protects a specific destination segment attached to that interface.</p>
+<p style="margin-bottom: 15px;">Traffic destined for the router itself is handled separately, because packets addressed to the management plane are processed differently from packets the router forwards. Remote management sessions are controlled with the access-class command applied in line configuration mode, which restricts the source addresses permitted to open a session to the virtual terminal lines. Filtering the management plane this way is significantly more efficient than attempting to block management traffic on every physical interface, and it protects the device regardless of which interface the connection attempt arrives on.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip access-group 10 out</span> : Interface configuration command that applies the specified list to traffic leaving the interface after the routing decision.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-class 5 in</span> : Line configuration command that restricts inbound remote management sessions to the permitted source addresses.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>G. Verification and Diagnostics</strong><br>Administrators must verify both the contents of the list and the interface to which it is bound, because a syntactically correct list applied to the wrong interface or in the wrong direction produces no error message at the command line. The show access-lists command displays every configured list with the sequence number of each entry and a match counter that increments as traffic is evaluated. These counters are the primary diagnostic instrument in this module. A counter that remains at zero throughout a connectivity test proves that the traffic never reached the filter, which redirects the investigation toward interface binding, direction, or the routing path rather than toward the statement syntax. A counter that increments on an unexpected entry proves the statement order is wrong.</p>
+<p style="margin-bottom: 15px;">The show ip interface command confirms which list is bound to a given interface and in which direction, and should be executed on every interface involved whenever a filter appears to have no effect. Testing must also exercise the specific flows the policy addresses. A successful ping only proves that the Internet Control Message Protocol is permitted, and on an extended list that filters a single Transmission Control Protocol port, a successful ping proves nothing about whether the policy is working.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show access-lists</span> : Displays all configured lists with their sequence numbers and per entry match counters.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show ip interface GigabitEthernet0/0/0</span> : Confirms the access control list bound to a specific interface and the direction of the filter.</li>
+</ul>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">6. Cisco IOS Command Reference Matrix</h2>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left;"><caption style="caption-side: bottom; text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Description: This matrix details the specific Cisco IOS command syntax, execution mode, and operational purpose for configuring IPv4 access control lists.</caption>
+<thead>
+<tr>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Full Command Syntax</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Mode</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Operational Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list [1-99] {permit | deny} [source] [wildcard]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Creates a numbered standard entry that filters on source address only</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list [100-199] {permit | deny} [protocol] [source] [wildcard] [destination] [wildcard] eq [port]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Creates a numbered extended entry that filters on address, protocol, and port</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-list [number] remark [text]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Documents the operational purpose of an access control list</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip access-list standard [name]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Creates a named standard list and enters named access control list config mode</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip access-list extended [name]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Global Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Creates a named extended list and enters named access control list config mode</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">no [sequence-number]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Named ACL Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Removes a single entry from a named list without deleting the entire list</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip access-group [number | name] {in | out}</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Interface Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Applies an access control list to an interface in the specified direction</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">access-class [number | name] in</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Line Config</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Restricts inbound remote management sessions on the virtual terminal lines</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show access-lists</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Privileged EXEC</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Displays all configured lists with sequence numbers and match counters</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show ip interface [interface-id]</span></td>
+<td style="border: 1px solid #ddd; padding: 10px;">Privileged EXEC</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Confirms which list is applied to an interface and in which direction</td>
+</tr>
+</tbody>
+</table>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">7. Interactive Formative Practice Activities</h2>
+<p style="margin-bottom: 15px;">To verify your conceptual comprehension and command line entry speed before participating in the weekly summative lab assessment, complete the following ungraded interactive practice tools. You must complete both the theoretical knowledge check and the sequential syntax verification tool.</p>
+<p style="margin-bottom: 10px;"><strong>Activity 1:</strong> Launch the Formative Knowledge Check to verify your understanding of access control list evaluation order, wildcard mask calculation, and filter placement.</p>
+<p style="text-align: center; margin-bottom: 25px;"><a style="display: inline-block; background-color: #004a99; color: #ffffff; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 4px;" href="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/Module_5_Knowledge_Checker.html" target="_blank" rel="noopener">Launch the Module 5 Knowledge Checker</a></p>
+<p style="margin-bottom: 10px;"><strong>Activity 2:</strong> Launch the Command Syntax Checker to execute sequential standard and extended access control list configurations. Return to this module page once you have achieved a 100 percent verification score.</p>
+<p style="text-align: center; margin-bottom: 15px;"><a style="display: inline-block; background-color: #004a99; color: #ffffff; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 4px;" href="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/Module_5_Syntax_Checker.html" target="_blank" rel="noopener">Launch the Module 5 Syntax Checker</a></p>
+</div>
+<p></p>
