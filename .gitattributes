@@ -1,0 +1,11 @@
+# Keep line endings consistent no matter what writes into this repository -
+# Windows, macOS, Linux, a web upload, or a tool acting on your behalf.
+#
+# text=auto tells Git to store every text file with LF endings in the
+# repository, and to check it out with the platform's native endings
+# (CRLF on Windows). Binary files are detected automatically and left alone.
+#
+# Without this, a file written with LF endings looks like every single line
+# changed, which buries real edits in noise.
+
+* text=auto
