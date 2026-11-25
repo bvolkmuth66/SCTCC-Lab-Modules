@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Review Syntax Checker: Modules 1 to 13</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .scenario pre { font-family: 'Courier New', Courier, monospace; font-size: 14px; background-color: #ffffff; border: 1px solid #ddd; padding: 10px; margin: 0 0 10px 0; white-space: pre-wrap; word-break: break-all; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; word-break: break-all; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Final Review Syntax Checker: Modules 1 to 13</h2>
+    <p class="intro">This ungraded review activity revisits the configuration skills from across the course before you take the final exam. Each step is taken from a different module and names it, so a step you cannot answer tells you exactly which module to review. Each entry is validated immediately, and you must enter a step correctly before the next objective is released. Work through all twelve steps to achieve a 100 percent verification score.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>A branch campus is being built from the ground up. S1 is a Catalyst 2960 access switch with faculty workstations in VLAN 10, a trunk on GigabitEthernet0/1 to R1, and two links to S2 that are bundled as an EtherChannel. R1 is an ISR 4321 that routes the VLANs on GigabitEthernet0/0/1 subinterfaces, runs OSPF in area 0, and reaches the provider on GigabitEthernet0/0/0.</p>
+        <p>A time server is at 192.168.30.5 and the configuration file server is at 172.16.35.201. Standard access list 5 permits the management network, and access list 1 selects the inside hosts.</p>
+        <p>Enter each command from the prompt shown. Entries are not case sensitive and extra spaces are ignored.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Step</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have completed all twelve steps correctly, drawing on Modules 1 through 13: secure remote access, VLANs and trunks, spanning tree and EtherChannel, inter-VLAN routing and OSPF, access lists, address translation, time synchronization, configuration backup, and the programmable interface. Return to the Week 16 announcement and review any module that gave you trouble before you take the final exam.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Step 1: Restrict Remote Access to Secure Shell",
+                objective: "Module 1. Remote management of S1 must be encrypted. You are in line configuration mode for VTY lines 0 through 15. Permit Secure Shell only.",
+                prompt: "S1(config-line)#",
+                accept: [/^transport input ssh$/],
+                hint: "The command names the transport the lines accept, followed by the protocol.",
+                explanation: "Correct. With only Secure Shell accepted, Telnet attempts are refused, and the credentials in the local database never cross the network in clear text.",
+                errors: [
+                    { pattern: /^transport input all$/, message: "That accepts Telnet as well, which sends the password in clear text." },
+                    { pattern: /^transport input telnet/, message: "Telnet sends every keystroke, including the password, in clear text." },
+                    { pattern: /^login local$/, message: "That makes the lines use the local user database, which is already configured. The objective is to limit which protocol may connect." }
+                ]
+            },
+            {
+                title: "Step 2: Assign an Access Port to a VLAN",
+                objective: "Module 2. FastEthernet0/1 on S1 connects a faculty workstation. In interface configuration mode, place the port in VLAN 10.",
+                prompt: "S1(config-if)#",
+                accept: [/^(switchport|sw) access vlan 10$/],
+                hint: "The command family is switchport, followed by the port role and the VLAN number.",
+                explanation: "Correct. The port is an access port in VLAN 10, so the workstation shares a broadcast domain only with other VLAN 10 hosts.",
+                errors: [
+                    { pattern: /^vlan 10$/, message: "That creates the VLAN in global configuration mode. The objective is to assign this port to it." },
+                    { pattern: /trunk/, message: "A workstation port is an access port, not a trunk." },
+                    { pattern: /^switchport access vlan(?! 10$)/, message: "Check the VLAN number in the objective." }
+                ]
+            },
+            {
+                title: "Step 3: Set the Native VLAN on the Trunk",
+                objective: "Module 2. GigabitEthernet0/1 is already a trunk to R1. Move its native VLAN to the ParkingLot VLAN, 99, as every assignment in the course does.",
+                prompt: "S1(config-if)#",
+                accept: [/^(switchport|sw) trunk native vlan 99$/],
+                hint: "The setting belongs to the trunk, so the command is switchport trunk followed by the keyword for untagged traffic.",
+                explanation: "Correct. Both ends of the trunk must name the same native VLAN, or untagged frames land in the wrong VLAN and the switches report a mismatch.",
+                errors: [
+                    { pattern: /^switchport access vlan/, message: "An access VLAN applies to an access port. A trunk's untagged VLAN is set with a trunk command." },
+                    { pattern: /^switchport trunk allowed/, message: "That limits which VLANs cross the trunk. The objective is the VLAN that crosses untagged." },
+                    { pattern: /^switchport trunk native vlan(?! 99$)/, message: "The course parks the native VLAN in VLAN 99." }
+                ]
+            },
+            {
+                title: "Step 4: Bring an Access Port Up Immediately",
+                objective: "Module 3. FastEthernet0/1 connects only a workstation. Let it skip the spanning tree listening and learning states so the host is online at once.",
+                prompt: "S1(config-if)#",
+                accept: [/^spanning-tree portfast$/],
+                hint: "The feature is a spanning tree option for edge ports, named for the fast path it gives them.",
+                explanation: "Correct. PortFast belongs on edge ports only. On a port that connects another switch it can create a loop, which is why BPDU Guard is normally paired with it.",
+                errors: [
+                    { pattern: /^spanning-tree bpduguard/, message: "BPDU Guard protects a PortFast port by shutting it if a switch appears. The objective is to skip the listening and learning states." },
+                    { pattern: /^spanning-tree mode/, message: "The mode is a global setting for the whole switch. The objective is a per-port edge feature." },
+                    { pattern: /^spanning-tree vlan/, message: "That sets per-VLAN values such as priority. The objective is a per-port edge feature." }
+                ]
+            },
+            {
+                title: "Step 5: Bundle Two Links With LACP",
+                objective: "Module 3. GigabitEthernet0/1 and 0/2 between S1 and S2 are selected as a range. Make them members of port channel 1, with S1 starting the LACP negotiation.",
+                prompt: "S1(config-if-range)#",
+                accept: [/^channel-group 1 mode active$/],
+                hint: "The command names the channel group number, then the mode. The end that starts LACP negotiation is the one that is not passive.",
+                explanation: "Correct. S1 is active and S2 is passive, the course standard. Two passive ends never form a channel because neither starts the negotiation.",
+                errors: [
+                    { pattern: /mode passive/, message: "Passive only responds. The objective is for S1 to start the negotiation." },
+                    { pattern: /mode on/, message: "On forces a channel with no negotiation at all. The objective is LACP." },
+                    { pattern: /mode (desirable|auto)/, message: "Those are PAgP modes. The course uses LACP." },
+                    { pattern: /^interface port-channel/, message: "That configures the bundle after it exists. Make the physical ports members first." }
+                ]
+            },
+            {
+                title: "Step 6: Tag a Router Subinterface",
+                objective: "Module 4. On R1, subinterface GigabitEthernet0/0/1.10 routes for VLAN 10. Tell it which 802.1Q tag it handles.",
+                prompt: "R1(config-subif)#",
+                accept: [/^encapsulation dot1q 10$/],
+                hint: "The command names the encapsulation, the trunking standard, and the VLAN.",
+                explanation: "Correct. The subinterface now accepts frames tagged 10. It needs this before it will accept an address.",
+                errors: [
+                    { pattern: /^ip address/, message: "The subinterface refuses an address until its encapsulation is set." },
+                    { pattern: /^encapsulation dot1q(?! 10$)/, message: "The tag must match the VLAN this subinterface routes for." },
+                    { pattern: /^switchport/, message: "Routers do not use switchport commands. A subinterface is tagged with encapsulation." }
+                ]
+            },
+            {
+                title: "Step 7: Advertise a Network in OSPF",
+                objective: "Module 4. In OSPF router configuration mode, advertise 192.168.10.0/24 in area 0.",
+                prompt: "R1(config-router)#",
+                accept: [/^network 192\.168\.10\.0 0\.0\.0\.255 area 0$/],
+                hint: "OSPF network statements use a wildcard mask, the inverse of the subnet mask, and name the area.",
+                explanation: "Correct. Interfaces with an address in that range join area 0 and their network is advertised to neighbors.",
+                errors: [
+                    { pattern: /255\.255\.255\.0/, message: "OSPF network statements take a wildcard mask, not a subnet mask." },
+                    { pattern: /^network 192\.168\.10\.0 0\.0\.0\.255$/, message: "The statement must name the area." },
+                    { pattern: /^router ospf/, message: "You are already in router configuration mode." }
+                ]
+            },
+            {
+                title: "Step 8: Restrict the VTY Lines With an Access List",
+                objective: "Module 5. Standard access list 5 permits only the management network. Apply it to R1's VTY lines so only those hosts may connect.",
+                prompt: "R1(config-line)#",
+                accept: [/^access-class 5 in$/],
+                hint: "On lines, an access list is applied with a different command from the one used on interfaces, with the direction last.",
+                explanation: "Correct. access-class filters who may open a session to the router itself; ip access-group filters traffic passing through an interface.",
+                errors: [
+                    { pattern: /^ip access-group/, message: "That applies an access list to an interface. On VTY lines the command is different." },
+                    { pattern: /^access-class 5 out$/, message: "Out filters sessions the router opens to other devices. The objective is sessions arriving at the router." },
+                    { pattern: /^access-list/, message: "That creates list entries, which already exist. The objective is to apply the list." }
+                ]
+            },
+            {
+                title: "Step 9: Translate Many Hosts to One Address",
+                objective: "Module 6. Access list 1 selects the inside hosts. Translate them all to the address of GigabitEthernet0/0/0, the outside interface, sharing it by port.",
+                prompt: "R1(config)#",
+                accept: [/^ip nat inside source list 1 interface (gigabitethernet|gi|g) ?0\/0\/0 overload$/],
+                hint: "The statement names the inside source, the list that selects it, the interface whose address is shared, and the keyword that turns on port translation.",
+                explanation: "Correct. overload is what makes this Port Address Translation. Without it, the second inside host to start a session would find no address left.",
+                errors: [
+                    { pattern: /^ip nat inside source list 1 interface (gigabitethernet|gi|g) ?0\/0\/0$/, message: "Without overload only one inside host can be translated at a time." },
+                    { pattern: /^ip nat outside/, message: "Translation of inside hosts begins with the inside source statement." },
+                    { pattern: /^ip nat inside$/, message: "That marks an interface as inside, which is already done. The objective is the translation rule itself." }
+                ]
+            },
+            {
+                title: "Step 10: Synchronize the Clock",
+                objective: "Module 10. Point R1 at the time server 192.168.30.5 so every log timestamp can be compared with the other devices.",
+                prompt: "R1(config)#",
+                accept: [/^ntp server 192\.168\.30\.5$/],
+                hint: "The command family is ntp, followed by the role of the device R1 learns from and its address.",
+                explanation: "Correct. Time comes first because every later log message is only useful if its timestamp agrees with the other devices. show ntp status confirms it; stratum 16 means it has not synchronized yet.",
+                errors: [
+                    { pattern: /^ntp master/, message: "That makes R1 a time source. The objective is for R1 to learn time from the server." },
+                    { pattern: /^clock set/, message: "A manual clock drifts and agrees with nothing. Point R1 at the server." },
+                    { pattern: /^logging/, message: "Logging depends on the clock, so the clock comes first." }
+                ]
+            },
+            {
+                title: "Step 11: Back Up the Configuration",
+                objective: "Module 11. Save R1's running configuration to the file server at 172.16.35.201 using the secure copy protocol, so a known good version exists before you troubleshoot.",
+                prompt: "R1#",
+                accept: [/^copy (running-config|run) scp:(\/\/.*)?$/],
+                hint: "The command is copy, the source configuration, and the secure copy destination with a colon. The router then prompts for the server and filename.",
+                explanation: "Correct. The router prompts for the address, the username, and the filename. A saved configuration is the undo for any change made while troubleshooting.",
+                errors: [
+                    { pattern: /tftp:/, message: "TFTP sends the configuration, including password hashes, in clear text. The course uses secure copy." },
+                    { pattern: /startup-config$/, message: "That saves locally. The objective is a copy on the remote server." },
+                    { pattern: /^copy (running-config|run) (scp|sftp)$/, message: "The destination needs a colon after it." }
+                ]
+            },
+            {
+                title: "Step 12: Enable the Programmable Interface",
+                objective: "Module 13. The secure web service, a privilege 15 user, and AAA are already configured on R1. Enable the web based programmable interface.",
+                prompt: "R1(config)#",
+                accept: [/^restconf$/],
+                hint: "The command is the name of the interface itself, entered on its own.",
+                explanation: "Correct. R1 now answers web requests for structured data. Read before you write: the first request against it should be a GET.",
+                errors: [
+                    { pattern: /^netconf/, message: "NETCONF runs over a secure shell session. The interface reached with web requests is a different one." },
+                    { pattern: /^ip http/, message: "The secure web service is already running. Enable the interface itself." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase()
+                .replace(/["'\u201c\u201d\u2018\u2019]/g, '')
+                .replace(/^curl\.exe\b/, 'curl')
+                .replace(/\s*\|\s*/g, ' | ')
+                .replace(/\s+/g, ' ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Step " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Step.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + "  " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Step accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That entry was not accepted. Check the command, its options, and the address, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) {
+                showHint();
+            }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Review the module named in the objective, then enter the step again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [
+                { x: 0, angle: -1.0 },
+                { x: confettiCanvas.width, angle: -2.1 }
+            ];
+
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x,
+                        y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6,
+                        height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI,
+                        spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1
+                    });
+                }
+            }
+
+            if (!confettiRunning) {
+                confettiRunning = true;
+                window.requestAnimationFrame(drawConfetti);
+            }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35;
+                piece.vx *= 0.99;
+                piece.vy *= 0.99;
+                piece.x += piece.vx;
+                piece.y += piece.vy;
+                piece.rotation += piece.spin;
+                piece.life -= 0.006;
+
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) {
+                    confettiPieces.splice(i, 1);
+                    continue;
+                }
+
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+
+            if (confettiPieces.length > 0) {
+                window.requestAnimationFrame(drawConfetti);
+            } else {
+                confettiRunning = false;
+                confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        function restart() {
+            current = 0;
+            attempts = 0;
+            verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkCommand();
+            }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>

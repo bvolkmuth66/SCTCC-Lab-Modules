@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Review Knowledge Checker: Modules 1 to 13</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        .intro { margin-bottom: 25px; }
+        .question { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options label { cursor: pointer; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #003366; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+        .feedback { margin-top: 20px; }
+        .feedback h3 { color: #004a99; font-size: 16px; margin-bottom: 10px; }
+        .feedback ul { padding-left: 20px; }
+        .feedback li { margin-bottom: 10px; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+    </style>
+</head>
+<body>
+    <h2>Final Review Knowledge Checker: Modules 1 to 13</h2>
+    <p class="intro">This ungraded review activity revisits one central idea from each of the thirteen modules before you take the final exam. Answer all thirteen questions and select Submit Assessment. Each missed question names the module to review. Return to the Week 16 announcement and launch the Final Review Syntax Checker once you have achieved a score of thirteen out of thirteen.</p>
+    <div id="quiz-container">
+        <div class="question">
+            <p><strong>1. Why does the course configure Secure Shell rather than Telnet for remote management?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">Secure Shell encrypts the whole session, including the username and password; Telnet sends both in clear text.</label></li>
+                <li><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">Secure Shell does not need a local username database.</label></li>
+                <li><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">Telnet cannot reach a device through a Switch Virtual Interface.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>2. What happens to frames in the native VLAN on an 802.1Q trunk?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q2" id="q2a" value="a"> <label for="q2a">They are tagged twice so both switches can identify them.</label></li>
+                <li><input type="radio" name="q2" id="q2b" value="b"> <label for="q2b">They cross the trunk untagged, so both ends must agree on which VLAN is native.</label></li>
+                <li><input type="radio" name="q2" id="q2c" value="c"> <label for="q2c">They are discarded, which is why the native VLAN is moved to an unused VLAN.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>3. Both ends of an EtherChannel are configured with LACP in passive mode. What happens?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">The channel forms, because both ends run the same protocol.</label></li>
+                <li><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">The channel forms, but load balancing is disabled.</label></li>
+                <li><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">No channel forms, because a passive port only responds and neither end starts the negotiation.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>4. Two OSPF routers on the same link never become neighbors. Which mismatch prevents the adjacency?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q4" id="q4a" value="a"> <label for="q4a">The hello and dead intervals differ on the two interfaces.</label></li>
+                <li><input type="radio" name="q4" id="q4b" value="b"> <label for="q4b">The two routers have different router IDs.</label></li>
+                <li><input type="radio" name="q4" id="q4c" value="c"> <label for="q4c">The two routers use different OSPF process IDs.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>5. An access list contains only deny statements and is applied to an interface. What happens to all other traffic?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q5" id="q5a" value="a"> <label for="q5a">It is permitted, because nothing denies it.</label></li>
+                <li><input type="radio" name="q5" id="q5b" value="b"> <label for="q5b">It is denied by the implicit deny at the end of every access list.</label></li>
+                <li><input type="radio" name="q5" id="q5c" value="c"> <label for="q5c">It is logged and then forwarded.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>6. How does Port Address Translation let many inside hosts share one public address?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q6" id="q6a" value="a"> <label for="q6a">It assigns each host its own public address from a pool.</label></li>
+                <li><input type="radio" name="q6" id="q6b" value="b"> <label for="q6b">It translates only the destination address of each packet.</label></li>
+                <li><input type="radio" name="q6" id="q6c" value="c"> <label for="q6c">It tracks each session by its port number, so many inside local addresses map to one inside global address.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>7. How does a wireless client end up on the faculty VLAN when it joins a controller based network?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q7" id="q7a" value="a"> <label for="q7a">The wireless network is mapped to a dynamic interface on the controller, and that interface is bound to the VLAN.</label></li>
+                <li><input type="radio" name="q7" id="q7b" value="b"> <label for="q7b">The access point assigns the VLAN from its own configuration.</label></li>
+                <li><input type="radio" name="q7" id="q7c" value="c"> <label for="q7c">The client chooses the VLAN when it authenticates.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>8. Why do enterprise designs run a GRE tunnel inside IPsec instead of using IPsec alone?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q8" id="q8a" value="a"> <label for="q8a">GRE encrypts the traffic more strongly.</label></li>
+                <li><input type="radio" name="q8" id="q8b" value="b"> <label for="q8b">IPsec alone does not carry the multicast traffic OSPF uses to form adjacencies across the tunnel.</label></li>
+                <li><input type="radio" name="q8" id="q8c" value="c"> <label for="q8c">GRE removes the need for a pre-shared key.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>9. A queuing policy applied to an idle link shows no matches and no drops in any class. What does this prove?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q9" id="q9a" value="a"> <label for="q9a">Nothing yet; a queuing policy acts only when the interface is congested.</label></li>
+                <li><input type="radio" name="q9" id="q9b" value="b"> <label for="q9b">The class maps match nothing.</label></li>
+                <li><input type="radio" name="q9" id="q9c" value="c"> <label for="q9c">The policy is attached in the wrong direction.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>10. show ntp status on a switch reports stratum 16. What does this mean?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q10" id="q10a" value="a"> <label for="q10a">The switch is synchronized to the most authoritative source available.</label></li>
+                <li><input type="radio" name="q10" id="q10b" value="b"> <label for="q10b">The switch is sixteen hops from a reference clock.</label></li>
+                <li><input type="radio" name="q10" id="q10c" value="c"> <label for="q10c">The clock is unsynchronized, whatever the configuration says.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>11. Every source in the building fails to reach one server, and everything else works. Where does the evidence point?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q11" id="q11a" value="a"> <label for="q11a">At the reporting user's access port.</label></li>
+                <li><input type="radio" name="q11" id="q11b" value="b"> <label for="q11b">At the server or the path in front of it.</label></li>
+                <li><input type="radio" name="q11" id="q11c" value="c"> <label for="q11c">At every switch in the building.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>12. In software defined networking, which plane moves to the controller?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q12" id="q12a" value="a"> <label for="q12a">The data plane, so the controller forwards every packet.</label></li>
+                <li><input type="radio" name="q12" id="q12b" value="b"> <label for="q12b">The management plane only, so the controller replaces the command line.</label></li>
+                <li><input type="radio" name="q12" id="q12c" value="c"> <label for="q12c">The control plane, which decides where traffic goes, while the devices keep forwarding it.</label></li>
+            </ul>
+        </div>
+        <div class="question">
+            <p><strong>13. An administrator means to add one time server and uses PUT with a body naming only that server. What happens to the servers already configured?</strong></p>
+            <ul class="options">
+                <li><input type="radio" name="q13" id="q13a" value="a"> <label for="q13a">They are removed, because PUT replaces the resource with the body.</label></li>
+                <li><input type="radio" name="q13" id="q13b" value="b"> <label for="q13b">They are kept, because PUT adds to a resource.</label></li>
+                <li><input type="radio" name="q13" id="q13c" value="c"> <label for="q13c">The request is refused, because PUT can only create.</label></li>
+            </ul>
+        </div>
+        <button onclick="gradeQuiz()">Submit Assessment</button>
+        <div id="result" role="status" aria-live="polite"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        var answerKey = {
+            q1: { correct: 'a', review: "Question 1: Telnet carries credentials in clear text, so anyone capturing the traffic reads them. Secure Shell encrypts the session from the first keystroke. Review Module 1." },
+            q2: { correct: 'b', review: "Question 2: Native VLAN traffic carries no tag. If the two ends name different native VLANs, untagged frames land in the wrong VLAN and the switches report a mismatch. Review Module 2." },
+            q3: { correct: 'c', review: "Question 3: Passive waits to be asked. At least one end must be active, which is why the course standard is active on one switch and passive on the other. Review Module 3." },
+            q4: { correct: 'a', review: "Question 4: Hello and dead intervals, area, and subnet must agree. Router IDs must be different, and the process ID is locally significant. Review Module 4." },
+            q5: { correct: 'b', review: "Question 5: Every access list ends with an invisible deny any. A list made only of deny statements blocks everything. Review Module 5." },
+            q6: { correct: 'c', review: "Question 6: Overload is the keyword that turns dynamic NAT into PAT. The translation table keeps sessions apart by port. Review Module 6." },
+            q7: { correct: 'a', review: "Question 7: A dynamic interface binds a wireless network to a wired segment. The access point tunnels the client's traffic to the controller over CAPWAP. Review Module 7." },
+            q8: { correct: 'b', review: "Question 8: GRE solves transport, including multicast; IPsec provides the confidentiality, integrity, and authentication GRE lacks. Review Module 8." },
+            q9: { correct: 'a', review: "Question 9: On an idle link a correct policy and a missing one look the same. Testing requires enough traffic to fill the link. Review Module 9." },
+            q10: { correct: 'c', review: "Question 10: Stratum 16 is how NTP reports an unsynchronized clock, and every timestamp from that device is suspect until it changes. Review Module 10." },
+            q11: { correct: 'b', review: "Question 11: Establish scope first. When every source fails to one destination, the reporting user's location is irrelevant. Review Module 11." },
+            q12: { correct: 'c', review: "Question 12: The controller decides; the switches and routers still forward. That separation is what SDN means. Review Module 12." },
+            q13: { correct: 'a', review: "Question 13: PUT replaces; PATCH alters only the parts named. Choosing the wrong verb is how an automated change removes configuration nobody meant to touch. Review Module 13." }
+        };
+
+        function gradeQuiz() {
+            var score = 0;
+            var missed = [];
+            var unanswered = 0;
+
+            for (var item in answerKey) {
+                var selected = document.querySelector('input[name="' + item + '"]:checked');
+                if (!selected) {
+                    unanswered++;
+                    missed.push(answerKey[item].review);
+                } else if (selected.value === answerKey[item].correct) {
+                    score++;
+                } else {
+                    missed.push(answerKey[item].review);
+                }
+            }
+
+            var total = Object.keys(answerKey).length;
+            var resultDiv = document.getElementById('result');
+            var feedbackDiv = document.getElementById('feedback');
+
+            resultDiv.innerText = "You scored " + score + " out of " + total + ".";
+
+            if (unanswered > 0) {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " You left " + unanswered + " question(s) unanswered.";
+            } else if (score === total) {
+                resultDiv.style.color = "green";
+                resultDiv.innerText += " Proceed to the Final Review Syntax Checker.";
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerText += " Review the modules named below and try again.";
+            }
+
+            feedbackDiv.innerHTML = "";
+            if (missed.length > 0) {
+                var heading = document.createElement('h3');
+                heading.innerText = "Items to Review";
+                var list = document.createElement('ul');
+                for (var i = 0; i < missed.length; i++) {
+                    var entry = document.createElement('li');
+                    entry.innerText = missed[i];
+                    list.appendChild(entry);
+                }
+                feedbackDiv.appendChild(heading);
+                feedbackDiv.appendChild(list);
+            }
+        }
+    </script>
+</body>
+</html>
