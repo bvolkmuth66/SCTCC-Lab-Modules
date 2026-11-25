@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 13 Syntax Checker: Network Automation and Programmable Interfaces</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; line-height: 1.6; }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; }
+        h3 { color: #0056b3; font-size: 17px; margin-bottom: 5px; }
+        .intro { margin-bottom: 25px; }
+        .scenario { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 25px; }
+        .scenario p { margin: 0 0 10px 0; }
+        .scenario p:last-child { margin-bottom: 0; }
+        .scenario pre { font-family: 'Courier New', Courier, monospace; font-size: 14px; background-color: #ffffff; border: 1px solid #ddd; padding: 10px; margin: 0 0 10px 0; white-space: pre-wrap; word-break: break-all; }
+        .progress { font-weight: bold; color: #555; margin-bottom: 8px; }
+        .step { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; margin-bottom: 20px; }
+        .prompt-line { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 16px; padding: 10px; border: 1px solid #999; }
+        button { background-color: #004a99; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; margin-top: 12px; margin-right: 10px; }
+        button:hover { background-color: #003366; }
+        button.secondary { background-color: #6c757d; }
+        button.secondary:hover { background-color: #4e5257; }
+        input:focus, button:focus { outline: 3px solid #cc0000; outline-offset: 2px; }
+        .feedback { margin-top: 15px; font-weight: bold; }
+        .feedback.correct { color: #1a7a34; }
+        .feedback.incorrect { color: #cc0000; }
+        .explanation { margin-top: 8px; font-weight: normal; color: #333; }
+        .hint { margin-top: 12px; padding: 10px; border-left: 4px solid #004a99; background-color: #eef3fa; }
+        .transcript { border: 1px solid #ddd; background-color: #f9f9f9; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; word-break: break-all; margin-bottom: 20px; }
+        .transcript-heading { color: #004a99; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        code { font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold; }
+        .complete { border: 2px solid #1a7a34; padding: 20px; margin-bottom: 20px; }
+        .complete h3 { color: #1a7a34; font-size: 20px; margin-top: 0; }
+        .hidden { display: none; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <h2>Module 13 Syntax Checker: Network Automation and Programmable Interfaces</h2>
+    <p class="intro">This ungraded formative activity verifies your command accuracy before you attempt the Packet Tracer activities. You work an automation task in the order that keeps a mistake small: enable the interface, read before you write, change one part on one device, read the result back, and confirm a device that should not have changed. Configuration and verification steps are entered at the router command line, and requests are entered as curl commands at the laptop's Command Prompt. Each entry is validated immediately, and you must enter a step correctly before the next objective is released. Work through all eight steps to achieve a 100 percent verification score, then return to the module page.</p>
+
+    <div class="scenario">
+        <p><strong>Topology and Policy Scenario</strong></p>
+        <p>Two IOS XE routers, R1 at 192.168.12.1 and R2 at 192.168.12.2, share a management segment with an administrator's laptop. A local user named admin with password cisco and privilege level 15 already exists on both routers, and AAA login authentication and authorization are already configured.</p>
+        <p>The change request adds one time server to R1 only. R2 must not change. The laptop has a folder named C:\m13 containing a file named ntp.json that describes the new server. The resource that holds R1's time configuration is:</p>
+        <pre>https://192.168.12.1/restconf/data/Cisco-IOS-XE-native:native/ntp</pre>
+        <p>Requests and responses use JSON, so the header for both the Accept and Content-Type fields is:</p>
+        <pre>application/yang-data+json</pre>
+        <p>Enter each step in the order the work requires. Entries are not case sensitive, extra spaces are ignored, and quotation marks around a header are optional. curl options may be entered in any order.</p>
+    </div>
+
+    <div id="activity">
+        <p class="progress" id="progress"></p>
+        <div class="step">
+            <h3 id="step-title"></h3>
+            <p id="step-objective"></p>
+            <p class="prompt-line" id="step-prompt"></p>
+            <label for="command-input">Enter the command</label>
+            <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div>
+                <button onclick="checkCommand()">Verify Step</button>
+                <button class="secondary" onclick="showHint()">Show Hint</button>
+            </div>
+            <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+            <div class="hint hidden" id="hint"></div>
+        </div>
+    </div>
+
+    <div id="completion" class="complete hidden">
+        <h3>Verification Score: 100 Percent</h3>
+        <p>You have completed all eight steps correctly. You enabled the secure web service and the programmable interface, read the resource before changing it, confirmed the starting state at the device, changed one part of the resource on one device with PATCH, read the result back, confirmed the change at the device, and confirmed that a device outside the change was untouched. Return to the Module 13 page and begin Packet Tracer Assignment 1.</p>
+        <button onclick="restart()">Start Over</button>
+    </div>
+
+    <div id="transcript-container" class="hidden">
+        <p class="transcript-heading">Verified Configuration Transcript</p>
+        <div class="transcript" id="transcript"></div>
+    </div>
+
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <script>
+        var steps = [
+            {
+                title: "Step 1: Enable the Secure Web Service",
+                objective: "R1 must offer a programmable interface before any script can reach it, and that interface runs over the secure web service. In global configuration mode on R1, enable the secure web service.",
+                prompt: "R1(config)#",
+                accept: [/^ip http secure-server$/],
+                hint: "The web service is part of the ip http family of commands. The secure variant is the server that uses HTTPS.",
+                explanation: "Correct. Without the secure web service, the programmable interface can be configured and still be unreachable.",
+                errors: [
+                    { pattern: /^ip http server$/, message: "That enables the unencrypted web service. Requests to the programmable interface, and the credentials they carry, must be encrypted." },
+                    { pattern: /^restconf/, message: "The interface depends on the web service, so the service comes first." },
+                    { pattern: /^ip https/, message: "The command family is ip http, followed by the keyword for the secure server." }
+                ]
+            },
+            {
+                title: "Step 2: Enable the Programmable Interface",
+                objective: "With the secure web service running, enable the web based programmable interface on R1.",
+                prompt: "R1(config)#",
+                accept: [/^restconf$/],
+                hint: "The command is the name of the interface itself, entered on its own in global configuration mode.",
+                explanation: "Correct. On IOS XE the interface also requires a local user with privilege level 15 and AAA login authorization; in this scenario those are already configured. Allow a minute or two for the interface processes to start before the first request.",
+                errors: [
+                    { pattern: /^netconf/, message: "NETCONF reads and changes configuration over a secure shell session. The interface reached with web requests is a different one." },
+                    { pattern: /^ip http/, message: "The web service is already running from Step 1. Enable the programmable interface itself." },
+                    { pattern: /^restconf (enable|on)$/, message: "The command takes no keyword. Enter it on its own." }
+                ]
+            },
+            {
+                title: "Step 3: Read Before You Write",
+                objective: "The first request against any device changes nothing. From the laptop, read R1's time configuration as JSON. Show the status line, accept the router's self-signed certificate, authenticate as admin with password cisco, and ask for JSON.",
+                prompt: "C:\\m13>",
+                accept: [/^curl(?=.*\s(-k|--insecure)(\s|$))(?=.*\s(-i|--include)(\s|$))(?=.*\s(-u|--user) admin:cisco(\s|$))(?=.*\s(-h|--header) accept: ?application\/yang-data\+json)(?=.*\shttps:\/\/192\.168\.12\.1\/restconf\/data\/cisco-ios-xe-native:native\/ntp(\s|$))(?!.*\s(-x|--request) (?!get(\s|$)))(?!.*\s(-d|--data)\s)/],
+                hint: "Start with curl. Use -k for the certificate, -i to show the status line, -u admin:cisco for the credentials, and the Accept header from the scenario, then the address. A read needs no -X option.",
+                explanation: "Correct. A status of 200 with the time settings as named fields proves the connection, the credentials, and the format before anything is changed. A 401 would mean the credentials were refused; a 404 would mean the address names no resource.",
+                errors: [
+                    { pattern: /\s-x (put|patch|post|delete)/, message: "The first request against any device reads and changes nothing. Leave out -X, or use -X GET, so the verb is GET." },
+                    { pattern: /http:\/\//, message: "The router's programmable interface is served by the secure web service, so the address begins https://." },
+                    { pattern: /^(?!.*\s(-i|--include)(\s|$))curl/, message: "Without -i, curl prints only the data and hides the status line. The status code is the part that says whether the request worked." },
+                    { pattern: /^(?!.*\s(-k|--insecure)(\s|$))curl/, message: "The router presents a self-signed certificate, which curl refuses by default. Add -k to accept it in the laboratory." },
+                    { pattern: /^(?!.*\s-u )curl/, message: "The router requires a username and password with every request. Without -u admin:cisco it answers 401." },
+                    { pattern: /^(?!.*accept)curl/, message: "The router answers in XML unless the request asks for JSON. Add the Accept header shown in the scenario." },
+                    { pattern: /\s-d\s/, message: "A read sends no body. Remove the -d option." }
+                ]
+            },
+            {
+                title: "Step 4: Confirm the Starting State at the Device",
+                objective: "Compare what the interface reported with the device's own view. On R1, display only the configuration lines that contain the word ntp.",
+                prompt: "R1#",
+                accept: [/^(show|sh) (running-config|run) \| (include|incl|inc|i) ntp$/],
+                hint: "Pass show running-config through a filter with the vertical bar, and use the filter that keeps only lines containing a word.",
+                explanation: "Correct. The device is the authority, and a programmable interface is only a way of reaching it. Recording the starting lines now also tells you exactly what an undo must put back.",
+                errors: [
+                    { pattern: /^show running-config$/, message: "That lists the whole configuration. Filter it so only the time configuration lines appear." },
+                    { pattern: /\| (section|begin)/, message: "Use the filter that displays only the lines containing a word." },
+                    { pattern: /^show ntp/, message: "That reports synchronization, which is useful, but the objective is to confirm the configured lines themselves." },
+                    { pattern: /^curl/, message: "This step is confirmed at the device itself, with the command line, because the device's own view is the authority." }
+                ]
+            },
+            {
+                title: "Step 5: Change One Part, on One Device",
+                objective: "The file ntp.json, already in C:\\m13, names one new time server. Send it to R1 so that the new server is added and every existing time setting is left alone. Show the status line, accept the certificate, authenticate, and state that the body is JSON.",
+                prompt: "C:\\m13>",
+                accept: [/^curl(?=.*\s(-k|--insecure)(\s|$))(?=.*\s(-i|--include)(\s|$))(?=.*\s(-u|--user) admin:cisco(\s|$))(?=.*\s(-x|--request) patch(\s|$))(?=.*\s(-h|--header) content-type: ?application\/yang-data\+json)(?=.*\s(-d|--data) @ntp\.json(\s|$))(?=.*\shttps:\/\/192\.168\.12\.1\/restconf\/data\/cisco-ios-xe-native:native\/ntp(\s|$))/],
+                hint: "Use -X with the verb that alters only the parts named, the Content-Type header from the scenario, and -d @ntp.json for the body, along with -k, -i, and -u admin:cisco.",
+                explanation: "Correct. PATCH alters only what the body names. A status in the 200s means the router accepted the request; it does not yet prove the result is what you intended, which is why the next step reads it back.",
+                errors: [
+                    { pattern: /\s-x put(\s|$)/, message: "PUT replaces the whole resource and discards every time setting the body does not mention. The objective is to alter one part and leave the rest alone." },
+                    { pattern: /\s-x post(\s|$)/, message: "POST creates a new item and is not safe to repeat; a second run may duplicate it or be refused. The objective is to alter part of an existing resource." },
+                    { pattern: /^(?!.*\s-x )curl/, message: "Without -X, curl sends POST whenever a body is attached with -d. State the verb that alters only the parts named." },
+                    { pattern: /^(?!.*\s-d @ntp\.json)curl/, message: "The new value travels in the body. Send the prepared file with -d @ntp.json." },
+                    { pattern: /^(?!.*content-type)curl/, message: "The router must be told the body is JSON. Add the Content-Type header shown in the scenario." },
+                    { pattern: /http:\/\//, message: "The address begins https://, because the interface is served by the secure web service." },
+                    { pattern: /^(?!.*\s(-i|--include)(\s|$))curl/, message: "Without -i you cannot see the status code, which is the only proof the change was accepted." }
+                ]
+            },
+            {
+                title: "Step 6: Read the Resource Back",
+                objective: "A request that was accepted can still be interpreted differently from what was intended. Read R1's time configuration again exactly as you did in Step 3.",
+                prompt: "C:\\m13>",
+                accept: [/^curl(?=.*\s(-k|--insecure)(\s|$))(?=.*\s(-i|--include)(\s|$))(?=.*\s(-u|--user) admin:cisco(\s|$))(?=.*\s(-h|--header) accept: ?application\/yang-data\+json)(?=.*\shttps:\/\/192\.168\.12\.1\/restconf\/data\/cisco-ios-xe-native:native\/ntp(\s|$))(?!.*\s(-x|--request) (?!get(\s|$)))(?!.*\s(-d|--data)\s)/],
+                hint: "Repeat the read from Step 3.",
+                explanation: "Correct. The read-back shows the new server alongside the existing settings. If the earlier settings had vanished, the request would have replaced the resource rather than altered it.",
+                errors: [
+                    { pattern: /\s-x (put|patch|post|delete)/, message: "The first request against any device reads and changes nothing. Leave out -X, or use -X GET, so the verb is GET." },
+                    { pattern: /http:\/\//, message: "The router's programmable interface is served by the secure web service, so the address begins https://." },
+                    { pattern: /^(?!.*\s(-i|--include)(\s|$))curl/, message: "Without -i, curl prints only the data and hides the status line. The status code is the part that says whether the request worked." },
+                    { pattern: /^(?!.*\s(-k|--insecure)(\s|$))curl/, message: "The router presents a self-signed certificate, which curl refuses by default. Add -k to accept it in the laboratory." },
+                    { pattern: /^(?!.*\s-u )curl/, message: "The router requires a username and password with every request. Without -u admin:cisco it answers 401." },
+                    { pattern: /^(?!.*accept)curl/, message: "The router answers in XML unless the request asks for JSON. Add the Accept header shown in the scenario." },
+                    { pattern: /\s-d\s/, message: "A read sends no body. Remove the -d option." }
+                ]
+            },
+            {
+                title: "Step 7: Confirm the Change at the Device",
+                objective: "Confirm on R1 itself that the new time server appears and the earlier lines are still present.",
+                prompt: "R1#",
+                accept: [/^(show|sh) (running-config|run) \| (include|incl|inc|i) ntp$/],
+                hint: "Use the same filtered display as Step 4 and compare the two.",
+                explanation: "Correct. The device's own view now matches what the interface reported. Comparing it with Step 4 shows exactly one added line.",
+                errors: [
+                    { pattern: /^show running-config$/, message: "That lists the whole configuration. Filter it so only the time configuration lines appear." },
+                    { pattern: /\| (section|begin)/, message: "Use the filter that displays only the lines containing a word." },
+                    { pattern: /^show ntp/, message: "That reports synchronization, which is useful, but the objective is to confirm the configured lines themselves." },
+                    { pattern: /^curl/, message: "This step is confirmed at the device itself, with the command line, because the device's own view is the authority." }
+                ]
+            },
+            {
+                title: "Step 8: Confirm a Device That Should Not Have Changed",
+                objective: "R2 was not a target of this change. Confirm on R2 that its time configuration is exactly as it was.",
+                prompt: "R2#",
+                accept: [/^(show|sh) (running-config|run) \| (include|incl|inc|i) ntp$/],
+                hint: "Use the same filtered display on R2.",
+                explanation: "Correct. Confirming a device outside the target list is what catches a script whose list of targets was wrong. A script that changed the wrong device would have reported success just the same.",
+                errors: [
+                    { pattern: /^show running-config$/, message: "That lists the whole configuration. Filter it so only the time configuration lines appear." },
+                    { pattern: /\| (section|begin)/, message: "Use the filter that displays only the lines containing a word." },
+                    { pattern: /^show ntp/, message: "That reports synchronization, which is useful, but the objective is to confirm the configured lines themselves." },
+                    { pattern: /^curl/, message: "This step is confirmed at the device itself, with the command line, because the device's own view is the authority." }
+                ]
+            }
+        ];
+
+        var current = 0;
+        var attempts = 0;
+        var verified = [];
+
+        function normalize(value) {
+            return value.trim().toLowerCase()
+                .replace(/["'\u201c\u201d\u2018\u2019]/g, '')
+                .replace(/^curl\.exe\b/, 'curl')
+                .replace(/\s*\|\s*/g, ' | ')
+                .replace(/\s+/g, ' ');
+        }
+
+        function loadStep() {
+            var step = steps[current];
+            document.getElementById('progress').innerText = "Step " + (current + 1) + " of " + steps.length;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-objective').innerText = step.objective;
+            document.getElementById('step-prompt').innerText = step.prompt;
+            document.getElementById('command-input').value = "";
+            document.getElementById('feedback').innerHTML = "";
+            document.getElementById('feedback').className = "feedback";
+            document.getElementById('hint').className = "hint hidden";
+            document.getElementById('hint').innerText = "";
+            attempts = 0;
+            document.getElementById('command-input').focus();
+        }
+
+        function checkCommand() {
+            var step = steps[current];
+            var entry = normalize(document.getElementById('command-input').value);
+            var feedback = document.getElementById('feedback');
+
+            if (entry === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerText = "Enter a command before selecting Verify Step.";
+                return;
+            }
+
+            var isCorrect = false;
+            for (var i = 0; i < step.accept.length; i++) {
+                if (step.accept[i].test(entry)) { isCorrect = true; break; }
+            }
+
+            if (isCorrect) {
+                verified.push(step.prompt + "  " + document.getElementById('command-input').value.trim());
+                updateTranscript();
+                feedback.className = "feedback correct";
+                feedback.innerHTML = "Step accepted.<span class='explanation'><br>" + step.explanation + "</span>";
+                current++;
+                if (current < steps.length) {
+                    window.setTimeout(loadStep, 2600);
+                } else {
+                    window.setTimeout(finish, 2600);
+                }
+                return;
+            }
+
+            attempts++;
+            var message = "That entry was not accepted. Check the command, its options, and the address, then try again.";
+            for (var j = 0; j < step.errors.length; j++) {
+                if (step.errors[j].pattern.test(entry)) { message = step.errors[j].message; break; }
+            }
+
+            feedback.className = "feedback incorrect";
+            feedback.innerText = message;
+
+            if (attempts === 2) {
+                showHint();
+            }
+            if (attempts >= 4) {
+                var reveal = document.getElementById('hint');
+                reveal.className = "hint";
+                reveal.innerText = "Hint: " + step.hint + "\n\nYou have made four attempts on this objective. Study the reference tables in Section 6 of the module content, then enter the step again to continue.";
+            }
+            document.getElementById('command-input').focus();
+            document.getElementById('command-input').select();
+        }
+
+        function showHint() {
+            var hint = document.getElementById('hint');
+            hint.className = "hint";
+            hint.innerText = "Hint: " + steps[current].hint;
+        }
+
+        function updateTranscript() {
+            document.getElementById('transcript-container').className = "";
+            document.getElementById('transcript').innerText = verified.join("\n");
+        }
+
+        function finish() {
+            document.getElementById('activity').className = "hidden";
+            document.getElementById('completion').className = "complete";
+            launchConfetti();
+        }
+
+        var confettiCanvas = document.getElementById('confetti-canvas');
+        var confettiContext = confettiCanvas.getContext('2d');
+        var confettiPieces = [];
+        var confettiRunning = false;
+
+        function sizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', sizeConfettiCanvas);
+        sizeConfettiCanvas();
+
+        function launchConfetti() {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
+            var colors = ["#004a99", "#0056b3", "#cc0000", "#1a7a34", "#f0b323", "#ffffff"];
+            var origins = [
+                { x: 0, angle: -1.0 },
+                { x: confettiCanvas.width, angle: -2.1 }
+            ];
+
+            for (var o = 0; o < origins.length; o++) {
+                for (var i = 0; i < 80; i++) {
+                    var spread = (Math.random() - 0.5) * 0.7;
+                    var speed = 14 + Math.random() * 12;
+                    confettiPieces.push({
+                        x: origins[o].x,
+                        y: confettiCanvas.height,
+                        vx: Math.cos(origins[o].angle + spread) * speed,
+                        vy: Math.sin(origins[o].angle + spread) * speed,
+                        width: 6 + Math.random() * 6,
+                        height: 8 + Math.random() * 8,
+                        rotation: Math.random() * Math.PI,
+                        spin: (Math.random() - 0.5) * 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1
+                    });
+                }
+            }
+
+            if (!confettiRunning) {
+                confettiRunning = true;
+                window.requestAnimationFrame(drawConfetti);
+            }
+        }
+
+        function drawConfetti() {
+            confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            for (var i = confettiPieces.length - 1; i >= 0; i--) {
+                var piece = confettiPieces[i];
+                piece.vy += 0.35;
+                piece.vx *= 0.99;
+                piece.vy *= 0.99;
+                piece.x += piece.vx;
+                piece.y += piece.vy;
+                piece.rotation += piece.spin;
+                piece.life -= 0.006;
+
+                if (piece.life <= 0 || piece.y > confettiCanvas.height + 40) {
+                    confettiPieces.splice(i, 1);
+                    continue;
+                }
+
+                confettiContext.save();
+                confettiContext.globalAlpha = Math.max(piece.life, 0);
+                confettiContext.translate(piece.x, piece.y);
+                confettiContext.rotate(piece.rotation);
+                confettiContext.fillStyle = piece.color;
+                confettiContext.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+                confettiContext.restore();
+            }
+
+            if (confettiPieces.length > 0) {
+                window.requestAnimationFrame(drawConfetti);
+            } else {
+                confettiRunning = false;
+                confettiContext.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        function restart() {
+            current = 0;
+            attempts = 0;
+            verified = [];
+            document.getElementById('transcript').innerText = "";
+            document.getElementById('transcript-container').className = "hidden";
+            document.getElementById('completion').className = "complete hidden";
+            document.getElementById('activity').className = "";
+            loadStep();
+        }
+
+        document.getElementById('command-input').addEventListener('keydown', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkCommand();
+            }
+        });
+
+        loadStep();
+    </script>
+</body>
+</html>
