@@ -1,0 +1,136 @@
+<p></p>
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px;">
+<h1 style="color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px;">Module 13: Network Automation and Programmable Interfaces</h1>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">1. Introduction</h2>
+<p style="margin-bottom: 15px;">This module closes the course by removing the last assumption still standing. Every command in the previous twelve modules was typed by a person. That is how networks were operated for thirty years, and it remains how most small networks are operated today. It stops working at a size this course has already hinted at twice: in Module 10, where nobody logs into two hundred switches each morning to check whether anything failed, and in Module 11, where one of the commonest faults was nineteen switches configured from a template and the twentieth configured from memory.</p>
+<p style="margin-bottom: 15px;">Automation addresses both. A script reaches two hundred devices in the time a person reaches two, and it types the same thing on every one of them. The consistency matters more than the speed. A person performing the same task forty times will do it thirty-nine times correctly, and the fortieth becomes a fault someone investigates months later. A script either does it correctly everywhere or fails everywhere, which sounds worse and is considerably easier to diagnose.</p>
+<p style="margin-bottom: 15px;">Module 12 established what makes this possible: a controller presents a programmable interface northbound, and increasingly individual devices do the same. This module is about using those interfaces, and about the older technique that works when they are absent. Both are worth knowing, because a real network contains equipment of several ages and an administrator does not get to choose. This module covers why automation is worth the effort and what it costs, the two ways a script can reach a device, the structure of a programmable request, the data format these interfaces exchange, the safeguards that separate a useful script from a dangerous one, and how to verify that an automated change actually happened.</p>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">2. Real World Scenario: The Same Change, Sixty Times</h2>
+<p style="margin-bottom: 15px;">A policy decision at St. Cloud Technical &amp; Community College requires a new segment for laboratory equipment on every access switch in the campus, sixty of them, each needing the same virtual network created, the same ports assigned, and the same filtering statement added. Performed by hand at four minutes a switch, this is a full day of work that cannot be interrupted, and the probability that all sixty end up identical is not high.</p>
+<p style="margin-bottom: 15px;">A second requirement arrives at the same time from an audit. The auditor wants evidence that every device in the campus points at the approved time source and sends its logs to the approved server, which are the settings configured in Module 10. Nobody can produce that evidence, because producing it means logging into sixty devices and reading two lines from each, and by the time the last is read the first may have changed.</p>
+<p style="margin-bottom: 15px;">Both problems have the same shape: the same small operation repeated across many devices, where doing it by hand is slow, error-prone, and unverifiable. The administrator writes a script. The audit request becomes a read-only script that visits every device, retrieves two values, and produces a table, which is also the safest possible first automation because it changes nothing. The configuration change is written afterwards, tested on one switch, and only then released to the remaining fifty-nine.</p>
+<figure style="margin: 0 0 20px 0;"><img src="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/Module13-Two-Paths.svg?v=1" alt="Above, a script reaching a router over SSH on port 22 and receiving command line text laid out for a person. Below, the same script reaching it over HTTPS on port 443 and receiving named fields in JSON." style="display: block; margin: 0 auto; max-width: 100%; height: auto;">
+<figcaption style="text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Figure 1. Description: Two ways to reach the same device. Over SSH the device answers with text laid out for a person to read, so a script must pull values out by position and any change to the layout breaks it. Over a programmable interface the device answers with named fields, so a parser reads a value by its name and the script keeps working when the output grows or is reordered. Both paths are legitimate: the command line works on every device you own, including ones too old to offer an interface, while the structured path is more reliable where it exists. Most sites end up running both.</figcaption>
+</figure>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">3. Supplementary Instructional Video Resources</h2>
+<p style="margin-bottom: 15px;">Review both instructional videos before attempting the formative practice activities. The first establishes programmable interfaces and the data format. The second demonstrates automating a device from a script.</p>
+<p style="margin-bottom: 8px;"><strong>Video 1: Programmable Interfaces, Verbs, and Structured Data</strong></p>
+<div style="border: 1px dashed #999; background-color: #f9f9f9; padding: 40px 20px; text-align: center; color: #555; margin-bottom: 8px;">[ Insert instructional video embed code here ]</div>
+<p style="margin-bottom: 15px;"><strong>Context:</strong> This video introduces the request and response model and the data format these interfaces exchange. Pay particular attention to the status code returned with every answer. A request that is refused still produces a response, and a script that checks only whether it received something will report success for a change that never happened. The code is the part that says whether it worked.</p>
+<p style="margin-bottom: 8px;"><strong>Video 2: Automating a Device From a Script</strong></p>
+<div style="border: 1px dashed #999; background-color: #f9f9f9; padding: 40px 20px; text-align: center; color: #555; margin-bottom: 8px;">[ Insert instructional video embed code here ]</div>
+<p style="margin-bottom: 15px;"><strong>Context:</strong> This video demonstrates a script configuring a device. Watch the order of work rather than the code. The script is written to read first, run against one device next, and only then released against the rest, which is the sequence that keeps a mistake small. Note also what the presenter does with the credentials, because a password written into a script is a password published to everyone who can read the file.</p>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">4. Domain Specific Definitions</h2>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><strong>Application Programming Interface:</strong> A defined way for one piece of software to ask another to do something or report something.</li>
+<li style="margin-bottom: 8px;"><strong>REST:</strong> An architectural style in which each thing a device exposes is addressed as a resource by a web address and acted on with standard verbs.</li>
+<li style="margin-bottom: 8px;"><strong>Resource:</strong> One addressable item exposed by an interface, such as a single interface, a routing table, or the whole configuration.</li>
+<li style="margin-bottom: 8px;"><strong>Verb:</strong> The part of a request stating what to do, with GET reading, POST creating, PUT replacing, PATCH altering part, and DELETE removing.</li>
+<li style="margin-bottom: 8px;"><strong>Status Code:</strong> The number returned with every response stating whether the request succeeded, was rejected, or failed on the device.</li>
+<li style="margin-bottom: 8px;"><strong>JSON:</strong> A text format representing data as named fields, lists, and nested objects, which software can parse without ambiguity.</li>
+<li style="margin-bottom: 8px;"><strong>Data Model:</strong> A formal description of what values a device exposes and how they are structured, which allows a program to know what to ask for.</li>
+<li style="margin-bottom: 8px;"><strong>NETCONF:</strong> A protocol for reading and changing device configuration as structured data over a secure session.</li>
+<li style="margin-bottom: 8px;"><strong>RESTCONF:</strong> The equivalent expressed as web requests, which makes it accessible to any tool that can make a web request.</li>
+<li style="margin-bottom: 8px;"><strong>Screen Scraping:</strong> Automating a device by sending command line commands over a session and extracting values from the text returned.</li>
+<li style="margin-bottom: 8px;"><strong>Idempotent:</strong> Describing an operation that produces the same result whether it runs once or fifty times, which makes a script safe to re-run.</li>
+<li style="margin-bottom: 8px;"><strong>Source of Truth:</strong> The authoritative record of what the configuration should be, against which devices are compared and corrected.</li>
+<li style="margin-bottom: 8px;"><strong>Configuration Management Tool:</strong> Software that applies a described desired state to many devices, handling connection, ordering, and reporting.</li>
+</ul>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">5. Core Operational Concepts and Architecture</h2>
+<p style="margin-bottom: 15px;">To automate a network safely, an administrator must choose a way to reach the devices, construct requests correctly, read the answers properly, and build in the safeguards that keep a mistake from being applied everywhere at once. The detailed operational breakdown of these components and their technical purpose is detailed below.</p>
+<p style="margin-bottom: 15px;"><strong>A. What Automation Buys, and What It Costs</strong><br>Four benefits are worth naming separately. Speed is the obvious one and the least important. Consistency is the valuable one: a script applies identical configuration everywhere, which eliminates the entire class of fault that arises from a person doing the same thing slightly differently on the fortieth device. Auditability follows, because a script that reads configuration from every device produces evidence nobody could assemble by hand. And repeatability means the same work can be done again next year, or by someone else, without depending on anyone's memory.</p>
+<p style="margin-bottom: 15px;">The cost must be stated with equal clarity. A mistake typed at a console affects one device, and the person notices immediately. The same mistake in a script is applied to two hundred devices in seconds, correctly and identically, before anyone can intervene. Automation multiplies whatever it is given, including errors, and every safeguard described later in this module exists because of that one property.</p>
+<p style="margin-bottom: 15px;"><strong>B. Two Ways to Reach a Device</strong><br>A script can reach a device the same way you do, by opening a secure session, sending commands, and reading the text that comes back. This works on every device that accepts a login, including equipment far too old to offer anything else, which is why it remains widespread. Its weakness is that the text was formatted for a person. The script locates values by their position in the output, and a software upgrade that adds a column or reorders a line silently breaks it, sometimes by producing a wrong answer rather than an obvious failure.</p>
+<p style="margin-bottom: 15px;">The second way uses an interface designed for programs. The device returns named fields rather than a formatted page, and the script asks for a value by name. Adding information to the response does not break anything, because a parser reading a named field is indifferent to what surrounds it. The limitation is availability: this requires a device new enough to offer the interface and configured to enable it. In practice a campus contains both kinds of equipment, and an administrator uses whichever a given device supports.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">restconf</span> : Global configuration command that enables the web based programmable interface on releases that support it.</li>
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">ip http secure-server</span> : Enables the secure web service the interface depends on, without which the interface is configured and unreachable.</li>
+</ul>
+<p style="margin-bottom: 15px;"><strong>C. The Structure of a Request</strong><br>A request has four parts and each answers a different question. The verb says what to do. The address says which resource to do it to. The headers say what format the answer should take and who is asking. The body, present only when something is being created or changed, carries the new values.</p>
+<p style="margin-bottom: 15px;">The verbs divide usefully into one that is safe and several that are not. Reading changes nothing and can be repeated without consequence, which is why every automation effort should begin there. The others alter the device, and the differences between them matter: replacing a resource discards anything the new content does not mention, while altering part of it leaves the rest alone. Choosing the first where the second was meant is how an automated change removes configuration nobody intended to touch.</p>
+<figure style="margin: 0 0 20px 0;"><img src="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/Module13-REST-Anatomy.svg?v=1" alt="A request showing the verb GET, the resource address, and the headers, and the response showing a 200 OK status code with named fields in JSON, followed by notes on the verbs and the status code families." style="display: block; margin: 0 auto; max-width: 100%; height: auto;">
+<figcaption style="text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Figure 2. Description: One request and its answer. The verb says what to do rather than what to change, the address says which resource, and the headers say which format. The device answers with a status code and the data. GET reads, POST creates, PUT replaces, PATCH alters part, and DELETE removes, and only GET changes nothing. Codes in the 200s succeeded, codes in the 400s mean the request was wrong, and codes in the 500s mean the device failed. A script that ignores the code will report success for a request that changed nothing.</figcaption>
+</figure>
+<p style="margin-bottom: 15px;"><strong>D. Why the Data Format Matters</strong><br>The format these interfaces exchange represents data as named fields, lists, and nested objects. Its importance is not the syntax but what the syntax makes possible. A value retrieved by name is stable. A value retrieved by counting characters into a line of formatted output is not, and the difference becomes apparent the first time a device is upgraded.</p>
+<p style="margin-bottom: 15px;">The structure also travels in both directions. The same format that describes what a device currently holds describes what it should hold, which is what allows a desired configuration to be written in a file, compared against reality, and applied where the two differ. That comparison is the basis of the configuration management tools an administrator meets after this course, and it is why the format is worth understanding rather than merely tolerating.</p>
+<p style="margin-bottom: 15px;"><strong>E. Writing a Script That Is Safe to Run</strong><br>Five practices separate automation that helps from automation that causes an outage, and none of them is about programming skill.</p>
+<p style="margin-bottom: 15px;">Read before you write. The first script against any network should retrieve information and change nothing, which builds confidence in the connection, the credentials, and the parsing without risking anything. Test against one device. A change released to one switch that turns out wrong is a five minute correction; the same change released to sixty is an incident. Make operations repeatable. A script that can be run twice without doing harm can be re-run after a partial failure, whereas one that appends a line every time it runs produces a configuration full of duplicates. Keep the scripts under version control, so that the change to the network and the change to the script that made it are both recorded. And keep credentials out of the file, because a password written into a script is a password given to everyone who can read it, including everyone who can read the repository it is stored in.</p>
+<p style="margin-bottom: 15px;">A sixth practice deserves its own sentence. Know how to undo it. An automated change should be accompanied by an automated reversal written at the same time, while the intent is still clear, rather than composed under pressure once something has gone wrong across sixty devices.</p>
+<p style="margin-bottom: 15px;"><strong>F. Verification</strong><br>Verification in this module has a failure mode the earlier modules did not. A script can report success while having achieved nothing, and it will do so whenever it checks that it received a response rather than checking what the response said. The status code is the first thing to read, every time, and a script that does not examine it is not verifying anything.</p>
+<p style="margin-bottom: 15px;">Beyond the code, three checks are worth making. Read the resource back after changing it and confirm the value is what was sent, which catches a request that was accepted and interpreted differently from what was intended. Confirm on the device itself with the command line commands from the whole of this course, because the device's own view is the authority and a programmable interface is only a way of reaching it. And confirm on a device that should not have changed, which catches a script whose target list was wrong.</p>
+<ul style="margin-bottom: 15px;">
+<li style="margin-bottom: 8px;"><span style="font-family: 'Courier New', Courier, monospace; color: #cc0000; font-weight: bold;">show running-config | include ntp</span> : Filters the configuration to the lines of interest, which is how a change made by a script is confirmed at the device.</li>
+<li style="margin-bottom: 8px;"><code style="font-family: 'Courier New', Courier, monospace;">show ip interface brief</code> : Confirms at the device what an automated read reported, using output you have relied on since Module 4.</li>
+</ul>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">6. Request and Response Reference</h2>
+<p style="margin-bottom: 15px;">This module introduces little device configuration, so the reference below records the two things you will be asked to apply: what each verb does to a resource, and what each family of status codes means.</p>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left;"><caption style="caption-side: bottom; text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Description: This matrix details the request verbs, their effect on a resource, and whether an operation is safe to repeat.</caption>
+<thead>
+<tr>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Verb</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Effect on the Resource</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Safe to Repeat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">GET</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Reads it and changes nothing</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Yes</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;">POST</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Creates a new item within it</td>
+<td style="border: 1px solid #ddd; padding: 10px;">No, a second run may duplicate or be refused</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">PUT</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Replaces it entirely, discarding what is not mentioned</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Yes, with the same content</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;">PATCH</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Alters the parts named and leaves the rest alone</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Yes, with the same content</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">DELETE</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Removes it</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Yes, though a second run reports it is already gone</td>
+</tr>
+</tbody>
+</table>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left;"><caption style="caption-side: bottom; text-align: left; padding-top: 10px; font-weight: bold; color: #555;">Description: This matrix details the status code families and what each requires a script to do next.</caption>
+<thead>
+<tr>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Family</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">Meaning</th>
+<th style="border: 1px solid #ddd; padding: 10px; background-color: #004a99; color: white;" scope="col">What the Script Should Do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">200 to 299</td>
+<td style="border: 1px solid #ddd; padding: 10px;">The request succeeded</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Continue, and read the resource back to confirm</td>
+</tr>
+<tr style="background-color: #f9f9f9;">
+<td style="border: 1px solid #ddd; padding: 10px;">400 to 499</td>
+<td style="border: 1px solid #ddd; padding: 10px;">The request was wrong or unauthorized</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Stop, because repeating it will fail identically</td>
+</tr>
+<tr>
+<td style="border: 1px solid #ddd; padding: 10px;">500 to 599</td>
+<td style="border: 1px solid #ddd; padding: 10px;">The device failed to carry out a valid request</td>
+<td style="border: 1px solid #ddd; padding: 10px;">Stop and investigate the device, not the script</td>
+</tr>
+</tbody>
+</table>
+<h2 style="color: #0056b3; margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">7. Interactive Formative Practice Activities</h2>
+<p style="margin-bottom: 15px;">To verify your conceptual comprehension before participating in the weekly laboratory work, complete the following ungraded interactive practice tools. You must complete both the theoretical knowledge check and the sequential verification tool.</p>
+<p style="margin-bottom: 10px;"><strong>Activity 1:</strong> Launch the Formative Knowledge Check to verify your understanding of the two access paths, the verbs, the status codes, and the safeguards.</p>
+<p style="text-align: center; margin-bottom: 25px;"><a rel="noopener" style="display: inline-block; background-color: #004a99; color: #ffffff; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 4px;" href="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/Module_13_Knowledge_Checker.html" target="_blank">Launch the Module 13 Knowledge Checker</a></p>
+<p style="margin-bottom: 10px;"><strong>Activity 2:</strong> Launch the Command Syntax Checker to work through an automation task in the order that keeps a mistake small, from a read-only request to a verified change.</p>
+<p style="text-align: center; margin-bottom: 15px;"><a rel="noopener" style="display: inline-block; background-color: #004a99; color: #ffffff; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 4px;" href="https://bvolkmuth66.github.io/SCTCC-Lab-Modules/Module_13_Syntax_Checker.html" target="_blank">Launch the Module 13 Syntax Checker</a></p>
+</div>
+<p></p>
